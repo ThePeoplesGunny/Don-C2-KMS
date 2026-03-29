@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DoN C2 KMS v6.a — GAS Framework | Three-Body Problem: OT/CPS Cyber Gap</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   NAVY STYLE GUIDE — OFFICIAL COLOR PALETTE (DIGITAL)
+   Navy Blue #022a3a | Blue #0076a9 | Gold #e8b00f
+   Gray #C6CCD0 | Navy White #fffef9 | Black #000000
+   Source: Navy Licensing Guide Feb 2024, p.35
+   ══════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  /* Official Navy digital palette */
+  --navy:    #022a3a;
+  --blue:    #0076a9;
+  --gold:    #e8b00f;
+  --gray:    #C6CCD0;
+  --nwhite:  #fffef9;
+  --black:   #000000;
+  /* Navy Emblem PMS colors */
+  --pms4505: #978a3f;
+  --pms294:  #0a3782;
+  --pms1805: #ae1b21;
+  /* Derived UI tones from official navy */
+  --navy1:   #011d28;
+  --navy2:   #022a3a;
+  --navy3:   #03374a;
+  --navy4:   #04455c;
+  --navy5:   #05546e;
+  --blue1:   #005a82;
+  --blue2:   #0076a9;
+  --blue3:   #0090cc;
+  --gold1:   #b88a0c;
+  --gold2:   #e8b00f;
+  --gold3:   #f0c040;
+  --goldbg:  rgba(232,176,15,.1);
+  --graydim: rgba(198,204,208,.3);
+  /* GAS Authority stream colors — distinct per layer */
+  --auth-adcon:  #4a9eff;   /* Administrative Control — blue   */
+  --auth-ta:     #cc44ff;   /* Technical Authority — violet    */
+  --auth-acq:    #ff8833;   /* Acquisition — orange            */
+  --auth-ops:    #ff3355;   /* Operational — red               */
+  --auth-cyber:  #00ddcc;   /* Cyber/DODIN — cyan              */
+  --auth-bso:    #44cc77;   /* Financial/BSO — green           */
+  /* Text */
+  --t1: #fffef9;  /* Navy White — primary text */
+  --t2: #8aabb8;  /* muted */
+  --t3: #3d6275;  /* very muted */
+  --t4: #1e3a4a;  /* near invisible on dark bg */
+}
+html,body{height:100%;overflow:hidden}
+/* Roboto Slab = official Navy secondary typeface (body)
+   Roboto = official alternate for digital sans-serif  */
+body{background:var(--navy1);color:var(--t1);
+  font-family:'Roboto Slab',Georgia,serif;
+  display:flex;flex-direction:column;font-size:12px}
+
+/* ── CLASSIFICATION BANNER ───────── */
+.clf{
+  background:#002200;text-align:center;
+  padding:3px 0;font-family:'Roboto',monospace;
+  font-size:8px;color:#44ee44;letter-spacing:4px;
+  flex-shrink:0;text-transform:uppercase
+}
+
+/* ── HEADER ──────────────────────── */
+header{
+  background:var(--navy2);
+  border-bottom:2px solid var(--navy4);
+  padding:0 16px;height:52px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;position:relative;overflow:hidden
+}
+/* Official gold accent stripe — mimics Navy brand bar */
+header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,
+    var(--auth-adcon) 0%,var(--auth-adcon) 16.6%,
+    var(--auth-ta)    16.6%,var(--auth-ta)   33.2%,
+    var(--auth-acq)   33.2%,var(--auth-acq)  49.8%,
+    var(--auth-ops)   49.8%,var(--auth-ops)  66.4%,
+    var(--auth-cyber) 66.4%,var(--auth-cyber)83%,
+    var(--auth-bso)   83%,  var(--auth-bso)  100%)
+}
+/* Navy seal placeholder */
+.h-seal{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(232,176,15,.12);
+  border:1.5px solid rgba(232,176,15,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0
+}
+.h-titles h1{
+  /* Helvetica is official Navy headline alternate to Liberator */
+  font-family:Helvetica,'Helvetica Neue','Roboto',sans-serif;
+  font-weight:700;font-size:13px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--t1)
+}
+.h-titles h1 span.gas{color:var(--gold2);font-style:italic}
+.h-titles p{
+  font-family:'Roboto',sans-serif;font-weight:300;
+  font-size:7px;color:var(--t2);letter-spacing:1px;
+  margin-top:2px;text-transform:uppercase
+}
+.h-right{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.hpill{
+  font-family:'Roboto',sans-serif;font-size:7px;
+  padding:2px 7px;border-radius:2px;letter-spacing:.6px;
+  text-transform:uppercase;font-weight:500
+}
+.hp-ver  {background:var(--goldbg);color:var(--gold2);border:1px solid rgba(232,176,15,.3)}
+.hp-count{background:rgba(74,158,255,.1);color:var(--auth-adcon);border:1px solid rgba(74,158,255,.25)}
+.hp-unclass{background:rgba(68,204,119,.08);color:#44cc77;border:1px solid rgba(68,204,119,.2)}
+.h-btn{
+  background:var(--navy3);border:1px solid var(--navy5);
+  color:var(--t2);font-family:Helvetica,sans-serif;
+  font-weight:700;font-size:8px;letter-spacing:1px;
+  text-transform:uppercase;padding:5px 10px;
+  border-radius:2px;cursor:pointer;transition:all .15s
+}
+.h-btn:hover{color:var(--t1);border-color:var(--blue2);background:var(--navy4)}
+.h-btn.active{background:var(--goldbg);color:var(--gold2);border-color:rgba(232,176,15,.4)}
+
+/* ── NAV TABS ────────────────────── */
+nav{
+  background:var(--navy2);border-bottom:1px solid var(--navy3);
+  display:flex;padding:0 14px;gap:0;flex-shrink:0;overflow-x:auto
+}
+.tab{
+  font-family:Helvetica,'Helvetica Neue',sans-serif;
+  font-weight:700;font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--t3);
+  padding:9px 14px;cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:color .15s;user-select:none;
+  display:flex;align-items:center;gap:5px;white-space:nowrap
+}
+.tab:hover{color:var(--t2)}.tab.on{color:var(--gold2);border-bottom-color:var(--gold2)}
+.tbadge{
+  background:var(--navy3);border:1px solid var(--navy5);
+  color:var(--t3);font-size:7px;padding:1px 4px;
+  border-radius:8px;font-family:'Roboto',monospace
+}
+
+/* ── MAIN LAYOUT ─────────────────── */
+.main{flex:1;overflow:hidden;display:flex;min-height:0}
+
+/* ══════════════════════════════════════════
+   LEFT AUTHORITY CONTROL PANEL
+   ══════════════════════════════════════════ */
+.lp{
+  width:218px;background:var(--navy2);
+  border-right:1px solid var(--navy3);
+  display:flex;flex-direction:column;
+  flex-shrink:0;overflow-y:auto
+}
+.lp-hdr{
+  padding:8px 10px 6px;border-bottom:1px solid var(--navy3);
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)
+}
+.lp-sect{padding:6px 10px;border-bottom:1px solid var(--navy3)}
+.lp-sect-title{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:7px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between
+}
+.lp-all-btn{
+  font-family:'Roboto',sans-serif;font-size:7px;
+  color:var(--blue3);cursor:pointer;letter-spacing:.5px
+}
+.lp-all-btn:hover{color:var(--t1)}
+
+/* Authority toggle row */
+.auth-toggle{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 6px;border-radius:3px;cursor:pointer;
+  margin-bottom:2px;transition:background .12s;
+  border:1px solid transparent
+}
+.auth-toggle:hover{background:var(--navy3);border-color:var(--navy4)}
+.auth-toggle.on{background:rgba(255,255,255,.04);border-color:var(--navy4)}
+.auth-toggle.off{opacity:.35}
+.at-sw{
+  width:28px;height:14px;border-radius:7px;
+  background:var(--navy4);border:1px solid var(--navy5);
+  position:relative;transition:background .2s;flex-shrink:0
+}
+.auth-toggle.on .at-sw{border-color:var(--at-color)}
+.at-sw::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--t3);transition:all .2s
+}
+.auth-toggle.on .at-sw::after{
+  left:16px;background:var(--at-color)
+}
+.at-dot{
+  width:8px;height:8px;border-radius:50%;
+  flex-shrink:0;border:1px solid transparent
+}
+.at-label{flex:1}
+.at-name{
+  font-family:'Roboto Slab',serif;font-size:9px;
+  font-weight:700;color:var(--t2);line-height:1
+}
+.auth-toggle.on .at-name{color:var(--t1)}
+.at-cite{
+  font-family:'Roboto',monospace;font-size:6.5px;
+  color:var(--t3);margin-top:1px;line-height:1
+}
+
+/* GAS awareness indicator */
+.gas-meter{
+  background:var(--navy3);border:1px solid var(--navy4);
+  border-radius:3px;padding:6px 8px;margin:6px 10px;
+}
+.gas-meter-lbl{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:7px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold2);margin-bottom:5px
+}
+.gas-bars{display:flex;flex-direction:column;gap:3px}
+.gas-bar{display:flex;align-items:center;gap:6px}
+.gas-bar-lbl{
+  font-family:'Roboto',sans-serif;font-size:7px;
+  color:var(--t3);width:24px;text-align:right
+}
+.gas-bar-track{
+  flex:1;height:5px;background:var(--navy4);
+  border-radius:2px;overflow:hidden
+}
+.gas-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.gas-bar-val{
+  font-family:'Roboto',monospace;font-size:7px;
+  color:var(--t2);width:24px
+}
+
+/* ══════════════════════════════════════════
+   SVG CANVAS AREA
+   ══════════════════════════════════════════ */
+.canvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--navy1)}
+#main-svg{width:100%;height:100%}
+
+/* ── SVG node styles ── */
+.node rect,.node polygon{cursor:pointer;transition:filter .15s}
+.node:hover rect,.node:hover polygon{filter:brightness(1.25)}
+.node text{pointer-events:none;user-select:none}
+.node.selected rect,.node.selected polygon{stroke-width:2.5!important}
+/* Authority link lines */
+.link{pointer-events:none}
+
+/* ── Zoom controls ── */
+.zoom-ctrls{
+  position:absolute;bottom:12px;right:12px;
+  display:flex;flex-direction:column;gap:3px;z-index:10
+}
+.zoom-btn{
+  width:26px;height:26px;background:var(--navy3);
+  border:1px solid var(--navy5);color:var(--t2);
+  font-size:14px;cursor:pointer;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .12s;font-family:'Roboto',sans-serif
+}
+.zoom-btn:hover{color:var(--t1);border-color:var(--blue2)}
+
+/* ── Canvas legend ── */
+.canvas-legend{
+  position:absolute;bottom:12px;left:12px;z-index:10;
+  background:rgba(2,42,58,.85);border:1px solid var(--navy4);
+  backdrop-filter:blur(4px);border-radius:3px;padding:8px 10px;
+  display:flex;flex-direction:column;gap:4px;min-width:180px
+}
+.cl-title{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:7px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--t3);margin-bottom:2px
+}
+.cl-row{display:flex;align-items:center;gap:7px}
+.cl-line{height:2px;width:24px;border-radius:1px;flex-shrink:0}
+.cl-line.dashed{
+  background:transparent;
+  border-top:2px dashed currentColor;height:0
+}
+.cl-label{font-family:'Roboto',sans-serif;font-size:8px;color:var(--t2)}
+
+/* ── Node count badge (top right canvas) ── */
+.canvas-info{
+  position:absolute;top:10px;right:10px;z-index:10;
+  display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end
+}
+.ci-badge{
+  background:rgba(2,42,58,.8);border:1px solid var(--navy4);
+  border-radius:2px;padding:3px 7px;
+  font-family:'Roboto',monospace;font-size:7px;
+  color:var(--t2);letter-spacing:.5px
+}
+
+/* ══════════════════════════════════════════
+   RIGHT DETAIL PANEL
+   ══════════════════════════════════════════ */
+.rp{
+  width:0;background:var(--navy2);
+  border-left:1px solid var(--navy3);
+  display:flex;flex-direction:column;
+  transition:width .2s;overflow:hidden;flex-shrink:0
+}
+.rp.open{width:290px}
+.rp-hdr{
+  padding:9px 12px;border-bottom:1px solid var(--navy3);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0
+}
+.rp-hdr-title{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)
+}
+.rp-close{
+  background:none;border:none;color:var(--t3);
+  cursor:pointer;font-size:14px;line-height:1;padding:0 2px
+}
+.rp-close:hover{color:var(--t1)}
+.rp-body{flex:1;overflow-y:auto;padding:10px 12px}
+/* Node detail elements */
+.rp-svc-bar{
+  height:3px;border-radius:1px;margin-bottom:10px
+}
+.rp-name{
+  font-family:Helvetica,'Helvetica Neue',sans-serif;
+  font-weight:700;font-size:15px;color:var(--t1);
+  letter-spacing:.5px;line-height:1.1
+}
+.rp-full{
+  font-family:'Roboto Slab',serif;font-weight:300;
+  font-size:10px;color:var(--t2);margin:3px 0 8px;
+  line-height:1.4
+}
+.rp-meta{
+  display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px
+}
+.rp-tag{
+  font-family:'Roboto',monospace;font-size:7px;
+  padding:2px 6px;border-radius:2px;letter-spacing:.5px;
+  background:var(--navy3);border:1px solid var(--navy4);color:var(--t2)
+}
+.rp-tag.svc-tag{border-color:var(--svc-col)}
+.rp-sect-hdr{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:7px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--t3);margin:10px 0 5px;
+  display:flex;align-items:center;gap:6px
+}
+.rp-sect-hdr::after{content:'';flex:1;height:1px;background:var(--navy3)}
+/* Authority stream rows in detail panel */
+.auth-stream{
+  margin-bottom:6px;padding:6px 8px;
+  background:var(--navy3);border-radius:3px;
+  border-left:3px solid var(--stream-col,var(--navy5))
+}
+.as-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:4px
+}
+.as-name{
+  font-family:Helvetica,sans-serif;font-weight:700;
+  font-size:8px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--t2)
+}
+.as-cite{
+  font-family:'Roboto',monospace;font-size:6.5px;color:var(--t3)
+}
+.as-chain{display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.as-node{
+  font-family:'Roboto',monospace;font-size:7.5px;
+  padding:2px 5px;border-radius:2px;cursor:pointer;
+  background:var(--navy2);border:1px solid var(--navy4);
+  color:var(--t2);transition:all .12s
+}
+.as-node:hover{border-color:var(--gold2);color:var(--gold2)}
+.as-arr{color:var(--t4);font-size:9px;margin:0 1px}
+.as-empty{
+  font-family:'Roboto',monospace;font-size:7px;
+  color:var(--t4);font-style:italic
+}
+.rp-note{
+  font-family:'Roboto Slab',serif;font-weight:300;
+  font-size:9px;color:var(--t2);line-height:1.5;
+  padding:7px 8px;background:var(--navy3);
+  border-radius:3px;margin-top:6px
+}
+.rp-gas-flag{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 8px;background:rgba(232,176,15,.08);
+  border:1px solid rgba(232,176,15,.2);
+  border-radius:3px;margin-top:8px
+}
+.rp-gas-icon{font-size:14px}
+.rp-gas-text{
+  font-family:'Roboto Slab',serif;font-weight:700;
+  font-size:8px;color:var(--gold2);line-height:1.4
+}
+.rp-gas-sub{
+  font-family:'Roboto',sans-serif;font-weight:300;
+  font-size:7.5px;color:var(--t2);line-height:1.4;margin-top:2px
+}
+
+/* ══════════════════════════════════════════
+   PANEL SYSTEM (bottom tabs for secondary views)
+   ══════════════════════════════════════════ */
+.content{flex:1;overflow:hidden;position:relative;display:flex;min-height:0}
+.panel{display:none;width:100%;height:100%;flex-direction:column}
+.panel.on{display:flex}
+
+/* ORDERS panel */
+.ord-wrap{flex:1;display:flex;overflow:hidden}
+.ord-sb{width:260px;background:var(--navy2);border-right:1px solid var(--navy3);display:flex;flex-direction:column;flex-shrink:0}
+.sb-hdr{padding:8px 12px;border-bottom:1px solid var(--navy3);display:flex;align-items:center;justify-content:space-between}
+.sb-hdr-t{font-family:Helvetica,sans-serif;font-weight:700;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.ord-list{flex:1;overflow-y:auto}
+.ord-item{padding:8px 12px;border-bottom:1px solid var(--navy3);cursor:pointer;transition:background .12s}
+.ord-item:hover{background:var(--navy3)}
+.ord-item.selected{background:rgba(0,118,169,.1);border-left:2px solid var(--blue2)}
+.ord-date{font-family:'Roboto',monospace;font-size:7px;color:var(--t3);margin-bottom:2px;letter-spacing:.5px}
+.ord-title{font-family:'Roboto Slab',serif;font-size:9px;color:var(--t1);font-weight:700;line-height:1.3;margin-bottom:3px}
+.ord-tags{display:flex;gap:3px;flex-wrap:wrap}
+.ord-tag{font-family:'Roboto',monospace;font-size:6.5px;padding:1px 4px;border-radius:2px;background:var(--navy3);border:1px solid var(--navy4);color:var(--t3)}
+.ord-main{flex:1;overflow-y:auto;padding:16px}
+.ord-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3);font-family:'Roboto Slab',serif;font-size:11px}
+
+/* REGISTRY panel */
+.reg-wrap{flex:1;overflow:auto;padding:12px}
+.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.reg-card{
+  background:var(--navy2);border:1px solid var(--navy3);
+  border-radius:3px;padding:10px 12px;cursor:pointer;
+  transition:all .12s;border-top:3px solid var(--svc-col,var(--navy4))
+}
+.reg-card:hover{background:var(--navy3);border-color:var(--navy5)}
+.rc-name{font-family:Helvetica,sans-serif;font-weight:700;font-size:11px;color:var(--t1);margin-bottom:2px}
+.rc-full{font-family:'Roboto Slab',serif;font-weight:300;font-size:8px;color:var(--t2);line-height:1.3;margin-bottom:5px}
+.rc-meta{display:flex;gap:4px;flex-wrap:wrap}
+.rc-tag{font-family:'Roboto',monospace;font-size:7px;padding:1px 4px;border-radius:2px;background:var(--navy3);border:1px solid var(--navy4);color:var(--t3)}
+
+/* ── THREE-BODY PROBLEM PANEL ─────────────────────────────────── */
+.tbp-wrap{padding:20px;overflow-y:auto;height:100%;max-width:1400px;margin:0 auto}
+.tbp-masthead{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #ff4444}
+.tbp-title{font-family:'Roboto Slab',serif;font-size:22px;font-weight:700;color:#ff4444;letter-spacing:2px}
+.tbp-sub{font-family:'Roboto',sans-serif;font-size:12px;color:var(--t2);margin-top:4px}
+.tbp-byline{font-family:'Roboto',monospace;font-size:9px;color:var(--t3);margin-top:6px}
+.tbp-audience-banner{border:1px solid var(--navy4);border-radius:4px;padding:12px 16px;margin-bottom:20px;background:var(--navy2)}
+.tbp-aud-mode{display:flex;gap:12px;align-items:flex-start}
+.tbp-aud-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.tbp-aud-title{font-family:'Roboto',monospace;font-size:10px;font-weight:700;color:var(--gold2);margin-bottom:4px}
+.tbp-aud-desc{font-family:'Roboto Slab',serif;font-size:10px;color:var(--t2);line-height:1.5}
+.tbp-bodies{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;margin-bottom:24px;align-items:start}
+.tbp-body{background:var(--navy2);border-radius:6px;border:1px solid var(--navy4);overflow:hidden}
+.b1{border-top:3px solid var(--auth-ta)}
+.b2{border-top:3px solid var(--auth-cyber)}
+.b3{border-top:3px solid #ff4444}
+.tbp-body-hdr{padding:12px;background:var(--navy3)}
+.tbp-body-num{font-family:'Roboto',monospace;font-size:9px;color:var(--t3);letter-spacing:2px}
+.tbp-body-name{font-family:'Roboto Slab',serif;font-size:13px;font-weight:700;color:var(--t1);margin:2px 0}
+.tbp-body-owner{font-family:'Roboto',monospace;font-size:8px;color:var(--t3)}
+.tbp-body-content{padding:12px;display:flex;flex-direction:column;gap:8px}
+.tbp-fact{font-family:'Roboto Slab',serif;font-size:9px;line-height:1.5;color:var(--t2)}
+.tbp-fact-lbl{font-family:'Roboto',monospace;font-size:8px;font-weight:700;color:var(--t1);display:block;margin-bottom:2px}
+.tbp-gap-fact{background:rgba(255,68,0,.08);border:1px solid rgba(255,68,0,.3);border-radius:3px;padding:8px}
+.tbp-gap-lbl{color:#ff6633!important}
+.tbp-north-star{background:rgba(255,20,20,.1);border-color:rgba(255,20,20,.4)}
+.tbp-gap-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;gap:4px}
+.tbp-gap-line{width:2px;height:40px;background:linear-gradient(to bottom,transparent,#ff4444,transparent)}
+.tbp-gap-label{font-family:'Roboto',monospace;font-size:7px;color:#ff4444;text-align:center;white-space:nowrap;writing-mode:vertical-lr;transform:rotate(180deg);letter-spacing:1px}
+/* FMECA */
+.tbp-fmeca{margin-bottom:24px}
+.tbp-section-title{font-family:'Roboto',monospace;font-size:10px;font-weight:700;color:var(--gold2);letter-spacing:2px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--navy4)}
+.fmeca-table{width:100%;border-collapse:collapse;font-size:9px}
+.fmeca-table th{font-family:'Roboto',monospace;font-size:8px;color:var(--t3);background:var(--navy3);padding:6px 8px;text-align:left;border:1px solid var(--navy4);font-weight:700;letter-spacing:1px}
+.fmeca-table td{padding:8px;border:1px solid var(--navy4);vertical-align:top;font-family:'Roboto Slab',serif;color:var(--t2);line-height:1.4}
+.fmeca-table tr:hover td{background:rgba(255,255,255,.03)}
+.fmeca-sub{font-family:'Roboto',monospace;font-size:7px;color:var(--t3)}
+.fmeca-crit{text-align:center;font-family:'Roboto',monospace;font-size:8px;font-weight:700}
+.fmeca-crit.critical{color:#ff8833;background:rgba(255,136,51,.1)}
+.fmeca-crit.catastrophic{color:#ff3355;background:rgba(255,51,85,.1)}
+.fmeca-gap{color:#ff6633!important;font-style:italic}
+/* RCA */
+.tbp-rca{margin-bottom:24px}
+.rca-chain{display:flex;flex-direction:column;align-items:center;gap:0}
+.rca-node{background:var(--navy2);border:1px solid var(--navy4);border-radius:4px;padding:12px 16px;width:100%;max-width:800px}
+.rca-n-title{font-family:'Roboto',monospace;font-size:9px;font-weight:700;color:var(--gold2);margin-bottom:5px;letter-spacing:1px}
+.rca-n-body{font-family:'Roboto Slab',serif;font-size:9px;color:var(--t2);line-height:1.5}
+.rca-node-gap{border-color:#ff4444;border-width:2px;background:rgba(255,68,0,.05)}
+.rca-node-gap .rca-n-title{color:#ff4444}
+.rca-node-fleet{border-color:var(--auth-cyber);background:rgba(0,221,204,.04)}
+.rca-arrow{font-size:16px;color:var(--navy5);padding:4px 0}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--navy4);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--navy5)}
+</style>
+</head>
+<body>
+<!-- CLASSIFICATION BANNER -->
+<div class="clf">unclassified // for official use only // doe not contain classified information</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-seal">⚓</div>
+  <div class="h-titles">
+    <h1>DoN C2 KMS v6.a &nbsp;|&nbsp; <span class="gas">Governance, Acquisition &amp; Sustainment (GAS)</span> Framework</h1>
+    <p>Department of the Navy &bull; Command &amp; Control Knowledge Management System &bull; Authority Convergence &bull; <span style="color:#ff4444;font-weight:700">Three-Body Problem: OT/CPS Cyber Gap</span></p>
+  </div>
+  <div class="h-right">
+    <span class="hpill hp-ver">v6.a</span>
+    <span class="hpill hp-count" id="hp-nodes">0 NODES</span>
+    <span class="hpill hp-unclass">UNCLASSIFIED</span>
+    <button class="h-btn" id="btn-reset-view" onclick="resetView()">⌖ RESET VIEW</button>
+    <button class="h-btn active" id="btn-gas-mode" onclick="toggleGasMode()">GAS VIEW</button>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav>
+  <div class="tab on" data-panel="p-org" onclick="switchTab(this)">
+    <span>⬡ Authority Map</span>
+  </div>
+  <div class="tab" data-panel="p-3bp" onclick="switchTab(this)">
+    <span style="color:#ff4444">🔴 Three-Body Problem</span>
+  </div>
+  <div class="tab" data-panel="p-orders" onclick="switchTab(this)">
+    <span>📋 OPNAV Issuances</span>
+  </div>
+  <div class="tab" data-panel="p-registry" onclick="switchTab(this)">
+    <span>📇 Node Registry</span>
+    <span class="tbadge" id="tb-reg">0</span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding-right:8px">
+    <span style="font-family:'Roboto',monospace;font-size:8px;color:var(--t3)">AUDIENCE:</span>
+    <button class="h-btn active" id="aud-lead" onclick="setAudience('leadership')" title="Leadership View — consequence framing">🎯 LEADERSHIP</button>
+    <button class="h-btn" id="aud-prac" onclick="setAudience('practitioner')" title="Practitioner View — navigation framing">⚙️ PRACTITIONER</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- ══ AUTHORITY MAP PANEL ══ -->
+  <div class="panel on" id="p-org">
+    <div class="main">
+
+      <!-- LEFT PANEL: Authority Controls -->
+      <div class="lp">
+        <div class="lp-hdr">GAS Authority Streams</div>
+
+        <div class="lp-sect">
+          <div class="lp-sect-title">
+            <span>Active Streams</span>
+            <span class="lp-all-btn" onclick="toggleAllStreams(true)">ALL ON</span>
+          </div>
+          <!-- ADCON -->
+          <div class="auth-toggle on" id="tog-adcon" onclick="toggleStream('adcon')"
+               style="--at-color:var(--auth-adcon)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-adcon)"></div>
+            <div class="at-label">
+              <div class="at-name">Admin Control</div>
+              <div class="at-cite">10 U.S.C. §5032 / ADCON</div>
+            </div>
+          </div>
+          <!-- TA -->
+          <div class="auth-toggle on" id="tog-ta" onclick="toggleStream('ta')"
+               style="--at-color:var(--auth-ta)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-ta)"></div>
+            <div class="at-label">
+              <div class="at-name">Technical Authority</div>
+              <div class="at-cite">OPNAVINST 5450.350B / TA</div>
+            </div>
+          </div>
+          <!-- ACQ -->
+          <div class="auth-toggle on" id="tog-acq" onclick="toggleStream('acq')"
+               style="--at-color:var(--auth-acq)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-acq)"></div>
+            <div class="at-label">
+              <div class="at-name">Acquisition</div>
+              <div class="at-cite">SECNAVINST 5400.15D / SAE</div>
+            </div>
+          </div>
+          <!-- OPS -->
+          <div class="auth-toggle on" id="tog-ops" onclick="toggleStream('ops')"
+               style="--at-color:var(--auth-ops)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-ops)"></div>
+            <div class="at-label">
+              <div class="at-name">Operational</div>
+              <div class="at-cite">Title 10 COCOM / OPCON</div>
+            </div>
+          </div>
+          <!-- CYBER -->
+          <div class="auth-toggle on" id="tog-cyber" onclick="toggleStream('cyber')"
+               style="--at-color:var(--auth-cyber)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-cyber)"></div>
+            <div class="at-label">
+              <div class="at-name">Cyber / DODIN</div>
+              <div class="at-cite">OPNAVINST 5450.345 / DACO</div>
+            </div>
+          </div>
+          <!-- BSO -->
+          <div class="auth-toggle on" id="tog-bso" onclick="toggleStream('bso')"
+               style="--at-color:var(--auth-bso)">
+            <div class="at-sw"></div>
+            <div class="at-dot" style="background:var(--auth-bso)"></div>
+            <div class="at-label">
+              <div class="at-name">Financial / BSO</div>
+              <div class="at-cite">SECNAVINST 7000.27D</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry point selector -->
+        <div class="lp-sect">
+          <div class="lp-sect-title">View Focus</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <button class="h-btn active" id="ep-navair" onclick="setEntryPoint('navair')" style="text-align:left;padding:5px 8px;font-size:8px">⬡ NAVAIR Central</button>
+            <button class="h-btn" id="ep-cocom" onclick="setEntryPoint('cocom')" style="text-align:left;padding:5px 8px;font-size:8px">◈ COCOM / Operational</button>
+            <button class="h-btn" id="ep-full" onclick="setEntryPoint('full')" style="text-align:left;padding:5px 8px;font-size:8px">⊞ Full DoN Enterprise</button>
+          </div>
+        </div>
+
+        <!-- Filter by service -->
+        <div class="lp-sect">
+          <div class="lp-sect-title">Service Filter</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="fchip on" data-svc="all" onclick="filterSvc(this)">ALL</span>
+            <span class="fchip" data-svc="navy" onclick="filterSvc(this)" style="--fc:#1e6abf">USN</span>
+            <span class="fchip" data-svc="usmc" onclick="filterSvc(this)" style="--fc:#8b2222">USMC</span>
+            <span class="fchip" data-svc="joint" onclick="filterSvc(this)" style="--fc:#555577">JOINT</span>
+            <span class="fchip" data-svc="acq" onclick="filterSvc(this)" style="--fc:#2d6a4a">ACQ</span>
+            <span class="fchip" data-svc="civ" onclick="filterSvc(this)" style="--fc:#4a5568">CIV</span>
+            <span class="fchip" data-svc="cyber" onclick="filterSvc(this)" style="--fc:#006666">CYBER</span>
+          </div>
+        </div>
+
+        <!-- GAS Awareness Meter -->
+        <div class="gas-meter">
+          <div class="gas-meter-lbl">⚡ GAS Convergence</div>
+          <div style="font-family:'Roboto',sans-serif;font-size:7px;color:var(--t3);margin-bottom:5px">
+            Active authority streams at selected node
+          </div>
+          <div class="gas-bars">
+            <div class="gas-bar">
+              <div class="gas-bar-lbl">Gov</div>
+              <div class="gas-bar-track"><div class="gas-bar-fill" id="gb-adcon" style="background:var(--auth-adcon);width:0%"></div></div>
+              <div class="gas-bar-val" id="gv-adcon">—</div>
+            </div>
+            <div class="gas-bar">
+              <div class="gas-bar-lbl">Acq</div>
+              <div class="gas-bar-track"><div class="gas-bar-fill" id="gb-acq" style="background:var(--auth-acq);width:0%"></div></div>
+              <div class="gas-bar-val" id="gv-acq">—</div>
+            </div>
+            <div class="gas-bar">
+              <div class="gas-bar-lbl">Sus</div>
+              <div class="gas-bar-track"><div class="gas-bar-fill" id="gb-ta" style="background:var(--auth-ta);width:0%"></div></div>
+              <div class="gas-bar-val" id="gv-ta">—</div>
+            </div>
+            <div class="gas-bar">
+              <div class="gas-bar-lbl">Ops</div>
+              <div class="gas-bar-track"><div class="gas-bar-fill" id="gb-ops" style="background:var(--auth-ops);width:0%"></div></div>
+              <div class="gas-bar-val" id="gv-ops">—</div>
+            </div>
+            <div class="gas-bar">
+              <div class="gas-bar-lbl">Cyber</div>
+              <div class="gas-bar-track"><div class="gas-bar-fill" id="gb-cyber" style="background:var(--auth-cyber);width:0%"></div></div>
+              <div class="gas-bar-val" id="gv-cyber">—</div>
+            </div>
+          </div>
+          <div id="gas-node-lbl" style="font-family:'Roboto',monospace;font-size:7px;color:var(--t3);margin-top:5px;text-align:center">
+            — SELECT A NODE —
+          </div>
+        </div>
+
+      </div><!-- /lp -->
+
+      <!-- CENTER: SVG Canvas -->
+      <div class="canvas-wrap">
+        <div class="canvas-info">
+          <span class="ci-badge" id="ci-view">NAVAIR CENTRAL VIEW</span>
+          <span class="ci-badge" id="ci-links">0 LINKS</span>
+        </div>
+        <svg id="main-svg"></svg>
+        <div class="canvas-legend">
+          <div class="cl-title">Authority Streams</div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-adcon)"></div><span class="cl-label">Administrative Control (ADCON)</span></div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-ta)"></div><span class="cl-label">Technical Authority (TA)</span></div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-acq)"></div><span class="cl-label">Acquisition (SAE/CAE)</span></div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-ops)"></div><span class="cl-label">Operational (OPCON/COCOM)</span></div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-cyber)"></div><span class="cl-label">Cyber / DODIN (DACO)</span></div>
+          <div class="cl-row"><div class="cl-line" style="background:var(--auth-bso)"></div><span class="cl-label">Financial / BSO</span></div>
+          <div style="border-top:1px solid var(--navy3);margin-top:4px;padding-top:4px">
+            <div class="cl-row"><div class="cl-line" style="background:var(--navy4)"></div><span class="cl-label" style="color:var(--t3)">Solid = primary authority</span></div>
+            <div class="cl-row"><div style="width:24px;height:0;border-top:2px dashed var(--t3);flex-shrink:0"></div><span class="cl-label" style="color:var(--t3)">Dashed = delegated authority</span></div>
+            <div class="cl-row" style="margin-top:4px"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,68,0,.3);border:1px solid #ff4444;flex-shrink:0"></div><span class="cl-label" style="color:#ff6633">🔴 OT/CPS Cyber Gap node</span></div>
+            <div class="cl-row"><div style="width:10px;height:10px;border-radius:50%;background:rgba(255,200,0,.3);border:1px solid var(--gold2);flex-shrink:0"></div><span class="cl-label" style="color:var(--gold2)">⚡ GAS Convergence node</span></div>
+          </div>
+        </div>
+        <div class="zoom-ctrls">
+          <button class="zoom-btn" onclick="zoomIn()">+</button>
+          <button class="zoom-btn" onclick="zoomReset()">⌖</button>
+          <button class="zoom-btn" onclick="zoomOut()">−</button>
+        </div>
+      </div><!-- /canvas-wrap -->
+
+      <!-- RIGHT PANEL: Node Detail -->
+      <div class="rp" id="rp">
+        <div class="rp-hdr">
+          <span class="rp-hdr-title">Authority Profile</span>
+          <button class="rp-close" onclick="closePanel()">✕</button>
+        </div>
+        <div class="rp-body" id="rp-body">
+          <div style="color:var(--t3);font-family:'Roboto Slab',serif;font-size:10px;padding-top:20px;text-align:center">
+            Select a node to view its<br>Governance, Acquisition &amp; Sustainment<br>(GAS) authority profile
+          </div>
+        </div>
+      </div><!-- /rp -->
+
+    </div><!-- /main -->
+  </div><!-- /p-org -->
+
+  <!-- ══ OPNAV ISSUANCES PANEL ══ -->
+  <div class="panel" id="p-orders">
+    <div class="ord-wrap">
+      <div class="ord-sb">
+        <div class="sb-hdr">
+          <span class="sb-hdr-t">Source Documents</span>
+        </div>
+        <div class="ord-list" id="ord-list"></div>
+      </div>
+      <div class="ord-main" id="ord-main">
+        <div class="ord-empty">Select a document to view authority summary</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ REGISTRY PANEL ══ -->
+  <div class="panel" id="p-registry">
+    <div class="reg-wrap">
+      <div class="reg-grid" id="reg-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ THREE-BODY PROBLEM PANEL ══ -->
+  <div class="panel" id="p-3bp">
+    <div class="tbp-wrap">
+
+      <!-- 3BP HEADER -->
+      <div class="tbp-masthead">
+        <div class="tbp-title">THE THREE-BODY PROBLEM</div>
+        <div class="tbp-sub">Naval Aviation OT/CPS Cyber Incident Response — Authority Void Analysis</div>
+        <div class="tbp-byline">
+          Framing: <strong>Root Cause Analysis | FMECA | Fleet Impact</strong> &nbsp;|&nbsp;
+          Lens: <strong>NCA → SECNAV → CNO/OPNAV → NAVAIR Mission → Fleet</strong>
+        </div>
+      </div>
+
+      <!-- AUDIENCE CONTEXT BANNER -->
+      <div class="tbp-audience-banner" id="tbp-aud-banner">
+        <div id="tbp-aud-lead" class="tbp-aud-mode">
+          <span class="tbp-aud-icon">🎯</span>
+          <div>
+            <div class="tbp-aud-title">LEADERSHIP VIEW — Consequence Framing</div>
+            <div class="tbp-aud-desc">You are looking at a category of risk that exists <em>right now</em> in your enterprise that no single authority chain owns. When the problem manifests, it will look like a maintenance discrepancy. It is not.</div>
+          </div>
+        </div>
+        <div id="tbp-aud-prac" class="tbp-aud-mode" style="display:none">
+          <span class="tbp-aud-icon">⚙️</span>
+          <div>
+            <div class="tbp-aud-title">PRACTITIONER VIEW — Navigation Framing</div>
+            <div class="tbp-aud-desc">You already know this gap exists. This panel documents the authority boundaries, the incident response chain that <em>should</em> exist, and the navigation path available <em>right now</em> within current authority structures.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE THREE BODIES -->
+      <div class="tbp-bodies">
+
+        <!-- BODY 1 -->
+        <div class="tbp-body b1">
+          <div class="tbp-body-hdr">
+            <div class="tbp-body-num">BODY 1</div>
+            <div class="tbp-body-name">NAVAIR Technical Authority</div>
+            <div class="tbp-body-owner">PMA → Platform → RMF/ATO</div>
+          </div>
+          <div class="tbp-body-content">
+            <div class="tbp-fact"><span class="tbp-fact-lbl">Authority Basis:</span> OPNAVINST 5450.350B — CNO delegates TA for Naval Aviation to NAVAIRSYSCOM. PMA holds airworthiness and configuration authority for each platform.</div>
+            <div class="tbp-fact"><span class="tbp-fact-lbl">Cyber Posture:</span> Risk Management Framework (RMF) / Authority to Operate (ATO). Framework designed for DODIN-connected IT systems — servers, workstations, networked devices.</div>
+            <div class="tbp-fact tbp-gap-fact"><span class="tbp-fact-lbl tbp-gap-lbl">⚠ THE GAP:</span> Naval Aviation OT/CPS — avionics computers, mission systems, flight control, weapons systems, ground support equipment — are explicitly <em>non-DODIN-connected</em> by design. RMF/ATO was built for IT. Applying it to OT/CPS produces compliance theater: the boxes get checked, the ATO is current, the actual threat surface is never mapped.</div>
+            <div class="tbp-fact" id="b1-lead">
+              <span class="tbp-fact-lbl">Leadership Implication:</span> Your program office has an ISSM with a binder and a current ATO. That ATO documents compliance with a framework that does not address the attack surface that adversaries are actively developing capabilities against. The binder is real. The protection it implies is not.
+            </div>
+            <div class="tbp-fact" id="b1-prac" style="display:none">
+              <span class="tbp-fact-lbl">Practitioner Note:</span> RMF controls applicable to OT/CPS: NIST SP 800-82 (ICS security) exists but is not systematically applied in Naval Aviation PMA program offices. NAVAIR has no enterprise OT/CPS cyber incident response procedure. The ISSM role was built for IT. When the OT incident occurs, the ISSM will escalate to the PMA. The PMA will escalate to NAVAIR. NAVAIR will call FLTCYBERCOM. See Body 2.
+            </div>
+          </div>
+        </div>
+
+        <!-- GAP ARROW 1→2 -->
+        <div class="tbp-gap-arrow">
+          <div class="tbp-gap-line"></div>
+          <div class="tbp-gap-label">AUTHORITY BOUNDARY<br>DODIN / NON-DODIN</div>
+          <div class="tbp-gap-line"></div>
+        </div>
+
+        <!-- BODY 2 -->
+        <div class="tbp-body b2">
+          <div class="tbp-body-hdr">
+            <div class="tbp-body-num">BODY 2</div>
+            <div class="tbp-body-name">FLTCYBERCOM / DCO</div>
+            <div class="tbp-body-owner">DODIN Mission → Boundary Stop</div>
+          </div>
+          <div class="tbp-body-content">
+            <div class="tbp-fact"><span class="tbp-fact-lbl">Authority Basis:</span> OPNAVINST 5450.345 — CNO designates FLTCYBERCOM as central operational authority for Navy networks. OPCON: CYBERCOM. Mission: Defensive Cyber Operations (DCO) for the DODIN.</div>
+            <div class="tbp-fact"><span class="tbp-fact-lbl">Mandate Boundary:</span> FLTCYBERCOM DCO authority applies to the DODIN. Naval Aviation OT/CPS systems exist <em>outside</em> the DODIN boundary — by the same design decisions that NAVAIR TA approved. This is not a gap that FLTCYBERCOM created. It is a gap that the architecture created.</div>
+            <div class="tbp-fact tbp-gap-fact"><span class="tbp-fact-lbl tbp-gap-lbl">⚠ THE GAP:</span> When NAVAIR calls FLTCYBERCOM about a compromised avionics system, FLTCYBERCOM has no statutory authority to respond. They can advise. They cannot command. The DCO chain stops at the DODIN boundary. OT/CPS is on the other side of that boundary, alone.</div>
+            <div class="tbp-fact" id="b2-lead">
+              <span class="tbp-fact-lbl">Leadership Implication:</span> You have a cyber warfare command. You have a platform authority. Neither owns the space where the aircraft's brain lives. This is not a resourcing problem. It is an authority structure problem. The solution requires deliberate action at the CNO/SECNAV level to create the authority that currently does not exist.
+            </div>
+            <div class="tbp-fact" id="b2-prac" style="display:none">
+              <span class="tbp-fact-lbl">Practitioner Note:</span> Current navigation path: NAVAIR CIO/CISO (N6 equivalent) has informal coordination with FLTCYBERCOM N3 for OT issues. This is relationship-based, not authority-based. For a significant OT/CPS incident at a deployed unit, the actual path is: unit CO → FRC → PMA → NAVAIR N6 → informal FLTCYBERCOM coordination → CYBERCOM advisory support. Each handoff loses time and authority. No one in this chain can compel action from anyone else in a different authority stream.
+            </div>
+          </div>
+        </div>
+
+        <!-- GAP ARROW 2→3 -->
+        <div class="tbp-gap-arrow">
+          <div class="tbp-gap-line"></div>
+          <div class="tbp-gap-label">INCIDENT RESPONSE<br>VOID</div>
+          <div class="tbp-gap-line"></div>
+        </div>
+
+        <!-- BODY 3 — THE NORTH STAR -->
+        <div class="tbp-body b3">
+          <div class="tbp-body-hdr">
+            <div class="tbp-body-num">BODY 3</div>
+            <div class="tbp-body-name">The Operational Commander</div>
+            <div class="tbp-body-owner">Mission Owner → Aircraft Down → No Chain to Call</div>
+          </div>
+          <div class="tbp-body-content">
+            <div class="tbp-fact"><span class="tbp-fact-lbl">Authority Basis:</span> SecDef → CCDR → Numbered Fleet → CSG/MEF/ARG. Operational commanders own the mission. They do not own the platform. They do not own the network. They own the outcome.</div>
+            <div class="tbp-fact"><span class="tbp-fact-lbl">The Incident:</span> An aircraft cannot complete a mission because something in its OT layer — a mission computer, an avionics bus, a ground support system — behaved anomalously in a way that suggests adversary manipulation or exploitation. The aircraft is grounded. The mission is aborted.</div>
+            <div class="tbp-fact tbp-gap-fact tbp-north-star"><span class="tbp-fact-lbl tbp-gap-lbl">🎯 NORTH STAR — THE ROOT CAUSE:</span> The operational commander calls the FRC. The FRC calls the PMA. The PMA runs an ISSM checklist designed for a networked server. Nobody calls FLTCYBERCOM because nobody is certain that's the right call — and they're right to be uncertain, because it isn't clearly in FLTCYBERCOM's authority. The incident closes as a <em>maintenance discrepancy</em>. The adversary's access — if present — is neither confirmed nor denied. The next aircraft goes up.</div>
+            <div class="tbp-fact" id="b3-lead">
+              <span class="tbp-fact-lbl">Leadership Implication (National Command Authority lens):</span> This scenario — aircraft grounded by an unexplained OT/CPS anomaly, resolved as a maintenance write-up, adversary access unresolved — is not hypothetical. The dormancy mechanism is ignorance, not absence. The gap between what your authority structure covers and what your adversary is targeting grows every day that no one owns this problem. The CNO's signature on OPNAVINST 5450.350B established NAVAIR TA over Naval Aviation platforms. That TA does not include a cyber incident response chain for OT/CPS. That chain does not exist. That is a fact that needs to be visible at every level from PMA to SECNAV.
+            </div>
+            <div class="tbp-fact" id="b3-prac" style="display:none">
+              <span class="tbp-fact-lbl">Practitioner Navigation Path (current authorities, no new policy required):</span>
+              <ol style="margin:6px 0 0 16px;font-size:9px;line-height:1.6;color:var(--t1)">
+                <li><strong>Immediate:</strong> Treat as flight safety discrepancy — grounds aircraft, triggers PMA technical authority chain.</li>
+                <li><strong>Concurrent:</strong> Notify command ISSO/ISSM — triggers RMF event log even if framework is inadequate. Creates paper trail.</li>
+                <li><strong>Parallel:</strong> CO contacts numbered fleet N6 / FLTCYBERCOM liaison. No authority to compel action but creates advisory relationship and documents the incident in a cyber context.</li>
+                <li><strong>NAVAIR path:</strong> PMA Program Manager → NAVAIR N6 → NAVAIR Commander. This is the TA chain. Use it. NAVAIR Commander can engage FLTCYBERCOM VADM directly outside formal authority chains.</li>
+                <li><strong>Gap documentation:</strong> Every incident that closes as a maintenance discrepancy when cyber causation cannot be ruled out should be documented as such. This is the data that will eventually force the policy action.</li>
+                <li><strong>MARFORCYBER note (USMC):</strong> For USMC units, MARFORCYBER (not FLTCYBERCOM) is the SCC. Same gap applies — MARFORCYBER DCO mandate is DODIN-bounded. But MARFORCYBER has a more direct relationship with USMC aviation units than FLTCYBERCOM does with Navy units. Use that relationship.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tbp-bodies -->
+
+      <!-- FMECA TABLE -->
+      <div class="tbp-fmeca">
+        <div class="tbp-section-title">FMECA — Failure Mode, Effects &amp; Criticality Analysis<br>
+          <span style="font-weight:300;font-size:9px">Naval Aviation OT/CPS Cyber Incident | Scope: FRCs, MALS, Deployed Squadrons</span>
+        </div>
+        <table class="fmeca-table">
+          <thead>
+            <tr>
+              <th>Node</th>
+              <th>Failure Mode</th>
+              <th>Effect (Local)</th>
+              <th>Effect (Fleet)</th>
+              <th>Criticality</th>
+              <th>Current Authority</th>
+              <th>Gap</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>FRC (any)</strong><br><span class="fmeca-sub">FRCE/FRCSE/FRCSW/FRCW</span></td>
+              <td>OT/CPS anomaly in depot maintenance system (ALIS/ODIN/NTCSS) or aircraft avionics during depot-level work</td>
+              <td>Aircraft held in depot; production line disrupted; potential configuration data integrity unknown</td>
+              <td>Fleet delivery schedule at risk; adversary may have accessed MDS configuration data (LCSP-reportable)</td>
+              <td class="fmeca-crit critical">CRITICAL<br>Flight Safety / Mission Readiness</td>
+              <td>NAVAIR TA (PMA technical directive); COMFRC ADCON; FLTCYBERCOM DACO (DODIN only)</td>
+              <td class="fmeca-gap">No authority owns OT/CPS incident response at depot. RMF/ATO applies to DODIN-connected systems only. Aircraft avionics and depot OT are explicitly non-DODIN.</td>
+            </tr>
+            <tr>
+              <td><strong>MALS (USMC)</strong><br><span class="fmeca-sub">MALS-14/16/24/36/40</span></td>
+              <td>OT/CPS compromise of NALCOMIS, DECKPLATE, or aircraft IMRL/support equipment systems at intermediate maintenance level</td>
+              <td>Maintenance data integrity unknown; parts tracking compromised; aircraft may return to service on false readiness data</td>
+              <td>Entire MAW readiness reporting suspect; aircraft certified as mission-capable may not be</td>
+              <td class="fmeca-crit critical">CRITICAL<br>Readiness Reporting Integrity</td>
+              <td>CMC ADCON → MAW → MAG → MALS; NAVAIR TA (per airframe); MARFORCYBER (DODIN only)</td>
+              <td class="fmeca-gap">MARFORCYBER DCO = DODIN boundary. NALCOMIS/DECKPLATE OT interfaces are outside DODIN. No authority owns incident response for MALS OT layer. Five authority streams converge at MALS — none covers OT/CPS cyber.</td>
+            </tr>
+            <tr>
+              <td><strong>Deployed Squadron</strong><br><span class="fmeca-sub">CVW / MEU / UDP</span></td>
+              <td>Avionics bus anomaly, mission computer behavior, or EW/sensor system irregularity during deployed operations</td>
+              <td>Aircraft grounded; pilot unable to certify airworthiness; CO unsure if maintenance or cyber</td>
+              <td>Reduced CVW/MEU sortie generation; potential OPFOR real-time awareness of aircraft status; CCDR mission impact</td>
+              <td class="fmeca-crit catastrophic">CATASTROPHIC<br>Mission / OPFOR Exploitation</td>
+              <td>OPCON: numbered fleet → CSG/MEF → squadron; TA: PMA via NAVAIR (remote); Cyber: FLTCYBERCOM/MARFORCYBER (DODIN only)</td>
+              <td class="fmeca-gap">The operational commander holds the mission but not the platform. The PMA holds the platform but not the mission. FLTCYBERCOM holds the cyber mission but not the platform or this mission. In a deployed, contested environment, no one in the room has authority to compel a coordinated OT/CPS cyber incident response. The aircraft closes as a maintenance gripe.</td>
+            </tr>
+            <tr>
+              <td><strong>MALS + FRC Interface</strong><br><span class="fmeca-sub">Intermediate → Depot data flow</span></td>
+              <td>Corrupted or manipulated maintenance data transiting from MALS to FRC (or PMA LCSP systems) via non-DODIN data paths</td>
+              <td>FRC applies incorrect configuration baseline; depot work performed to corrupted specification</td>
+              <td>Systemic configuration errors across multiple aircraft; PMA technical directive based on false data; affects entire fleet type</td>
+              <td class="fmeca-crit catastrophic">CATASTROPHIC<br>Fleet-Wide Configuration Integrity</td>
+              <td>LCSP statutory reporting (10 U.S.C. §4324); PMA TA; COMFRC ADCON</td>
+              <td class="fmeca-gap">Data integrity attack on LCSP/MDS reporting chain is specifically outside both DODIN cyber authority and traditional TA framework. No authority currently owns data supply chain integrity for Naval Aviation OT/CPS maintenance data.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- /fmeca -->
+
+      <!-- ROOT CAUSE CHAIN -->
+      <div class="tbp-rca">
+        <div class="tbp-section-title">Root Cause Analysis — Why This Gap Exists</div>
+        <div class="rca-chain">
+          <div class="rca-node">
+            <div class="rca-n-title">NCA / SECNAV</div>
+            <div class="rca-n-body">Cyber as warfare domain established by policy (10 U.S.C. §394). DODIN as the bounded operational space. OT/CPS not explicitly addressed in foundational cyber authority.</div>
+          </div>
+          <div class="rca-arrow">▼</div>
+          <div class="rca-node">
+            <div class="rca-n-title">CNO / OPNAV</div>
+            <div class="rca-n-body">OPNAVINST 5450.345 (2012) designates FLTCYBERCOM as central authority for Navy networks — DODIN-bounded. OPNAVINST 5450.350B (2022) establishes NAVAIR TA for Naval Aviation — RMF/ATO compliance, no OT/CPS cyber IR chain. These two instructions do not address the space between them.</div>
+          </div>
+          <div class="rca-arrow">▼</div>
+          <div class="rca-node">
+            <div class="rca-n-title">NAVAIR Mission, Functions &amp; Tasks</div>
+            <div class="rca-n-body">NAVAIR executes TA through PMA program offices. Each PMA holds an ISSM position. ISSMs are trained on RMF for DODIN-connected systems. The OT/CPS security framework (NIST SP 800-82, IEC 62443) exists but is not operationalized in NAVAIR PMA standard practices. TA compliance = DODIN IT compliance. OT/CPS is outside the compliance framework by default.</div>
+          </div>
+          <div class="rca-arrow">▼</div>
+          <div class="rca-node rca-node-gap">
+            <div class="rca-n-title">⚡ THE VOID — Where Authority Ends</div>
+            <div class="rca-n-body">Naval Aviation OT/CPS: avionics, mission computers, EW systems, weapons computers, flight control systems, ground support OT, intermediate maintenance systems. None connected to DODIN. All governed by TA frameworks designed for airworthiness, not cyber warfare. All outside FLTCYBERCOM DCO authority. All operated by commands whose cyber chain (FLTCYBERCOM or MARFORCYBER) has no visibility into this layer.</div>
+          </div>
+          <div class="rca-arrow">▼</div>
+          <div class="rca-node rca-node-fleet">
+            <div class="rca-n-title">Fleet Impact</div>
+            <div class="rca-n-body">The aircraft that cannot fly because of an OT/CPS anomaly closes as a maintenance gripe. The adversary's access — confirmed or not — is neither documented in the cyber domain nor investigated by anyone with cyber authority. The sortie generation number goes down. The leadership layer sees a readiness issue, not a cyber warfare event. The gap compounds silently. This is happening now.</div>
+          </div>
+        </div>
+      </div><!-- /rca -->
+
+    </div><!-- /tbp-wrap -->
+  </div><!-- /p-3bp -->
+
+</div><!-- /content -->
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════════════
+// DoN C2 KMS v6 — Governance, Acquisition & Sustainment (GAS) Framework
+// Official Navy colors: Navy #022a3a | Blue #0076a9 | Gold #e8b00f
+// Typography: Helvetica (headlines) | Roboto Slab (body) per Navy Style Guide Feb 2024
+//
+// GAS = Governance, Acquisition & Sustainment
+// Three independently-operating authority streams that simultaneously
+// govern every node regardless of whether anyone in the room knows it.
+// Nodes where all three streams converge = maximum GAS visibility requirement.
+//
+// OSI Layer 8 = the decision-maker
+// OSI Layer 9 = the organization that made them who they are
+// When GAS fails at a node, it is always a Layer 8/9 problem.
+// ══════════════════════════════════════════════════════════════════
+
+// ── SERVICE COLOR MAP ─────────────────────────────────────────────
+const SVC = {
+  navy:       {col:'#1e6abf', lbl:'USN',        label:'United States Navy'},
+  usmc:       {col:'#8b2222', lbl:'USMC',       label:'United States Marine Corps'},
+  joint:      {col:'#555577', lbl:'JOINT',      label:'Joint Command'},
+  civ:        {col:'#4a5568', lbl:'CIV',        label:'Civilian/OSD'},
+  acq:        {col:'#2d6a4a', lbl:'ACQ',        label:'Acquisition Command'},
+  cyber:      {col:'#006666', lbl:'CYBER',      label:'Cyber Command'},
+  army:       {col:'#3d5c1e', lbl:'ARMY',       label:'United States Army'},
+  airforce:   {col:'#1a3a6b', lbl:'USAF',       label:'United States Air Force'},
+  spaceforce: {col:'#1a1a4b', lbl:'USSF',       label:'United States Space Force'},
+  coastguard: {col:'#004488', lbl:'USCG',       label:'United States Coast Guard'},
+};
+
+// ── AUTHORITY STREAM CONFIG ───────────────────────────────────────
+const ASTREAMS = {
+  adcon: {col:'#4a9eff', lbl:'Admin Control (ADCON)',     cite:'10 U.S.C. §5032',       dash:false},
+  ta:    {col:'#cc44ff', lbl:'Technical Authority (TA)',  cite:'OPNAVINST 5450.350B',   dash:false},
+  acq:   {col:'#ff8833', lbl:'Acquisition (SAE)',         cite:'SECNAVINST 5400.15D',   dash:false},
+  ops:   {col:'#ff3355', lbl:'Operational (OPCON)',       cite:'Title 10 §164',         dash:false},
+  cyber: {col:'#00ddcc', lbl:'Cyber/DODIN (DACO)',        cite:'OPNAVINST 5450.345',    dash:true},
+  bso:   {col:'#44cc77', lbl:'Financial (BSO)',           cite:'SECNAVINST 7000.27D',   dash:true},
+};
+
+// ── ACTIVE STREAM STATE ───────────────────────────────────────────
+const S = {
+  activeStreams: {adcon:true, ta:true, acq:true, ops:true, cyber:true, bso:true},
+  selectedNode: null,
+  entryPoint: 'navair',
+  svcFilter: 'all',
+  transform: null,
+  audience: 'leadership',
+};
+
+function setAudience(mode) {
+  S.audience = mode;
+  document.getElementById('aud-lead').classList.toggle('active', mode==='leadership');
+  document.getElementById('aud-prac').classList.toggle('active', mode==='practitioner');
+  const lead = document.getElementById('tbp-aud-lead');
+  const prac = document.getElementById('tbp-aud-prac');
+  if(lead) lead.style.display = mode==='leadership' ? 'flex' : 'none';
+  if(prac) prac.style.display = mode==='practitioner' ? 'flex' : 'none';
+  ['b1','b2','b3'].forEach(b => {
+    const lEl = document.getElementById(b+'-lead');
+    const pEl = document.getElementById(b+'-prac');
+    if(lEl) lEl.style.display = mode==='leadership' ? 'block' : 'none';
+    if(pEl) pEl.style.display = mode==='practitioner' ? 'block' : 'none';
+  });
+  if(S.selectedNode) showNodeDetail(S.selectedNode);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NODE DATA
+// All nodes carry: lbl, sub, billet, svc, uic, puc, loc
+// Authority chains: adcon[], ta[], acq[], ops[], cyber[], bso[]
+// ══════════════════════════════════════════════════════════════════
+const NODES = {
+// ── NCA / POTUS ──────────────────────────────────────────────────
+potus:{lbl:'PRESIDENT',sub:'Commander in Chief / NCA',billet:'',svc:'civ',uic:'WH00001',puc:null,
+  adcon:[],ta:[],acq:[],ops:[],cyber:[],bso:[],
+  note:'National Command Authority. Supreme Commander of U.S. Armed Forces per Article II, Section 2 of the Constitution. OPCON flows from NCA through SecDef to Combatant Commanders per Goldwater-Nichols.',
+  loc:{install:'White House',city:'Washington, DC',lat:38.8977,lon:-77.0365}},
+
+// ── OSD ──────────────────────────────────────────────────────────
+secdef:{lbl:'SECDEF',sub:'Secretary of Defense',billet:'OSD Echelon I',svc:'civ',uic:'OD00001',puc:'WH00001',
+  adcon:['potus'],ta:[],acq:['potus'],ops:['potus'],cyber:['potus'],bso:['potus'],
+  note:'Exercises authority, direction and control over DoD. OPCON flows: POTUS → SecDef → CCDR (bypasses JCS). SecDef is in the chain of command; CJCS is not.',
+  loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+usd_as:{lbl:'USD(A&S)',sub:'Under Sec — Acquisition & Sustainment',billet:'OSD Echelon II',svc:'civ',uic:'OD00010',puc:'OD00001',
+  adcon:['secdef'],ta:[],acq:['secdef'],ops:[],cyber:[],bso:[],
+  note:'Defense Acquisition Executive (DAE). Milestone Decision Authority for ACAT ID programs. All service SAEs report through USD(A&S) for acquisition oversight.',
+  loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+cjcs:{lbl:'CJCS',sub:'Chairman, Joint Chiefs of Staff',billet:'4★',svc:'joint',uic:'JC00001',puc:'OD00001',
+  adcon:['secdef'],ta:[],acq:[],ops:[],cyber:[],bso:[],
+  note:'Serves as principal military advisor to POTUS/SecDef/NSC. NOT in the chain of command for operational forces. Transmits OPCON orders but does not exercise OPCON.',
+  loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+
+// ── SERVICE SECRETARIES ──────────────────────────────────────────
+secnav:{lbl:'SECNAV',sub:'Secretary of the Navy',billet:'Executive Agent',svc:'civ',uic:'DN00001',puc:'OD00001',
+  adcon:['secdef'],ta:[],acq:['secdef'],ops:[],cyber:[],bso:['secdef'],
+  note:'Responsible for recruiting, organizing, supplying, equipping, training, mobilizing and demobilizing the Navy and Marine Corps. CNO and CMC operate under SECNAV authority.',
+  loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+
+// ── DON ASNs ─────────────────────────────────────────────────────
+asn_rda:{lbl:'ASN(RD&A)',sub:'Asst Sec Navy — Research, Dev. & Acquisition',billet:'DoN CAE',svc:'civ',uic:'DN00010',puc:'DN00001',
+  adcon:['secnav'],ta:['usd_as'],acq:['secnav','usd_as'],ops:[],cyber:[],bso:[],
+  note:'DoN Component Acquisition Executive (CAE). Milestone Decision Authority for DoN ACAT I/II programs. Exercises acquisition authority over SYSCOMs and PEOs independent of CNO/CMC ADCON chain. This is a key GAS convergence point — ASN(RD&A) authority is SEPARATE from and NOT subordinate to CNO ADCON.',
+  gas_flag:true, loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+
+// ── SERVICE CHIEFS ───────────────────────────────────────────────
+cno:{lbl:'CNO',sub:'Chief of Naval Operations',billet:'ADM (4★)',svc:'navy',uic:'N00000',puc:'DN00001',
+  adcon:['secnav'],ta:['secnav'],acq:[],ops:[],cyber:[],bso:['secnav'],
+  note:'CNO is the professional head of the Navy. Exercises ADCON over all Echelon 2 commands. Delegates Technical Authority for naval aviation to NAVAIRSYSCOM per OPNAVINST 5450.350B. CNO is NOT in the OPCON chain — operational authority runs POTUS→SecDef→CCDR.',
+  gas_flag:true, loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+cmc:{lbl:'CMC',sub:'Commandant of the Marine Corps',billet:'Gen (4★)',svc:'usmc',uic:'M00001',puc:'DN00001',
+  adcon:['secnav'],ta:['secnav'],acq:[],ops:[],cyber:[],bso:['secnav'],
+  note:'CMC is the professional head of the Marine Corps. Exercises ADCON over all USMC commands. TA for Marine aviation systems flows through CNO → NAVAIR, not through CMC — a critical GAS gap for USMC aviation units.',
+  gas_flag:true, loc:{install:'The Pentagon',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+
+// ── SYSCOMs ──────────────────────────────────────────────────────
+navair:{lbl:'NAVAIR',sub:'Naval Air Systems Command',billet:'VADM (3★)',svc:'navy',uic:'N00019',puc:'N00000',
+  adcon:['cno'],ta:['cno','asn_rda'],acq:['asn_rda'],ops:[],cyber:['fltcybercom'],bso:['cno'],
+  note:'NAVAIR is the PEO Holding Command for all naval aviation programs. CNO delegates TA for naval aviation to NAVAIR per OPNAVINST 5450.350B. This TA is NOT bounded by geography — it applies to every aircraft, every FRC, every MALS, every squadron operating a NAVAIR-managed platform. ASN(RD&A) exercises independent acquisition authority over NAVAIR and its PEOs. These two chains (CNO→TA and ASN(RD&A)→ACQ) are parallel and non-subordinate. NAVAIR reports to TWO authorities simultaneously.',
+  gas_flag:true, loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2842,lon:-76.4118}},
+navsea:{lbl:'NAVSEA',sub:'Naval Sea Systems Command',billet:'VADM (3★)',svc:'navy',uic:'N00024',puc:'N00000',
+  adcon:['cno'],ta:['cno','asn_rda'],acq:['asn_rda'],ops:[],cyber:['fltcybercom'],bso:['cno'],
+  note:'NAVSEA is the PEO Holding Command for surface and subsurface warfare systems. Exercises TA over ship hull, mechanical, electrical and propulsion systems.',
+  loc:{install:'Washington Navy Yard',city:'Washington, DC',lat:38.8729,lon:-77.0013}},
+navwar:{lbl:'NAVWAR',sub:'Naval Info. Warfare Systems Command',billet:'VADM (3★)',svc:'navy',uic:'N00039',puc:'N00000',
+  adcon:['cno'],ta:['cno','asn_rda'],acq:['asn_rda'],ops:[],cyber:['fltcybercom'],bso:['cno'],
+  note:'NAVWAR is the PEO Holding Command for C4ISR, networks and digital enterprise systems.',
+  loc:{install:'Old Town San Diego Campus',city:'San Diego, CA',lat:32.7239,lon:-117.1644}},
+navsup:{lbl:'NAVSUP',sub:'Naval Supply Systems Command',billet:'VADM (3★)',svc:'navy',uic:'N00189',puc:'N00000',
+  adcon:['cno'],ta:['cno'],acq:[],ops:[],cyber:['fltcybercom'],bso:['cno'],
+  loc:{install:'NSA Mechanicsburg',city:'Mechanicsburg, PA',lat:40.2148,lon:-77.0111}},
+
+// ── PEOs — NAVAIR ─────────────────────────────────────────────────
+peo_a:{lbl:'PEO(A)',sub:'PEO Aviation',billet:'RDML/SES',svc:'acq',uic:'N60610',puc:'N00019',
+  adcon:['navair'],ta:['navair','asn_rda'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PEO Aviation manages fixed-wing and rotary-wing programs. PMA offices under PEO(A) hold program-level TA delegated from NAVAIR. TA flows: CNO → NAVAIR → PEO(A) → PMA.',
+  loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2842,lon:-76.4118}},
+peo_uw:{lbl:'PEO(U&W)',sub:'PEO Unmanned & Strike Weapons',billet:'RDML/SES',svc:'acq',uic:'N60650',puc:'N00019',
+  adcon:['navair'],ta:['navair','asn_rda'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'NOTE: PEO(U&W) ADCON is ASN(RD&A) → PEO(U&W). NAVAIR is the host command and provides TA support but PEO(U&W) is NOT NAVAIR ADCON subordinate in the acquisition chain.',
+  loc:{install:'NAS China Lake / Pax River',city:'China Lake / Pax River',lat:35.6852,lon:-117.6836}},
+peo_t:{lbl:'PEO(T)',sub:'PEO Tactical Aircraft Programs',billet:'RDML/SES — RADM Hornbuckle',svc:'acq',uic:'N61340',puc:'N00019',
+  adcon:['navair'],ta:['navair','asn_rda'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PEO Tactical Aircraft Programs. Post-Jan 2024 reorganization absorbed PMAs from disbanded PEO(CS). 12 program offices including PMA-231 (E-2/C-2), PMA-234 (AEA), PMA-265 (F/A-18 & EA-18G), PMA-272 (V-22 ASE/survivability).',
+  loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2842,lon:-76.4118}},
+
+// ── PMAs ─────────────────────────────────────────────────────────
+pma265:{lbl:'PMA-265',sub:'F/A-18 E/F & EA-18G Growler',billet:'CAPT/SES',svc:'acq',uic:'N62269',puc:'N60610',
+  adcon:['peo_t'],ta:['peo_t','navair'],acq:['asn_rda','peo_t'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PMA-265 holds TA for all F/A-18 variants and EA-18G. Parent: PEO(T) (post-Jan 2024). Issues technical directives to ALL units operating these platforms regardless of service branch or geographic location. TA is not bounded by ADCON — a squadron in WESTPAC is just as subject to PMA-265 TA as one at NAS Oceana. OT/CPS gap: avionics and mission systems on these aircraft are non-DODIN. RMF/ATO compliance does not address OT/CPS threat surface.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2920,lon:-76.4200}},
+pma299:{lbl:'PMA-299',sub:'H-60 Multi-Mission Helicopter (MH-60R/S)',billet:'CAPT/SES',svc:'acq',uic:'N62298',puc:'N60610',
+  adcon:['peo_a'],ta:['peo_a','navair'],acq:['asn_rda','peo_a'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PMA-299 holds TA for MH-60R Seahawk (ASW/ASuW) and MH-60S Knighthawk (combat support). Navy Aviation Vision 2030-2035 identifies Link 16 MIDS, Minotaur mission system, and DMAD upgrades as active programs. OT/CPS gap applies to all avionics and mission system layers.',
+  ot_cps:true, loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2920,lon:-76.4200}},
+pma261:{lbl:'PMA-261',sub:'H-53 Heavy Lift Helicopters (CH-53K/E)',billet:'CAPT/SES',svc:'acq',uic:'N62260',puc:'N60610',
+  adcon:['peo_a'],ta:['peo_a','navair'],acq:['asn_rda','peo_a'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PMA-261 holds TA for CH-53K King Stallion and legacy CH-53E. USMC-primary platform. TA crosses CMC ADCON chain — PMA-261 issues technical directives to USMC units regardless of MAW/MAG chain.',
+  loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2920,lon:-76.4200}},
+pma272:{lbl:'PMA-272',sub:'Advanced Tactical Aircraft Protection Systems (ASE/Survivability)',billet:'CAPT/SES',svc:'acq',uic:'N62271',puc:'N60610',
+  adcon:['peo_t'],ta:['peo_t','navair'],acq:['asn_rda','peo_t'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PMA-272: Aircraft Survivability Equipment (ASE) and protection systems across multiple platforms. Parent: PEO(T) post-Jan 2024. V-22 program is PMA-275 (PEO(A)).',
+  loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2920,lon:-76.4200}},
+pma275:{lbl:'PMA-275',sub:'V-22 Osprey Joint Program Office (MV-22B/CMV-22B/CV-22)',billet:'CAPT/SES',svc:'acq',uic:'N62274',puc:'N60610',
+  adcon:['peo_a'],ta:['peo_a','navair'],acq:['asn_rda','peo_a'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'V-22 Joint Program Office. TA covers MV-22B (USMC), CMV-22B (USN carrier onboard delivery), CV-22 (USSOCOM). Cross-service TA: NAVAIR TA applies to Air Force Special Operations Command V-22 ops equally. OT/CPS gap: triple-redundant fly-by-wire flight control, glass cockpit, nacelle control — all OT.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2900,lon:-76.4150}},
+pma281:{lbl:'PMA-281',sub:'Strike Planning & Execution Systems',billet:'CAPT/SES',svc:'acq',uic:'N62280',puc:'N60650',
+  adcon:['peo_uw'],ta:['peo_uw','navair'],acq:['asn_rda','peo_uw'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PMA-281: Strike Planning and Execution Systems (mission planning systems, JMPS). Parent: PEO(U&W). Note: CH-53K is PMA-261 under PEO(A).',
+  loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2850,lon:-76.4150}},
+
+pma276:{lbl:'PMA-276',sub:'H-1 AH-1Z Viper / UH-1Y Venom',billet:'CAPT/SES',svc:'acq',uic:'N62275',puc:'N60610',
+  adcon:['peo_a'],ta:['peo_a','navair'],acq:['asn_rda','peo_a'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'H-1 TA holder. AH-1Z and UH-1Y are USMC-only platforms yet TA flows from NAVAIR/PMA-276, not CMC. OT/CPS gap: H-1 digital flight control and mission systems are non-DODIN. FLTCYBERCOM has no authority; MARFORCYBER DCO is DODIN-bounded. TA-governed but cyber-unguarded.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Patuxent River',city:'Patuxent River, MD',lat:38.2930,lon:-76.4180}},
+
+// ── PEO(JSF) — F-35 Joint Program Office ──────────────────────────
+peo_jsf:{lbl:'PEO(JSF)',sub:'F-35 Lightning II Joint Program Office',billet:'LtGen Masiello USMC',svc:'acq',uic:'N60680',puc:'N00019',
+  adcon:['navair'],ta:['navair','usd_as'],acq:['usd_as','asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'PEO(JSF) is a Joint Program Office (JPO) — not purely NAVAIR. USD(A&S) is Milestone Decision Authority for F-35 (ACAT ID). NAVAIR hosts but does not solely govern. DoW (f/k/a DoD) acquisition authority flows through USD(A&S). Navy/USMC/USAF all receive F-35 through this single program office — highest GAS convergence density in the enterprise. OT/CPS: ALIS/ODIN maintenance data systems and F-35 avionics layer represent the most complex non-DODIN OT/CPS surface in Naval Aviation.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Patuxent River (Pax River)',city:'Patuxent River, MD',lat:38.2842,lon:-76.4118}},
+
+// ── NAWCAD / NAWCWD ───────────────────────────────────────────────
+nawcad:{lbl:'NAWCAD',sub:'Naval Air Warfare Center Aircraft Division',billet:'SES / O-6',svc:'navy',uic:'N00421',puc:'N00019',
+  adcon:['navair'],ta:['navair'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'NAWCAD (Pax River + Lakehurst): In-Service Engineering Agent (ISEA) for numerous platforms. Executes NAVAIR TA at the engineering level. Science and Engineering (S&E) workforce. Aircraft test and evaluation (T&E). OT/CPS gap: NAWCAD engineers specify the avionics and mission system architectures that create the non-DODIN OT/CPS surface — they are the closest to the ground truth of what the threat surface actually looks like.',
+  ot_cps:true, loc:{install:'NAS Patuxent River / NAES Lakehurst',city:'Patuxent River, MD',lat:38.2842,lon:-76.4118}},
+nawcwd:{lbl:'NAWCWD',sub:'Naval Air Warfare Center Weapons Division',billet:'SES / O-6',svc:'navy',uic:'N00422',puc:'N00019',
+  adcon:['navair'],ta:['navair'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'NAWCWD (China Lake + Pt. Mugu): Weapons system engineering, EW test ranges. Cyber relevance: EW systems and weapons computers are OT/CPS — not DODIN-connected. The EW threat detection and jamming systems that sit between the aircraft and the adversary are precisely the layer that adversaries seek to probe.',
+  ot_cps:true, loc:{install:'NAWS China Lake',city:'China Lake, CA',lat:35.6852,lon:-117.6836}},
+
+// ── Naval Aviation Enterprise (NAE) ──────────────────────────────
+nae:{lbl:'NAE',sub:'Naval Aviation Enterprise',billet:'Governance Body (CNO/CMC co-chaired)',svc:'joint',uic:'N00NAE',puc:'N00000',
+  adcon:['cno','cmc'],ta:['navair'],acq:[],ops:[],cyber:[],bso:[],
+  note:'Naval Aviation Enterprise (NAE): Cross-service readiness governance body. Co-chaired by CNO and CMC. Covers all naval aviation readiness, sustainment, and cost. The Naval Aviation Analytics Consortium (NAAC) is chartered under NAE as authoritative analytics governance. Naval Sustainment System-Aviation (NSS-A) drives cost/readiness initiatives. NAE is a governance node — not a command. It produces guidance and policy but has no independent authority. GAS implication: NAE sits above NAVAIR TA but is not in the ADCON chain. Another parallel authority structure.',
+  gas_flag:true, loc:{install:'Pentagon / NAS Patuxent River',city:'Arlington, VA',lat:38.8719,lon:-77.0563}},
+comfrc:{lbl:'COMFRC',sub:'Commander, Fleet Readiness Centers',billet:'RADM (2★)',svc:'navy',uic:'N00490',puc:'N00019',
+  adcon:['cno','navair'],ta:['navair','asn_rda'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'COMFRC exercises admin authority over all FRCs. CNO → NAVAIR → COMFRC per 10 U.S.C. §§8013, 8033. Each FRC receives TA from applicable PMAs for their depot/intermediate workload. LCSP data return from FRCs to PMAs is mandated by 10 U.S.C. §4324(b). OT/CPS FMECA: depot maintenance systems (NTCSS, NALCOMIS, ALIS/ODIN) and aircraft avionics handled at depot are non-DODIN OT/CPS. FLTCYBERCOM DACO stops at DODIN. Depot OT/CPS incident response = authority void.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Patuxent River, Bldg 447',city:'Patuxent River, MD',lat:38.27,lon:-76.41}},
+frce:{lbl:'FRCE',sub:'FRC East — MCAS Cherry Point',billet:'SES/O-6',svc:'navy',uic:'N68600',puc:'N00490',
+  adcon:['cno','navair','comfrc'],ta:['pma265','pma299'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'Depot: F/A-18 all series, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC. Returns MDS configuration data to PMA-265 and PMA-299 per LCSP statute. OT/CPS FMECA — CRITICAL: F-35C avionics depot work handled here. ALIS/ODIN maintenance data systems. Anomaly in depot OT layer: no incident response chain. Closes as maintenance discrepancy. Fleet delivery schedule impact.',
+  gas_flag:true, ot_cps:true, loc:{install:'MCAS Cherry Point',city:'Havelock, NC',lat:34.90,lon:-76.88}},
+frcse:{lbl:'FRCSE',sub:'FRC Southeast — NAS Jacksonville',billet:'SES/O-6',svc:'navy',uic:'N68500',puc:'N00490',
+  adcon:['cno','navair','comfrc'],ta:['pma265','pma299','pma261','pma275'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'Depot: F/A-18, F-35, E-2/C-2, P-8A, T-45, E-6B. Engines: F414, F404, T700, T56, TF34. First F135 power module depot. OT/CPS FMECA — CRITICAL: Highest platform diversity of any FRC means widest non-DODIN OT/CPS surface. Multiple PMAs, multiple TA chains, zero coordinated OT/CPS cyber IR authority.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS Jacksonville',city:'Jacksonville, FL',lat:30.23,lon:-81.68}},
+frcsw:{lbl:'FRCSW',sub:'FRC Southwest — NAS North Island',billet:'SES/O-6',svc:'navy',uic:'N68700',puc:'N00490',
+  adcon:['cno','navair','comfrc'],ta:['pma265','pma275','pma261'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'Depot: F/A-18A-F, EA-18G, MV-22B, MH-60. Primary USMC MV-22 and CH-53 maintenance source. Sites: Yuma AZ, Kaneohe Bay HI, Pt. Mugu CA. OT/CPS: MV-22 triple-redundant FBW flight control system handled here. Non-DODIN. MARFORCYBER has no authority; FLTCYBERCOM has no authority. TA chain (PMA-275) handles airworthiness, not cyber IR.',
+  gas_flag:true, ot_cps:true, loc:{install:'NAS North Island',city:'Coronado, CA',lat:32.70,lon:-117.20}},
+frcw:{lbl:'FRCW',sub:'FRC West — NAS Lemoore',billet:'SES/O-6',svc:'navy',uic:'N68800',puc:'N00490',
+  adcon:['cno','navair','comfrc'],ta:['pma265','pma261','pma275'],acq:['asn_rda','navair'],ops:[],cyber:['fltcybercom'],bso:['navair'],
+  note:'Depot work for F/A-18, MH-60, E-2. Proximity to NAS Lemoore CVW home. OT/CPS gap applies equally — no depot-level OT/CPS cyber IR authority.',
+  ot_cps:true, loc:{install:'NAS Lemoore',city:'Lemoore, CA',lat:36.33,lon:-119.95}},
+
+// ── NAVY FLEET COMMANDERS ─────────────────────────────────────────
+usffc:{lbl:'USFFC',sub:'Fleet Forces Command',billet:'ADM (4★)',svc:'navy',uic:'N00002',puc:'N00000',
+  adcon:['cno'],ta:[],acq:[],ops:['secdef','northcom'],cyber:['fltcybercom'],bso:['cno'],
+  note:'Echelon 2 under CNO ADCON. COMLANTFLT / 2nd Fleet. BSO for assigned forces. USFFTFORCOM is NOT in the OPCON chain — operational authority runs through geographic CCDRs.',
+  loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+compacflt:{lbl:'COMPACFLT',sub:'Commander, Pacific Fleet',billet:'ADM (4★)',svc:'navy',uic:'N00003',puc:'N00000',
+  adcon:['cno'],ta:[],acq:[],ops:['secdef','indopacom'],cyber:['fltcybercom'],bso:['cno'],
+  loc:{install:'JBPHH',city:'Pearl Harbor, HI',lat:21.3590,lon:-157.9751}},
+naveur:{lbl:'NAVEUR-NAVAF',sub:'Naval Forces Europe/Africa',billet:'ADM (4★)',svc:'navy',uic:'N00004',puc:'N00000',
+  adcon:['cno'],ta:[],acq:[],ops:['secdef','eucom'],cyber:['fltcybercom'],bso:['cno'],
+  loc:{install:'NSA Naples',city:'Naples, Italy',lat:40.8359,lon:14.1952}},
+navcent:{lbl:'NAVCENT',sub:'Naval Forces Central',billet:'VADM (3★)',svc:'navy',uic:'N00005',puc:'N00000',
+  adcon:['cno'],ta:[],acq:[],ops:['secdef','centcom'],cyber:['fltcybercom'],bso:['cno'],
+  loc:{install:'NSA Bahrain',city:'Manama, Bahrain',lat:26.2172,lon:50.5856}},
+
+// ── NUMBERED FLEETS ───────────────────────────────────────────────
+fl2:{lbl:'U.S. 2nd Fleet',sub:'U.S. 2nd Fleet / JFC Norfolk',billet:'VADM (3★)',svc:'navy',uic:'N00020',puc:'N00002',
+  adcon:['cno','usffc'],ta:[],acq:[],ops:['northcom','usffc'],cyber:['fltcybercom'],bso:['usffc'],
+  loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+fl3:{lbl:'U.S. 3rd Fleet',sub:'U.S. 3rd Fleet',billet:'VADM (3★)',svc:'navy',uic:'N00021',puc:'N00003',
+  adcon:['cno','compacflt'],ta:[],acq:[],ops:['indopacom','compacflt'],cyber:['fltcybercom'],bso:['compacflt'],
+  loc:{install:'Naval Base Point Loma',city:'San Diego, CA',lat:32.6902,lon:-117.2345}},
+fl5:{lbl:'U.S. 5th Fleet',sub:'U.S. 5th Fleet',billet:'VADM (3★)',svc:'navy',uic:'N00022',puc:'N00005',
+  adcon:['cno','navcent'],ta:[],acq:[],ops:['centcom','navcent'],cyber:['fltcybercom'],bso:['navcent'],
+  loc:{install:'NSA Bahrain',city:'Manama, Bahrain',lat:26.2172,lon:50.5856}},
+fl6:{lbl:'U.S. 6th Fleet',sub:'U.S. 6th Fleet',billet:'VADM (3★)',svc:'navy',uic:'N00023',puc:'N00004',
+  adcon:['cno','naveur'],ta:[],acq:[],ops:['eucom','naveur'],cyber:['fltcybercom'],bso:['naveur'],
+  loc:{install:'NSA Naples',city:'Naples, Italy',lat:40.8359,lon:14.1952}},
+fl7:{lbl:'U.S. 7th Fleet',sub:'U.S. 7th Fleet',billet:'VADM (3★)',svc:'navy',uic:'N00024',puc:'N00003',
+  adcon:['cno','compacflt'],ta:[],acq:[],ops:['indopacom','compacflt'],cyber:['fltcybercom'],bso:['compacflt'],
+  loc:{install:'Fleet Activities Yokosuka',city:'Yokosuka, Japan',lat:35.2924,lon:139.6743}},
+
+// ── TYPE COMMANDS ─────────────────────────────────────────────────
+airlant:{lbl:'AIRLANT',sub:'Naval Air Force Atlantic',billet:'VADM (3★)',svc:'navy',uic:'N00031',puc:'N00002',
+  adcon:['cno','usffc'],ta:['navair'],acq:[],ops:['usffc'],cyber:['fltcybercom'],bso:['usffc'],
+  note:'Naval Air Force Atlantic. ADCON: CNO → USFFC → AIRLANT. TA: NAVAIR holds airworthiness and configuration authority for all aircraft operated by AIRLANT squadrons. This is the primary GAS convergence point — ADCON runs through USFFC but TA runs through NAVAIR. These are parallel, non-subordinate streams.',
+  gas_flag:true, loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+airpac:{lbl:'AIRPAC',sub:'Naval Air Force Pacific',billet:'VADM (3★)',svc:'navy',uic:'N00034',puc:'N00003',
+  adcon:['cno','compacflt'],ta:['navair'],acq:[],ops:['compacflt'],cyber:['fltcybercom'],bso:['compacflt'],
+  note:'Naval Air Force Pacific. ADCON: CNO → COMPACFLT → AIRPAC. TA: NAVAIR holds TA regardless of fleet assignment. The NAVAIR→AIRPAC TA line crosses the ADCON chain.',
+  gas_flag:true, loc:{install:'NAS North Island',city:'San Diego, CA',lat:32.6977,lon:-117.1984}},
+surflant:{lbl:'SURFLANT',sub:'Surface Force Atlantic',billet:'VADM (3★)',svc:'navy',uic:'N00030',puc:'N00002',
+  adcon:['cno','usffc'],ta:[],acq:[],ops:['usffc'],cyber:['fltcybercom'],bso:['usffc'],
+  loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+surfpac:{lbl:'SURFPAC',sub:'Surface Force Pacific',billet:'VADM (3★)',svc:'navy',uic:'N00033',puc:'N00003',
+  adcon:['cno','compacflt'],ta:[],acq:[],ops:['compacflt'],cyber:['fltcybercom'],bso:['compacflt'],
+  loc:{install:'Naval Base San Diego',city:'San Diego, CA',lat:32.7153,lon:-117.2115}},
+sublant:{lbl:'SUBLANT',sub:'Submarine Force Atlantic',billet:'VADM (3★)',svc:'navy',uic:'N00032',puc:'N00002',
+  adcon:['cno','usffc'],ta:[],acq:[],ops:['usffc'],cyber:['fltcybercom'],bso:['usffc'],
+  loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+subpac:{lbl:'SUBPAC',sub:'Submarine Force Pacific',billet:'VADM (3★)',svc:'navy',uic:'N00035',puc:'N00003',
+  adcon:['cno','compacflt'],ta:[],acq:[],ops:['compacflt'],cyber:['fltcybercom'],bso:['compacflt'],
+  loc:{install:'JBPHH',city:'Pearl Harbor, HI',lat:21.3590,lon:-157.9751}},
+navifor:{lbl:'NAVIFOR',sub:'Naval Information Forces',billet:'VADM (3★)',svc:'navy',uic:'N00036',puc:'N00002',
+  adcon:['cno','usffc'],ta:[],acq:[],ops:['usffc'],cyber:['fltcybercom'],bso:['usffc'],
+  loc:{install:'NS Norfolk',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+
+// ── FLTCYBERCOM ───────────────────────────────────────────────────
+fltcybercom:{lbl:'FLTCYBERCOM',sub:'Fleet Cyber Command / 10th Fleet',billet:'VADM (3★)',svc:'cyber',uic:'N00039',puc:'N00002',
+  adcon:['cno','usffc'],ta:[],acq:[],ops:['cybercom'],cyber:['cybercom'],bso:['cno'],
+  note:'FLTCYBERCOM is the Navy Service Cyber Component. CNO designates as central operational authority for Navy networks. ADCON: CNO → USFFC → FLTCYBERCOM. OPCON for cyber/space ops: CYBERCOM. Exercises DACO over ALL Navy networks including those operated by NAVAIR commands. This authority is INDEPENDENT of NAVAIR TA/ADCON chains.',
+  gas_flag:true, loc:{install:'Fort Meade',city:'Fort Meade, MD',lat:39.1146,lon:-76.7712}},
+
+// ── GEOGRAPHIC CCDRs ──────────────────────────────────────────────
+indopacom:{lbl:'INDOPACOM',sub:'Indo-Pacific Command',billet:'ADM (4★)',svc:'joint',uic:'JC00010',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Camp H.M. Smith',city:'Halawa, HI',lat:21.3714,lon:-157.9321}},
+northcom:{lbl:'NORTHCOM',sub:'Northern Command',billet:'GEN (4★)',svc:'joint',uic:'JC00011',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Peterson SFB',city:'Colorado Springs, CO',lat:38.8239,lon:-104.7007}},
+southcom:{lbl:'SOUTHCOM',sub:'Southern Command',billet:'ADM (4★)',svc:'joint',uic:'JC00012',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Doral, FL',city:'Doral, FL',lat:25.8180,lon:-80.3392}},
+eucom:{lbl:'EUCOM',sub:'European Command',billet:'GEN (4★)',svc:'joint',uic:'JC00013',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Patch Barracks',city:'Stuttgart, Germany',lat:48.7758,lon:9.1829}},
+centcom:{lbl:'CENTCOM',sub:'Central Command',billet:'GEN (4★)',svc:'joint',uic:'JC00014',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'MacDill AFB',city:'Tampa, FL',lat:27.8498,lon:-82.5217}},
+africom:{lbl:'AFRICOM',sub:'Africa Command',billet:'GEN (4★)',svc:'joint',uic:'JC00015',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Kelley Barracks',city:'Stuttgart, Germany',lat:48.7758,lon:9.1929}},
+
+// ── FUNCTIONAL CCDRs ──────────────────────────────────────────────
+socom:{lbl:'SOCOM',sub:'Special Operations Command',billet:'GEN (4★)',svc:'joint',uic:'JC00020',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'MacDill AFB',city:'Tampa, FL',lat:27.8498,lon:-82.5237}},
+transcom:{lbl:'TRANSCOM',sub:'Transportation Command',billet:'GEN (4★)',svc:'joint',uic:'JC00021',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Scott AFB',city:'Belleville, IL',lat:38.5448,lon:-89.8498}},
+stratcom:{lbl:'STRATCOM',sub:'Strategic Command',billet:'ADM (4★)',svc:'joint',uic:'JC00022',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['cybercom'],bso:[],
+  loc:{install:'Offutt AFB',city:'Bellevue, NE',lat:41.1183,lon:-95.9127}},
+cybercom:{lbl:'CYBERCOM',sub:'US Cyber Command',billet:'GEN (4★)',svc:'cyber',uic:'JC00024',puc:'JC00001',
+  adcon:[],ta:[],acq:[],ops:['secdef','potus'],cyber:['secdef'],bso:[],
+  note:'USCYBERCOM exercises COCOM over cyber/space forces assigned. DACO chain: SecDef (10 U.S.C. §394) → CJCS EXORD → CYBERCOM → SCCs. Dual-hat: DIRNSA.',
+  loc:{install:'Fort Meade',city:'Fort Meade, MD',lat:39.1146,lon:-76.7712}},
+
+// ── USMC FORCES ───────────────────────────────────────────────────
+marforcom:{lbl:'MARFORCOM',sub:'Marine Forces Command',billet:'LtGen (3★)',svc:'usmc',uic:'M00010',puc:'M00001',
+  adcon:['cmc'],ta:[],acq:[],ops:['northcom','usffc'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'NS Norfolk / MCB Quantico',city:'Norfolk, VA',lat:36.9456,lon:-76.3093}},
+marforpac:{lbl:'MARFORPAC',sub:'Marine Forces Pacific',billet:'LtGen (3★)',svc:'usmc',uic:'M00011',puc:'M00001',
+  adcon:['cmc'],ta:[],acq:[],ops:['indopacom','compacflt'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'Camp H.M. Smith',city:'Halawa, HI',lat:21.3714,lon:-157.9321}},
+marforcyber:{lbl:'MARFORCYBER',sub:'Marine Forces Cyberspace Command',billet:'BGen (1★)',svc:'usmc',uic:'M00016',puc:'M00001',
+  adcon:['cmc','marforcom'],ta:[],acq:[],ops:['cybercom'],cyber:['cybercom'],bso:['cmc'],
+  note:'USMC Service Cyber Component. ADCON: CMC → MARFORCOM → MARFORCYBER. OPCON: CYBERCOM. FLTCYBERCOM has ZERO authority over USMC networks — MARFORCYBER is the SCC for USMC, NOT subordinate to FLTCYBERCOM.',
+  loc:{install:'Fort Meade',city:'Fort Meade, MD',lat:39.1146,lon:-76.7712}},
+
+// ── MEFs ──────────────────────────────────────────────────────────
+imef:{lbl:'I MEF',sub:'I Marine Expeditionary Force',billet:'LtGen (3★)',svc:'usmc',uic:'M10000',puc:'M00011',
+  adcon:['cmc','marforpac'],ta:[],acq:[],ops:['indopacom','marforpac'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'MCB Camp Pendleton',city:'Oceanside, CA',lat:33.3760,lon:-117.4524}},
+iimef:{lbl:'II MEF',sub:'II Marine Expeditionary Force',billet:'LtGen (3★)',svc:'usmc',uic:'M20000',puc:'M00010',
+  adcon:['cmc','marforcom'],ta:[],acq:[],ops:['northcom','marforcom'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'MCB Camp Lejeune',city:'Jacksonville, NC',lat:34.6551,lon:-77.3432}},
+iiimef:{lbl:'III MEF',sub:'III Marine Expeditionary Force',billet:'LtGen (3★)',svc:'usmc',uic:'M30000',puc:'M00011',
+  adcon:['cmc','marforpac'],ta:[],acq:[],ops:['indopacom','marforpac'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'Camp Courtney, Okinawa',city:'Uruma, Japan',lat:26.3344,lon:127.8056}},
+
+// ── MAWs ──────────────────────────────────────────────────────────
+smaw:{lbl:'2d MAW',sub:'2d Marine Aircraft Wing',billet:'MajGen (2★)',svc:'usmc',uic:'M20100',puc:'M20000',
+  adcon:['cmc','marforcom','iimef'],ta:['navair'],acq:[],ops:['marforcom','iimef'],cyber:['marforcyber'],bso:['cmc'],
+  note:'2d MAW ADCON: CMC → MARFORCOM → II MEF → 2d MAW. TA for all USMC aircraft: CNO → NAVAIR → PEO(A)/PMA (independent of ADCON chain). This is a core GAS demonstration node.',
+  gas_flag:true, loc:{install:'MCAS Cherry Point',city:'Havelock, NC',lat:34.9002,lon:-76.8803}},
+tmaw:{lbl:'3d MAW',sub:'3d Marine Aircraft Wing',billet:'MajGen (2★)',svc:'usmc',uic:'M10100',puc:'M10000',
+  adcon:['cmc','marforpac','imef'],ta:['navair'],acq:[],ops:['marforpac','imef'],cyber:['marforcyber'],bso:['cmc'],
+  gas_flag:true, loc:{install:'MCAS Miramar',city:'San Diego, CA',lat:32.8688,lon:-117.1430}},
+dmaw:{lbl:'1st MAW',sub:'1st Marine Aircraft Wing',billet:'MajGen (2★)',svc:'usmc',uic:'M30100',puc:'M30000',
+  adcon:['cmc','marforpac','iiimef'],ta:['navair'],acq:[],ops:['marforpac','iiimef'],cyber:['marforcyber'],bso:['cmc'],
+  gas_flag:true, loc:{install:'MCAS Iwakuni',city:'Iwakuni, Japan',lat:34.1444,lon:132.2356}},
+
+// ── MAGs ──────────────────────────────────────────────────────────
+mag26:{lbl:'MAG-26',sub:'Marine Aircraft Group 26',billet:'COL',svc:'usmc',uic:'M20126',puc:'M20100',
+  adcon:['cmc','marforcom','iimef','smaw'],ta:['navair'],acq:[],ops:['marforcom','iimef','smaw'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'MCAS New River',city:'Jacksonville, NC',lat:34.7076,lon:-77.4396}},
+mag16:{lbl:'MAG-16',sub:'Marine Aircraft Group 16',billet:'COL',svc:'usmc',uic:'M10116',puc:'M10100',
+  adcon:['cmc','marforpac','imef','tmaw'],ta:['navair'],acq:[],ops:['marforpac','imef','tmaw'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'MCAS Miramar',city:'San Diego, CA',lat:32.8700,lon:-117.1420}},
+mag36:{lbl:'MAG-36',sub:'Marine Aircraft Group 36',billet:'COL',svc:'usmc',uic:'M30136',puc:'M30100',
+  adcon:['cmc','marforpac','iiimef','dmaw'],ta:['navair'],acq:[],ops:['marforpac','iiimef','dmaw'],cyber:['marforcyber'],bso:['cmc'],
+  loc:{install:'MCAS Futenma / Iwakuni',city:'Ginowan, Japan',lat:26.2727,lon:127.7548}},
+
+// ── MALS ──────────────────────────────────────────────────────────
+mals14:{lbl:'MALS-14',sub:'Marine Aviation Logistics Squadron 14',billet:'LtCol/Col',svc:'usmc',uic:'M20114',puc:'M20126',
+  adcon:['cmc','marforcom','iimef','smaw','mag26'],
+  ta:['pma261','pma276','pma272'],
+  acq:[], ops:['marforcom','iimef','smaw','mag26'],
+  cyber:['marforcyber'],bso:['cmc'],
+  note:'MALS-14 is subject to FIVE independent authority streams simultaneously. ADCON: CMC → MARFORCOM → II MEF → 2d MAW → MAG-26. TA: CNO → NAVAIR → PEO(A) → PMA-261/276/272 (by airframe, independent of ADCON). OPCON: SecDef → NORTHCOM → operating command chain. Cyber: SecDef → CYBERCOM → MARFORCYBER. BSO: CMC → MARFORCOM. None of these five streams is subordinate to any other.',
+  gas_flag:true, loc:{install:'MCAS Cherry Point',city:'Havelock, NC',lat:34.9010,lon:-76.8815}},
+mals16:{lbl:'MALS-16',sub:'Marine Aviation Logistics Squadron 16',billet:'LtCol/Col',svc:'usmc',uic:'M10116',puc:'M10116',
+  adcon:['cmc','marforpac','imef','tmaw','mag16'],
+  ta:['pma281','pma272','pma276','pma261'],
+  acq:[], ops:['indopacom','marforpac','imef','tmaw','mag16'],
+  cyber:['marforcyber'],bso:['cmc'],
+  note:'MALS-16 — CH-53K (PMA-281), MV-22 (PMA-272), H-1 (PMA-276), H-60 (PMA-261) TA flows independently of ADCON chain. Convergence of 5 parallel authority streams at a single unit.',
+  gas_flag:true, loc:{install:'MCAS Miramar',city:'San Diego, CA',lat:32.8680,lon:-117.1440}},
+mals36:{lbl:'MALS-36',sub:'Marine Aviation Logistics Squadron 36',billet:'LtCol/Col',svc:'usmc',uic:'M30136',puc:'M30136',
+  adcon:['cmc','marforpac','iiimef','dmaw','mag36'],
+  ta:['pma281','pma272','pma276','pma261'],
+  acq:[], ops:['indopacom','marforpac','iiimef','dmaw','mag36'],
+  cyber:['marforcyber'],bso:['cmc'],
+  note:'Forward-deployed; III MEF AOR. OCONUS location does not change TA compliance requirements — PMA technical directives apply equally regardless of geography.',
+  gas_flag:true, loc:{install:'MCAS Iwakuni',city:'Iwakuni, Japan',lat:34.1455,lon:132.2367}},
+mals40:{lbl:'MALS-40',sub:'Marine Aviation Logistics Squadron 40',billet:'LtCol/Col',svc:'usmc',uic:'M20140',puc:'M20126',
+  adcon:['cmc','marforcom','iimef','smaw','mag26'],
+  ta:['pma272','pma276','pma261'],
+  acq:[], ops:['northcom','marforcom','iimef','smaw','mag26'],
+  cyber:['marforcyber'],bso:['cmc'],
+  gas_flag:true, loc:{install:'MCAS New River',city:'Jacksonville, NC',lat:34.7080,lon:-77.4380}},
+mals24:{lbl:'MALS-24',sub:'Marine Aviation Logistics Squadron 24',billet:'LtCol/Col',svc:'usmc',uic:'M10124',puc:'M10100',
+  adcon:['cmc','marforpac','imef','tmaw'],
+  ta:['pma281','pma272','pma276'],
+  acq:[], ops:['indopacom','marforpac','imef','tmaw'],
+  cyber:['marforcyber'],bso:['cmc'],
+  gas_flag:true, loc:{install:'MCAS Kaneohe Bay',city:'Kaneohe Bay, HI',lat:21.4520,lon:-157.7640}},
+};
+// Self-assign IDs
+Object.keys(NODES).forEach(k=>NODES[k].id=k);
+
+// ══════════════════════════════════════════════════════════════════
+// OPNAV ISSUANCES REFERENCE DATA
+// ══════════════════════════════════════════════════════════════════
+const ISSUANCES = [
+  {id:'5450_350B', date:'9 Mar 2022', ver:'OPNAVINST 5450.350B',
+   title:'Missions, Functions and Tasks of NAVAIRSYSCOM',
+   tags:['NAVAIR','TA','ADCON','BSO'],
+   summary:`<p><strong>Core Authority:</strong> Establishes NAVAIRSYSCOM as Echelon 2 under CNO ADCON. CNO delegates Technical Authority for naval aviation to NAVAIR.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance — Governance:</strong> §4: NAVAIR exercises TA for design, development, production and sustainment of aircraft, unmanned aviation and strike weapons. This TA is NOT bounded by geography or service branch.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance — Acquisition:</strong> ASN(RD&A) exercises independent acquisition authority over NAVAIR PEOs. This is parallel to and NOT subordinate to CNO ADCON.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance — Sustainment:</strong> §4b(4): NAVAIR reports DIRECTLY to CNO and CMC for logistics support to operating forces. This creates a third independent reporting relationship beyond TA and Acquisition.</p>
+   <p style="margin-top:8px"><strong>Key Finding:</strong> NAVAIR simultaneously reports to CNO (ADCON/TA), ASN(RD&A) (Acquisition), and CNO/CMC directly (Sustainment). These are three legally distinct authorities operating in parallel.</p>`},
+  {id:'5450_345', date:'04 Apr 2012', ver:'OPNAVINST 5450.345',
+   title:'Missions, Functions and Tasks of FLTCYBERCOM / 10th Fleet',
+   tags:['FLTCYBERCOM','CYBER','DODIN','DACO'],
+   summary:`<p><strong>Core Authority:</strong> CNO designates FLTCYBERCOM as the "central operational authority" for Navy networks.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance — Cyber Stream:</strong> FLTCYBERCOM exercises DACO over ALL Navy networks, including those operated by NAVAIR commands. This authority is INDEPENDENT of NAVAIR TA/ADCON chains.</p>
+   <p style="margin-top:8px"><strong>USMC Boundary:</strong> FLTCYBERCOM has ZERO authority over USMC networks. MARFORCYBER is the USMC Service Cyber Component, reporting to CYBERCOM — NOT to FLTCYBERCOM.</p>
+   <p style="margin-top:8px"><strong>BSO:</strong> FLTCYBERCOM is BSO 60C. ADCON: CNO → USFFC → FLTCYBERCOM.</p>`},
+  {id:'5450_352B', date:'9 Mar 2022', ver:'OPNAVINST 5450.352B',
+   title:'Missions, Functions and Tasks of OPNAV',
+   tags:['CNO','OPNAV','ADCON','Echelon 2'],
+   summary:`<p><strong>Core Authority:</strong> CNO exercises ADCON over 28 Echelon 2 commands. The list includes NAVAIRSYSCOM (#11) and FLTCYBERCOM (#6) as co-equal Echelon 2 commands — neither subordinate to the other.</p>
+   <p style="margin-top:8px"><strong>Authority Distribution:</strong> CNO authority is distributed across N1 (Manpower), N2/N6 (Information/Cyber), N3/N5 (Operations/Policy), N4 (Logistics), N8 (Resources), N9 (Warfighting). Multiple independent N-codes exercise different authority streams over the same Echelon 2 commands.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance:</strong> This instruction defines the Governance stream origin. CNO ADCON is the administrative foundation upon which TA and Acquisition authority are layered by separate legal instruments.</p>`},
+  {id:'5440_77C', date:'26 Feb 2021', ver:'OPNAVINST 5440.77C',
+   title:'Missions, Functions and Tasks of USFLTFORCOM',
+   tags:['USFFC','ADCON','BSO','TYCOMs'],
+   summary:`<p><strong>Core Authority:</strong> USFFC is Echelon 2 under CNO ADCON. Serves as BSO for assigned forces. Dual-hatted as COMLANTFLT and JFC Norfolk (2nd Fleet).</p>
+   <p style="margin-top:8px"><strong>Maintenance Authority Clarification:</strong> §7b specifies NAVSEASYSCOM exercises TA as operator of regional maintenance centers (RMCs) and naval shipyards under USFFC BSO. This applies to SHIP maintenance activities — hull, mechanical, electrical. This does NOT apply to Fleet Readiness Centers, which are NAVAIR-subordinate aviation maintenance activities.</p>
+   <p style="margin-top:8px"><strong>Key Distinction:</strong> RMCs (ship maintenance) → NAVSEA TA. FRCs (aviation maintenance) → NAVAIR TA. These are separate maintenance ecosystems with separate TA chains.</p>
+   <p style="margin-top:8px"><strong>GAS Relevance:</strong> USFFC is in the Operational and ADCON streams for TYCOMs and numbered fleets, but NAVAIR TA crosses the USFFC administrative boundary independently.</p>`},
+];
+
+// ══════════════════════════════════════════════════════════════════
+// VIEW DEFINITIONS — node sets for each entry point
+// ══════════════════════════════════════════════════════════════════
+const VIEWS = {
+  navair: {
+    label:'NAVAIR Central',
+    ids:['potus','secdef','usd_as','cno','asn_rda','secnav','navair','fltcybercom','cybercom',
+         'peo_a','peo_uw','peo_t','comfrc',
+         'pma265','pma299','pma261','pma272','pma276','pma281','pma275',
+         'frce','frcse','frcsw','frcw',
+         'airlant','airpac',
+         'smaw','tmaw','dmaw',
+         'mals14','mals16','mals36','mals40','mals24'],
+    pos:{
+      // NCA tier
+      potus:[760,30], secdef:[760,100], usd_as:[980,100], cno:[540,100],
+      secnav:[760,175], asn_rda:[980,175],
+      // Core hub tier
+      navair:[760,280], fltcybercom:[1060,280], cybercom:[1060,175],
+      // PEO tier
+      peo_a:[560,380], peo_uw:[760,380], peo_t:[960,380],
+      comfrc:[400,380],
+      // PMA tier
+      pma265:[300,490], pma299:[420,490], pma261:[540,490],
+      pma272:[660,490], pma276:[780,490], pma281:[900,490], pma275:[1020,490],
+      // FRC tier
+      frce:[300,590], frcse:[480,590], frcsw:[660,590], frcw:[840,590],
+      // TYCOM tier
+      airlant:[200,690], airpac:[400,690],
+      // MAW tier
+      smaw:[140,790], tmaw:[340,790], dmaw:[540,790],
+      // MALS tier
+      mals14:[80,890], mals40:[200,890],
+      mals16:[300,890], mals24:[420,890],
+      mals36:[540,890],
+    }
+  },
+  cocom: {
+    label:'COCOM / Operational',
+    ids:['potus','secdef','cjcs',
+         'indopacom','northcom','southcom','eucom','centcom','africom',
+         'socom','transcom','stratcom','cybercom',
+         'compacflt','usffc','naveur','navcent',
+         'fl2','fl3','fl5','fl6','fl7',
+         'marforcom','marforpac',
+         'imef','iimef','iiimef',
+         'airlant','airpac','surflant','surfpac','sublant','subpac','navifor',
+         'fltcybercom','marforcyber'],
+    pos:{
+      potus:[760,30], secdef:[760,100], cjcs:[960,100],
+      indopacom:[200,220], northcom:[380,220], southcom:[560,220],
+      eucom:[740,220], centcom:[920,220], africom:[1100,220],
+      socom:[260,340], transcom:[480,340], stratcom:[700,340], cybercom:[920,340],
+      compacflt:[160,460], usffc:[380,460], naveur:[600,460], navcent:[820,460],
+      fl2:[300,570], fl3:[160,570],
+      fl5:[820,570], fl6:[600,570], fl7:[80,570],
+      marforcom:[460,460], marforpac:[640,460],
+      imef:[140,680], iimef:[320,680], iiimef:[500,680],
+      airlant:[260,680], airpac:[440,680],
+      surflant:[200,780], surfpac:[360,780],
+      sublant:[520,780], subpac:[680,780], navifor:[840,780],
+      fltcybercom:[940,460], marforcyber:[940,570],
+    }
+  },
+  full: {
+    label:'Full DoN Enterprise',
+    ids:['potus','secdef','usd_as','cno','cmc','secnav','asn_rda','cjcs',
+         'navair','navsea','navwar','navsup',
+         'fltcybercom','cybercom','marforcyber',
+         'usffc','compacflt','naveur','navcent',
+         'indopacom','northcom','eucom','centcom','southcom','africom',
+         'socom','transcom','stratcom',
+         'peo_a','peo_uw','comfrc',
+         'pma265','pma299','pma261','pma272','pma276','pma281',
+         'frce','frcsw',
+         'airlant','airpac',
+         'marforcom','marforpac',
+         'imef','iimef','iiimef',
+         'smaw','tmaw','dmaw',
+         'mals16','mals14'],
+    pos:{
+      potus:[760,30], secdef:[760,100], usd_as:[1000,100], cjcs:[1150,100],
+      secnav:[760,175], asn_rda:[1000,175],
+      cno:[540,175], cmc:[400,175],
+      indopacom:[100,290], northcom:[240,290], eucom:[380,290], centcom:[520,290],
+      southcom:[660,290], africom:[800,290], socom:[940,290], transcom:[1080,290], stratcom:[1220,290],
+      cybercom:[1350,175],
+      navair:[660,380], navsea:[820,380], navwar:[960,380], navsup:[1100,380],
+      fltcybercom:[1350,380],
+      usffc:[160,380], compacflt:[300,380], naveur:[440,380], navcent:[580,380],
+      peo_a:[560,490], peo_uw:[700,490], comfrc:[440,490],
+      pma265:[420,590], pma299:[560,590], pma261:[700,590], pma272:[840,590],
+      pma276:[980,590], pma281:[1120,590],
+      frce:[400,680], frcsw:[600,680],
+      airlant:[200,490], airpac:[320,490],
+      marforcom:[100,490], marforpac:[100,590],
+      imef:[80,680], iimef:[200,680], iiimef:[100,780],
+      smaw:[200,780], tmaw:[320,780], dmaw:[440,780],
+      mals14:[160,870], mals16:[320,870], marforcyber:[1350,490],
+    }
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════
+// LINK GENERATION
+// Build links from node authority chain arrays
+// ══════════════════════════════════════════════════════════════════
+function buildLinks(viewIds) {
+  const idSet = new Set(viewIds);
+  const links = [];
+  viewIds.forEach(id => {
+    const n = NODES[id]; if(!n) return;
+    ['adcon','ta','acq','ops','cyber','bso'].forEach(stream => {
+      const targets = n[stream]||[];
+      // For each node, draw link TO that node FROM its authority sources
+      targets.forEach(src => {
+        if(idSet.has(src) && S.activeStreams[stream]) {
+          links.push({s:src, t:id, type:stream});
+        }
+      });
+    });
+  });
+  return links;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// D3 RENDER ENGINE
+// ══════════════════════════════════════════════════════════════════
+const NW=124, NH=52;
+let svg, g, zoom;
+
+function initSvg() {
+  const el = document.getElementById('main-svg');
+  svg = d3.select(el);
+  svg.selectAll('*').remove();
+  // Arrow markers for each stream
+  const defs = svg.append('defs');
+  Object.entries(ASTREAMS).forEach(([k,v])=>{
+    defs.append('marker').attr('id','arr-'+k)
+      .attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0)
+      .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto')
+      .append('path').attr('d','M0,-4L8,0L0,4').attr('fill',v.col).attr('opacity',.8);
+  });
+  // Background grid
+  const bgG = svg.append('g').attr('class','bg');
+  bgG.append('rect').attr('width','100%').attr('height','100%').attr('fill','#011d28');
+  const pat = defs.append('pattern').attr('id','grid').attr('width',40).attr('height',40)
+    .attr('patternUnits','userSpaceOnUse');
+  pat.append('path').attr('d','M40 0 L0 0 0 40').attr('fill','none')
+    .attr('stroke','#03374a').attr('stroke-width','0.5');
+  bgG.append('rect').attr('width','100%').attr('height','100%').attr('fill','url(#grid)');
+
+  zoom = d3.zoom().scaleExtent([.15,3])
+    .on('zoom', e => { g.attr('transform', e.transform); S.transform = e.transform; });
+  svg.call(zoom);
+  g = svg.append('g');
+}
+
+function renderView() {
+  if(!g) initSvg();
+  const vk = S.entryPoint;
+  const view = VIEWS[vk];
+  if(!view) return;
+
+  // Filter by service if needed
+  let nodeIds = view.ids.filter(id => {
+    if(!NODES[id]) return false;
+    if(S.svcFilter === 'all') return true;
+    return NODES[id].svc === S.svcFilter;
+  });
+  // Always include nodes that are in pos, even if filtered
+  // For links, use all ids
+  const allIds = view.ids.filter(id => NODES[id] && view.pos[id]);
+  const links = buildLinks(allIds);
+
+  // Update info badges
+  document.getElementById('ci-view').textContent = view.label.toUpperCase() + ' VIEW';
+  document.getElementById('ci-links').textContent = links.length + ' LINKS';
+  document.getElementById('hp-nodes').textContent = allIds.length + ' NODES';
+  document.getElementById('tb-reg').textContent = Object.keys(NODES).length;
+
+  g.selectAll('*').remove();
+
+  // Draw links
+  const linkG = g.append('g').attr('class','links');
+  links.forEach(lk => {
+    const sc = ASTREAMS[lk.type];
+    const sp = view.pos[lk.s], tp = view.pos[lk.t];
+    if(!sp||!tp) return;
+    const sx = sp[0]+NW/2, sy = sp[1]+NH/2;
+    const tx = tp[0]+NW/2, ty = tp[1]+NH/2;
+    // Offset for multiple links between same pair
+    const dx = tx-sx, dy = ty-sy;
+    const len = Math.sqrt(dx*dx+dy*dy)||1;
+    const nx = -dy/len*6, ny = dx/len*6;
+    // Shorten to avoid arrowhead overlap
+    const ratio = 26/len;
+    const ex = tx - dx*ratio, ey = ty - dy*ratio;
+    linkG.append('line')
+      .attr('x1', sx+nx).attr('y1', sy+ny)
+      .attr('x2', ex+nx).attr('y2', ey+ny)
+      .attr('stroke', sc.col)
+      .attr('stroke-width', lk.type==='adcon'?1.8:lk.type==='ta'?2:1.4)
+      .attr('stroke-opacity', .65)
+      .attr('stroke-dasharray', sc.dash?'5,3':'none')
+      .attr('marker-end','url(#arr-'+lk.type+')')
+      .attr('class','link link-'+lk.type);
+  });
+
+  // Draw nodes
+  const nodeG = g.append('g').attr('class','nodes');
+  allIds.forEach(id => {
+    const n = NODES[id];
+    const pos = view.pos[id];
+    if(!n||!pos) return;
+    const svcDef = SVC[n.svc]||SVC.civ;
+    const isSelected = S.selectedNode===id;
+    const isMuted = S.svcFilter!=='all' && n.svc!==S.svcFilter;
+    const isGas = n.gas_flag;
+    const isOtCps = n.ot_cps;
+
+    const ng = nodeG.append('g')
+      .attr('class','node'+(isSelected?' selected':'')+(isGas?' gas-node':'')+(isOtCps?' otcps-node':''))
+      .attr('transform',`translate(${pos[0]},${pos[1]})`)
+      .style('opacity', isMuted?0.25:1)
+      .style('cursor','pointer')
+      .on('click',()=>selectNode(id));
+
+    // Node background — red tint for OT/CPS nodes
+    ng.append('rect')
+      .attr('width',NW).attr('height',NH)
+      .attr('rx',3).attr('ry',3)
+      .attr('fill', isOtCps?'#041520':'#03374a')
+      .attr('stroke', isSelected?'#e8b00f': isOtCps?'rgba(255,68,0,.7)' : isGas?'rgba(232,176,15,.4)' : svcDef.col)
+      .attr('stroke-width', isSelected?2: isOtCps?1.5: isGas?1.2:1)
+      .attr('stroke-opacity', isSelected?1:.85);
+
+    // Service color bar (top)
+    ng.append('rect')
+      .attr('width',NW).attr('height',3).attr('rx',3).attr('ry',0)
+      .attr('fill',svcDef.col).attr('opacity',.9);
+
+    // GAS flag indicator
+    if(isGas) {
+      ng.append('rect')
+        .attr('x',NW-18).attr('y',5).attr('width',13).attr('height',9)
+        .attr('rx',1).attr('fill','rgba(232,176,15,.2)')
+        .attr('stroke','rgba(232,176,15,.6)').attr('stroke-width',.8);
+      ng.append('text')
+        .attr('x',NW-11.5).attr('y',13)
+        .attr('text-anchor','middle')
+        .attr('font-family','Helvetica,sans-serif').attr('font-weight','700')
+        .attr('font-size',6).attr('fill','#e8b00f')
+        .text('GAS');
+    }
+
+    // OT/CPS cyber gap badge
+    if(isOtCps) {
+      const bx = isGas ? NW-33 : NW-18;
+      ng.append('rect')
+        .attr('x',bx).attr('y',5).attr('width',13).attr('height',9)
+        .attr('rx',1).attr('fill','rgba(255,68,0,.2)')
+        .attr('stroke','rgba(255,68,0,.7)').attr('stroke-width',.8);
+      ng.append('text')
+        .attr('x',bx+6.5).attr('y',13)
+        .attr('text-anchor','middle')
+        .attr('font-family','Helvetica,sans-serif').attr('font-weight','700')
+        .attr('font-size',6).attr('fill','#ff6633')
+        .text('OT');
+    }
+
+    // Label
+    ng.append('text')
+      .attr('x',NW/2).attr('y',NH/2-4)
+      .attr('text-anchor','middle').attr('dominant-baseline','middle')
+      .attr('font-family','Helvetica,"Helvetica Neue",sans-serif')
+      .attr('font-weight','700').attr('font-size',11)
+      .attr('fill', isSelected?'#e8b00f':'#fffef9')
+      .text(n.lbl);
+
+    // Sub label
+    const subText = n.billet?n.billet:(n.sub.length>28?n.sub.slice(0,26)+'…':n.sub);
+    ng.append('text')
+      .attr('x',NW/2).attr('y',NH-9)
+      .attr('text-anchor','middle')
+      .attr('font-family','"Roboto",sans-serif').attr('font-weight','300')
+      .attr('font-size',7).attr('fill','#8aabb8')
+      .text(subText);
+
+    // UIC
+    ng.append('text')
+      .attr('x',4).attr('y',NH-3)
+      .attr('font-family','"Roboto",monospace').attr('font-size',6)
+      .attr('fill','#3d6275').text(n.uic||'');
+  });
+
+  // Auto-fit view on first render or entry point change
+  const bbox = g.node().getBBox();
+  if(bbox.width>0) {
+    const svgEl = document.getElementById('main-svg');
+    const W = svgEl.clientWidth||1200, H = svgEl.clientHeight||700;
+    const scale = Math.min(W/(bbox.width+80), H/(bbox.height+80), 1.5)*0.88;
+    const tx = (W - bbox.width*scale)/2 - bbox.x*scale;
+    const ty = (H - bbox.height*scale)/2 - bbox.y*scale;
+    svg.call(zoom.transform, d3.zoomIdentity.translate(tx,ty).scale(scale));
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NODE SELECTION & DETAIL PANEL
+// ══════════════════════════════════════════════════════════════════
+function selectNode(id) {
+  S.selectedNode = id;
+  const n = NODES[id];
+  if(!n) return;
+  renderView();
+  showNodeDetail(n);
+  updateGasMeter(n);
+}
+
+function updateGasMeter(n) {
+  const streams = ['adcon','acq','ta','ops','cyber'];
+  const labels = ['adcon','acq','ta','ops','cyber'];
+  streams.forEach((s,i)=>{
+    const arr = n[s]||[];
+    const depth = arr.length;
+    const pct = depth>0?Math.min(depth/6*100,100):0;
+    const fillEl = document.getElementById('gb-'+labels[i]);
+    const valEl  = document.getElementById('gv-'+labels[i]);
+    if(fillEl) fillEl.style.width = pct+'%';
+    if(valEl)  valEl.textContent = depth>0?depth+'★':'—';
+  });
+  document.getElementById('gas-node-lbl').textContent = n.lbl;
+}
+
+function showNodeDetail(n) {
+  const rp = document.getElementById('rp');
+  const body = document.getElementById('rp-body');
+  rp.classList.add('open');
+  const svc = SVC[n.svc]||SVC.civ;
+
+  let html = `<div class="rp-svc-bar" style="background:${svc.col}"></div>
+  <div class="rp-name">${n.lbl}</div>
+  <div class="rp-full">${n.sub}</div>
+  <div class="rp-meta">
+    <span class="rp-tag">${svc.lbl}</span>
+    ${n.billet?`<span class="rp-tag">${n.billet}</span>`:''}
+    ${n.uic?`<span class="rp-tag">UIC: ${n.uic}</span>`:''}
+    ${n.loc?`<span class="rp-tag">${n.loc.city}</span>`:''}
+  </div>`;
+
+  if(n.gas_flag) {
+    html += `<div class="rp-gas-flag">
+      <span class="rp-gas-icon">⚡</span>
+      <div>
+        <div class="rp-gas-text">GAS Convergence Node</div>
+        <div class="rp-gas-sub">Multiple independent Governance, Acquisition &amp; Sustainment streams simultaneously govern this node.</div>
+      </div>
+    </div>`;
+  }
+
+  if(n.ot_cps) {
+    const isLead = S.audience === 'leadership';
+    html += `<div class="rp-gas-flag" style="border-color:#ff4444;background:rgba(255,68,0,.08)">
+      <span class="rp-gas-icon" style="color:#ff4444">🔴</span>
+      <div>
+        <div class="rp-gas-text" style="color:#ff4444">OT/CPS Cyber Gap — Three-Body Problem Node</div>
+        <div class="rp-gas-sub">
+          ${isLead
+            ? 'This node operates non-DODIN Operational Technology / Cyber-Physical Systems. No authority chain currently owns cyber incident response for these systems. See Three-Body Problem panel.'
+            : 'OT/CPS systems at this node are outside FLTCYBERCOM DACO and outside RMF/ATO scope. Incident response path: unit CO → FRC → PMA → NAVAIR N6 → informal FLTCYBERCOM coordination. No authority compels cross-chain action.'
+          }
+        </div>
+        <button onclick="switchTab(document.querySelector('[data-panel=p-3bp]'))" 
+          style="margin-top:6px;font-family:Roboto,monospace;font-size:8px;padding:3px 8px;background:rgba(255,68,0,.15);border:1px solid #ff4444;color:#ff4444;cursor:pointer;border-radius:2px">
+          → VIEW THREE-BODY PROBLEM ANALYSIS
+        </button>
+      </div>
+    </div>`;
+  }
+
+  html += `<div class="rp-sect-hdr">Authority Streams — Inbound</div>`;
+
+  const streamDefs = [
+    {k:'adcon', lbl:'Administrative Control (ADCON)', cite:'10 U.S.C. §5032'},
+    {k:'ta',    lbl:'Technical Authority (TA)',        cite:'OPNAVINST 5450.350B'},
+    {k:'acq',   lbl:'Acquisition (SAE/CAE)',           cite:'SECNAVINST 5400.15D'},
+    {k:'ops',   lbl:'Operational (OPCON)',             cite:'Title 10 §164'},
+    {k:'cyber', lbl:'Cyber / DODIN (DACO)',            cite:'OPNAVINST 5450.345'},
+    {k:'bso',   lbl:'Financial (BSO)',                 cite:'SECNAVINST 7000.27D'},
+  ];
+  streamDefs.forEach(sd => {
+    const arr = n[sd.k]||[];
+    const sc = ASTREAMS[sd.k];
+    html += `<div class="auth-stream" style="--stream-col:${sc.col}">
+      <div class="as-head">
+        <span class="as-name">${sd.lbl}</span>
+        <span class="as-cite">${sd.cite}</span>
+      </div>
+      <div class="as-chain">`;
+    if(arr.length===0) {
+      html += `<span class="as-empty">Origin / Not delegated</span>`;
+    } else {
+      arr.forEach((srcId,i)=>{
+        const srcN = NODES[srcId];
+        html += `<span class="as-node" onclick="jumpToNode('${srcId}')">${srcN?srcN.lbl:srcId}</span>`;
+        if(i<arr.length-1) html += `<span class="as-arr">→</span>`;
+      });
+      html += `<span class="as-arr">→</span><span class="as-node" style="border-color:${sc.col};color:${sc.col}">${n.lbl}</span>`;
+    }
+    html += `</div></div>`;
+  });
+
+  if(n.note) {
+    html += `<div class="rp-sect-hdr">Authority Note</div>
+    <div class="rp-note">${n.note}</div>`;
+  }
+
+  body.innerHTML = html;
+}
+
+function jumpToNode(id) {
+  // Switch to a view that contains this node, then select it
+  const ep = Object.entries(VIEWS).find(([k,v])=>v.ids.includes(id));
+  if(ep) {
+    S.entryPoint = ep[0];
+    setEntryPointUI(ep[0]);
+    renderView();
+    setTimeout(()=>selectNode(id),50);
+  }
+}
+
+function closePanel() {
+  document.getElementById('rp').classList.remove('open');
+  S.selectedNode = null;
+  renderView();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONTROLS
+// ══════════════════════════════════════════════════════════════════
+function toggleStream(type) {
+  S.activeStreams[type] = !S.activeStreams[type];
+  const tog = document.getElementById('tog-'+type);
+  if(tog) tog.classList.toggle('on', S.activeStreams[type]);
+  if(tog) tog.classList.toggle('off', !S.activeStreams[type]);
+  renderView();
+}
+function toggleAllStreams(on) {
+  Object.keys(S.activeStreams).forEach(k=>{
+    S.activeStreams[k]=on;
+    const tog=document.getElementById('tog-'+k);
+    if(tog){tog.classList.toggle('on',on);tog.classList.toggle('off',!on);}
+  });
+  renderView();
+}
+function setEntryPoint(ep) {
+  S.entryPoint = ep;
+  setEntryPointUI(ep);
+  renderView();
+}
+function setEntryPointUI(ep) {
+  ['navair','cocom','full'].forEach(k=>{
+    const btn = document.getElementById('ep-'+k);
+    if(btn) btn.classList.toggle('active', k===ep);
+  });
+}
+function filterSvc(el) {
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  S.svcFilter = el.dataset.svc;
+  renderView();
+}
+function toggleGasMode() {
+  const btn = document.getElementById('btn-gas-mode');
+  const on = !btn.classList.contains('active');
+  btn.classList.toggle('active', on);
+  // GAS mode highlights all gas_flag nodes
+  renderView();
+}
+function resetView() {
+  S.selectedNode = null;
+  S.svcFilter = 'all';
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  document.querySelector('.fchip[data-svc="all"]').classList.add('on');
+  document.getElementById('rp').classList.remove('open');
+  renderView();
+}
+function zoomIn()    { svg.transition().call(zoom.scaleBy,1.3); }
+function zoomOut()   { svg.transition().call(zoom.scaleBy,0.77); }
+function zoomReset() { svg.transition().call(zoom.transform, d3.zoomIdentity.translate(60,40).scale(0.85)); }
+
+// ══════════════════════════════════════════════════════════════════
+// TAB / PANEL SWITCHING
+// ══════════════════════════════════════════════════════════════════
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  const pid = el.dataset.panel;
+  const panel = document.getElementById(pid);
+  if(panel) panel.classList.add('on');
+  if(pid==='p-orders') renderOrders();
+  if(pid==='p-registry') renderRegistry();
+  if(pid==='p-org') { setTimeout(()=>{ if(!g) initSvg(); renderView(); },50); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ORDERS / ISSUANCES PANEL
+// ══════════════════════════════════════════════════════════════════
+function renderOrders() {
+  const list = document.getElementById('ord-list');
+  list.innerHTML = ISSUANCES.map(doc=>`
+    <div class="ord-item" onclick="selectDoc('${doc.id}')">
+      <div class="ord-date">${doc.date}</div>
+      <div class="ord-title">${doc.ver}</div>
+      <div style="font-family:'Roboto Slab',serif;font-size:8.5px;color:var(--t2);margin-bottom:4px;line-height:1.3">${doc.title}</div>
+      <div class="ord-tags">${doc.tags.map(t=>`<span class="ord-tag">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+function selectDoc(id) {
+  document.querySelectorAll('.ord-item').forEach(i=>i.classList.remove('selected'));
+  const doc = ISSUANCES.find(d=>d.id===id);
+  if(!doc) return;
+  document.querySelectorAll('.ord-item').forEach((el,i)=>{ if(ISSUANCES[i].id===id) el.classList.add('selected'); });
+  document.getElementById('ord-main').innerHTML = `
+    <div style="max-width:720px">
+      <div style="font-family:'Roboto',monospace;font-size:8px;color:var(--t3);margin-bottom:4px;letter-spacing:1px">${doc.date}</div>
+      <div style="font-family:Helvetica,sans-serif;font-weight:700;font-size:16px;color:var(--t1);margin-bottom:3px">${doc.ver}</div>
+      <div style="font-family:'Roboto Slab',serif;font-size:11px;color:var(--t2);margin-bottom:12px">${doc.title}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px">${doc.tags.map(t=>`<span class="ord-tag">${t}</span>`).join('')}</div>
+      <div style="font-family:'Roboto Slab',serif;font-size:10px;color:var(--t2);line-height:1.7;background:var(--navy3);padding:14px;border-radius:3px;border-left:3px solid var(--gold2)">${doc.summary}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// REGISTRY PANEL
+// ══════════════════════════════════════════════════════════════════
+function renderRegistry() {
+  const grid = document.getElementById('reg-grid');
+  const sorted = Object.values(NODES).sort((a,b)=>a.lbl.localeCompare(b.lbl));
+  grid.innerHTML = sorted.map(n=>{
+    const svc = SVC[n.svc]||SVC.civ;
+    const streamCount = ['adcon','ta','acq','ops','cyber','bso'].filter(s=>(n[s]||[]).length>0).length;
+    return `<div class="reg-card" style="--svc-col:${svc.col}" onclick="jumpAndSelect('${n.id}')">
+      <div class="rc-name">${n.lbl} ${n.gas_flag?'<span style="color:var(--gold2);font-size:8px">⚡GAS</span>':''}</div>
+      <div class="rc-full">${n.sub}</div>
+      <div class="rc-meta">
+        <span class="rc-tag">${svc.lbl}</span>
+        ${n.billet?`<span class="rc-tag">${n.billet}</span>`:''}
+        <span class="rc-tag">${streamCount} streams</span>
+        ${n.uic?`<span class="rc-tag">${n.uic}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function jumpAndSelect(id) {
+  switchTab(document.querySelector('.tab[data-panel="p-org"]'));
+  setTimeout(()=>jumpToNode(id),100);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+window.addEventListener('load',()=>{
+  initSvg();
+  renderView();
+  document.getElementById('hp-nodes').textContent = Object.keys(NODES).length + ' NODES';
+  document.getElementById('tb-reg').textContent = Object.keys(NODES).length;
+});
+window.addEventListener('resize', ()=>{ if(g) renderView(); });
+</script>
+</body>
+</html>
