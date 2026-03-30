@@ -705,7 +705,7 @@ function initMap(){
   });
   MAP.svg.call(MAP.zoom);
 
-  // World TopoJSON loaded via script tag (WORLD_TOPO global)
+  // World TopoJSON (10m) loaded via script tag
   MAP.topo=WORLD_TOPO;
   const countries=topojson.feature(WORLD_TOPO,WORLD_TOPO.objects.countries);
 
@@ -713,9 +713,16 @@ function initMap(){
   const graticule=d3.geoGraticule().step([30,20]);
   MAP.g.append('path').datum(graticule()).attr('class','graticule').attr('d',MAP.path);
 
-  // Country boundaries
+  // Country boundaries (10m detail)
   MAP.g.selectAll('.country').data(countries.features).enter()
     .append('path').attr('class','country').attr('d',MAP.path);
+
+  // US state boundaries (10m detail)
+  if(typeof US_STATES_TOPO!=='undefined'){
+    const states=topojson.feature(US_STATES_TOPO,US_STATES_TOPO.objects.states);
+    MAP.g.selectAll('.us-state').data(states.features).enter()
+      .append('path').attr('class','us-state').attr('d',MAP.path);
+  }
 
   // Layer groups for overlays, lines, nodes
   MAP.g.append('g').attr('id','g-aor');
@@ -1817,6 +1824,7 @@ window.addEventListener('resize',function(){
     MAP.path.projection(MAP.proj);
     d3.select('#d3-map').attr('width',W).attr('height',H);
     MAP.g.selectAll('.country').attr('d',MAP.path);
+    MAP.g.selectAll('.us-state').attr('d',MAP.path);
     MAP.g.selectAll('.graticule').attr('d',MAP.path);
     renderMapLayer();
   }
