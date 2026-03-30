@@ -677,7 +677,7 @@ function renderTimeline(){
 // ═══════════════════════════════════════════════════════
 // MAP — D3 Geo (fully offline, no tile server)
 // ═══════════════════════════════════════════════════════
-const MAP={svg:null,g:null,proj:null,path:null,zoom:null,ready:false,aorOn:false,topo:null};
+const MAP={gl:null,ready:false,aorOn:false,markers:[],lineLayer:null};
 
 const AOR_BOUNDS=[
   {name:'NORTHCOM',coords:[[-170,15],[-50,85]],col:'#3366cc'},
@@ -690,48 +690,32 @@ const AOR_BOUNDS=[
 
 function initMap(){
   if(MAP.ready){renderMapLayer();return;}
-  const wrap=document.getElementById('map-wrap');
-  const W=wrap.clientWidth||800,H=wrap.clientHeight||500;
 
-  MAP.proj=d3.geoNaturalEarth1().translate([W/2,H/2]).scale(W/5.5);
-  MAP.path=d3.geoPath().projection(MAP.proj);
+  // Register PMTiles protocol
+  const protocol=new pmtiles.Protocol();
+  maplibregl.addProtocol('pmtiles',protocol.tile);
 
-  MAP.svg=d3.select('#d3-map').attr('width',W).attr('height',H);
-  MAP.g=MAP.svg.append('g');
+  // Load style and create map
+  fetch('data/dark-style.json').then(r=>r.json()).then(style=>{
+    MAP.gl=new maplibregl.Map({
+      container:'maplibre-map',
+      style:style,
+      center:[10,25],
+      zoom:2,
+      attributionControl:false
+    });
+    MAP.gl.addControl(new maplibregl.NavigationControl(),'top-left');
+    MAP.gl.addControl(new maplibregl.AttributionControl({compact:true}));
 
-  // Zoom/pan
-  MAP.zoom=d3.zoom().scaleExtent([0.5,20]).on('zoom',e=>{
-    MAP.g.attr('transform',e.transform);
+    MAP.gl.on('load',function(){
+      MAP.ready=true;
+      renderMapLayer();
+      document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
+    });
+
+    // Close tooltip on map click (not on marker)
+    MAP.gl.on('click',function(){closeMapTooltip();});
   });
-  MAP.svg.call(MAP.zoom);
-
-  // World TopoJSON (10m) loaded via script tag
-  MAP.topo=WORLD_TOPO;
-  const countries=topojson.feature(WORLD_TOPO,WORLD_TOPO.objects.countries);
-
-  // Graticule (lat/lon grid)
-  const graticule=d3.geoGraticule().step([30,20]);
-  MAP.g.append('path').datum(graticule()).attr('class','graticule').attr('d',MAP.path);
-
-  // Country boundaries (10m detail)
-  MAP.g.selectAll('.country').data(countries.features).enter()
-    .append('path').attr('class','country').attr('d',MAP.path);
-
-  // US state boundaries (10m detail)
-  if(typeof US_STATES_TOPO!=='undefined'){
-    const states=topojson.feature(US_STATES_TOPO,US_STATES_TOPO.objects.states);
-    MAP.g.selectAll('.us-state').data(states.features).enter()
-      .append('path').attr('class','us-state').attr('d',MAP.path);
-  }
-
-  // Layer groups for overlays, lines, nodes
-  MAP.g.append('g').attr('id','g-aor');
-  MAP.g.append('g').attr('id','g-auth-lines');
-  MAP.g.append('g').attr('id','g-nodes');
-
-  MAP.ready=true;
-  renderMapLayer();
-  document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
 }
 
 function renderMapLayer(){
@@ -748,10 +732,16 @@ function renderMapLayer(){
     return true;
   });
 
-  // --- Authority lines ---
-  const gLines=MAP.g.select('#g-auth-lines');
-  gLines.selectAll('*').remove();
+  // --- Clear existing markers ---
+  MAP.markers.forEach(m=>m.remove());
+  MAP.markers=[];
+
+  // --- Authority lines (GeoJSON source/layer) ---
+  if(MAP.gl.getLayer('auth-lines'))MAP.gl.removeLayer('auth-lines');
+  if(MAP.gl.getSource('auth-lines'))MAP.gl.removeSource('auth-lines');
+
   if(authFilter!=='none'){
+    const features=[];
     const drawnLinks=new Set();
     Object.values(VIEWS).forEach(view=>{
       (view.links||[]).forEach(lk=>{
@@ -762,47 +752,42 @@ function renderMapLayer(){
         if(!src||!tgt||!src.loc||!tgt.loc)return;
         if(svcFilter!=='all'&&src.svc!==svcFilter&&tgt.svc!==svcFilter)return;
         drawnLinks.add(key);
-        const col=ACOL[lk.a]||'#888';
-        const p1=MAP.proj([src.loc.lon,src.loc.lat]),p2=MAP.proj([tgt.loc.lon,tgt.loc.lat]);
-        if(!p1||!p2)return;
-        const w=lk.a==='cyber'?2.5:lk.a==='ta'?2:1.5;
-        const op=lk.a==='cyber'?0.9:lk.a==='ta'?0.85:0.6;
-        const dash=lk.a==='adcon'?'6,4':lk.a==='opcon'?'3,3':lk.a==='ta'?'8,3,2,3':lk.a==='cyber'?'4,2':null;
-        const line=gLines.append('line').attr('class','auth-line')
-          .attr('x1',p1[0]).attr('y1',p1[1]).attr('x2',p2[0]).attr('y2',p2[1])
-          .attr('stroke',col).attr('stroke-width',w).attr('stroke-opacity',op);
-        if(dash)line.attr('stroke-dasharray',dash);
+        features.push({type:'Feature',geometry:{type:'LineString',coordinates:[[src.loc.lon,src.loc.lat],[tgt.loc.lon,tgt.loc.lat]]},properties:{auth:lk.a}});
       });
     });
+    if(features.length){
+      const col=ACOL[authFilter]||'#888';
+      MAP.gl.addSource('auth-lines',{type:'geojson',data:{type:'FeatureCollection',features:features}});
+      MAP.gl.addLayer({id:'auth-lines',type:'line',source:'auth-lines',paint:{
+        'line-color':col,
+        'line-width':authFilter==='cyber'?2.5:authFilter==='ta'?2:1.5,
+        'line-opacity':authFilter==='cyber'?0.9:authFilter==='ta'?0.85:0.6,
+        'line-dasharray':authFilter==='adcon'?[6,4]:authFilter==='opcon'?[3,3]:authFilter==='ta'?[8,3,2,3]:authFilter==='cyber'?[4,2]:[1,0]
+      }});
+    }
   }
 
-  // --- Node markers ---
-  const gNodes=MAP.g.select('#g-nodes');
-  gNodes.selectAll('*').remove();
-  const tooltip=document.getElementById('map-tooltip');
+  // --- Node markers (HTML markers) ---
   let count=0;
-
   visNodes.forEach(n=>{
-    const pt=MAP.proj([n.loc.lon,n.loc.lat]);
-    if(!pt)return;
     const sc=SVC[n.svc]||SVC.civ;
     const isSel=n.id===S.activeNode;
-    const r=isSel?8:5;
-    const g=gNodes.append('g').attr('class','map-node').attr('transform',`translate(${pt[0]},${pt[1]})`);
+    const sz=isSel?16:10;
+    const el=document.createElement('div');
+    el.style.cssText='width:'+sz+'px;height:'+sz+'px;border-radius:50%;cursor:pointer;background:'+sc.fill+';border:'+( isSel?'2.5':'1.5')+'px solid '+sc.stroke+';box-shadow:0 0 '+(isSel?'8':'4')+'px rgba(0,0,0,.6)';
+    if(isSel)el.style.boxShadow='0 0 0 3px '+sc.stroke+'44, 0 0 8px rgba(0,0,0,.6)';
+    el.title=n.lbl;
 
-    if(isSel){
-      g.append('circle').attr('r',r+3).attr('fill','none').attr('stroke',sc.stroke).attr('stroke-width',1).attr('opacity',0.5);
-    }
-    g.append('circle').attr('r',r).attr('fill',sc.fill).attr('stroke',sc.stroke).attr('stroke-width',isSel?2.5:1.5);
+    const marker=new maplibregl.Marker({element:el,anchor:'center'})
+      .setLngLat([n.loc.lon,n.loc.lat])
+      .addTo(MAP.gl);
 
-    // Click handler — show tooltip
-    g.on('click',function(event){
+    el.addEventListener('click',function(event){
       event.stopPropagation();
       showMapTooltip(n,event);
     });
 
-    // Hover title
-    g.append('title').text(n.lbl);
+    MAP.markers.push(marker);
     count++;
   });
 
@@ -834,7 +819,6 @@ function showMapTooltip(n,event){
     <button data-action="jump-to-node" data-arg="${n.id}" style="margin-top:5px;background:#1e3458;border:1px solid #2a4870;color:#7aaaee;font-family:'Space Mono',monospace;font-size:7px;padding:2px 7px;border-radius:2px;cursor:pointer;width:100%">View in Org Chart \u2192</button>`;
   tooltip.classList.add('open');
 
-  // Position near the click, clamped to viewport
   const wrap=document.getElementById('map-wrap');
   const wr=wrap.getBoundingClientRect();
   let x=event.clientX-wr.left+12,y=event.clientY-wr.top-10;
@@ -846,47 +830,37 @@ function showMapTooltip(n,event){
 
 function closeMapTooltip(){document.getElementById('map-tooltip').classList.remove('open');}
 
-// Close tooltip when clicking on map background
-document.addEventListener('click',function(e){
-  const tt=document.getElementById('map-tooltip');
-  if(tt&&!tt.contains(e.target)&&!e.target.closest('.map-node'))closeMapTooltip();
-});
-
 function closeMapPanel(){document.getElementById('map-panel').classList.remove('open');}
 
 function resetMapView(){
-  if(!MAP.svg)return;
-  MAP.svg.transition().duration(500).call(MAP.zoom.transform,d3.zoomIdentity);
+  if(!MAP.gl)return;
+  MAP.gl.flyTo({center:[10,25],zoom:2,duration:500});
 }
 
 function zoomMapToNode(id){
-  const n=NODES[id];if(!n||!n.loc||!MAP.ready)return;
-  const pt=MAP.proj([n.loc.lon,n.loc.lat]);if(!pt)return;
-  const wrap=document.getElementById('map-wrap');
-  const W=wrap.clientWidth||800,H=wrap.clientHeight||500;
-  const scale=6;
-  const tx=W/2-pt[0]*scale,ty=H/2-pt[1]*scale;
-  MAP.svg.transition().duration(600).call(MAP.zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+  const n=NODES[id];if(!n||!n.loc||!MAP.gl)return;
+  MAP.gl.flyTo({center:[n.loc.lon,n.loc.lat],zoom:8,duration:600});
   S.activeNode=id;
   setTimeout(renderMapLayer,50);
 }
 
 function drawAorOverlay(){
-  const gAor=MAP.g.select('#g-aor');
-  gAor.selectAll('*').remove();
-  AOR_BOUNDS.forEach(aor=>{
-    // Build a GeoJSON polygon for the bounding box
+  AOR_BOUNDS.forEach((aor,i)=>{
+    const sid='aor-'+i;
+    if(MAP.gl.getLayer(sid+'-fill'))return; // already drawn
     const [[x0,y0],[x1,y1]]=aor.coords;
-    const geo={type:'Feature',geometry:{type:'Polygon',coordinates:[[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]]]}};
-    gAor.append('path').datum(geo).attr('d',MAP.path)
-      .attr('class','aor-region').attr('fill',aor.col).attr('stroke',aor.col);
-    // Label at center
-    const center=MAP.proj([(x0+x1)/2,(y0+y1)/2]);
-    if(center){
-      gAor.append('text').attr('class','aor-label')
-        .attr('x',center[0]).attr('y',center[1]).attr('fill',aor.col)
-        .attr('text-anchor','middle').text(aor.name);
-    }
+    MAP.gl.addSource(sid,{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]]]}}});
+    MAP.gl.addLayer({id:sid+'-fill',type:'fill',source:sid,paint:{'fill-color':aor.col,'fill-opacity':0.04}});
+    MAP.gl.addLayer({id:sid+'-line',type:'line',source:sid,paint:{'line-color':aor.col,'line-width':1.5,'line-opacity':0.7,'line-dasharray':[6,4]}});
+    MAP.gl.addLayer({id:sid+'-label',type:'symbol',source:sid,layout:{'text-field':aor.name,'text-size':11,'text-font':['Noto Sans Regular']},paint:{'text-color':aor.col,'text-opacity':0.7,'text-halo-color':'#000','text-halo-width':1}});
+  });
+}
+
+function removeAorOverlay(){
+  AOR_BOUNDS.forEach((aor,i)=>{
+    const sid='aor-'+i;
+    ['fill','line','label'].forEach(s=>{if(MAP.gl.getLayer(sid+'-'+s))MAP.gl.removeLayer(sid+'-'+s);});
+    if(MAP.gl.getSource(sid))MAP.gl.removeSource(sid);
   });
 }
 
@@ -894,8 +868,8 @@ function toggleAorOverlay(){
   if(!MAP.ready)return;
   MAP.aorOn=!MAP.aorOn;
   document.getElementById('btn-aor').classList.toggle('on',MAP.aorOn);
-  if(MAP.aorOn){drawAorOverlay();}
-  else{MAP.g.select('#g-aor').selectAll('*').remove();}
+  if(MAP.aorOn)drawAorOverlay();
+  else removeAorOverlay();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1817,17 +1791,7 @@ document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODE
 window.addEventListener('load',function(){setTimeout(renderOrg,100);initSearch();initCustomChartSearch();initEvents();});
 window.addEventListener('resize',function(){
   if(document.getElementById('p-org').classList.contains('on'))renderOrg();
-  if(document.getElementById('p-map').classList.contains('on')&&MAP.ready){
-    const wrap=document.getElementById('map-wrap');
-    const W=wrap.clientWidth||800,H=wrap.clientHeight||500;
-    MAP.proj.translate([W/2,H/2]).scale(W/5.5);
-    MAP.path.projection(MAP.proj);
-    d3.select('#d3-map').attr('width',W).attr('height',H);
-    MAP.g.selectAll('.country').attr('d',MAP.path);
-    MAP.g.selectAll('.us-state').attr('d',MAP.path);
-    MAP.g.selectAll('.graticule').attr('d',MAP.path);
-    renderMapLayer();
-  }
+  if(MAP.gl)MAP.gl.resize();
 });
 
 // ═══════════════════════════════════════════════════════

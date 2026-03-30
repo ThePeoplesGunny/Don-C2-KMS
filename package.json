@@ -27,5 +27,8 @@
   "homepage": "https://github.com/ThePeoplesGunny/Don-C2-KMS#readme",
   "devDependencies": {
     "@tauri-apps/cli": "^2.10.1"
+  },
+  "dependencies": {
+    "@protomaps/basemaps": "^5.7.2"
   }
 }

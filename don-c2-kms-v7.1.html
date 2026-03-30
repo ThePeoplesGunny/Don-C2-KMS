@@ -6,10 +6,10 @@
 <title>DoN C2 KMS v7.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230a0e18'/><circle cx='16' cy='16' r='11' fill='none' stroke='%23c9a84c' stroke-width='1.5'/><text x='16' y='21' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='14' fill='%23c9a84c'>C2</text></svg>"/>
 <script src="lib/d3.v7.min.js"></script>
-<script src="lib/topojson-client.min.js"></script>
+<script src="lib/pmtiles.js"></script>
+<link rel="stylesheet" href="lib/maplibre-gl.css"/>
+<script src="lib/maplibre-gl.js"></script>
 <script src="data/kms-data.js"></script>
-<script src="data/world-10m.js"></script>
-<script src="data/us-states-10m.js"></script>
 <script>
 // Startup check — detect if opened from inside a zip or broken path
 if(typeof KMS_DATA==='undefined'){
@@ -192,7 +192,7 @@ if(typeof KMS_DATA==='undefined'){
       <span id="map-count" style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t2);margin-left:4px"></span>
     </div>
     <div id="map-wrap">
-      <svg id="d3-map"></svg>
+      <div id="maplibre-map"></div>
       <div class="map-tooltip" id="map-tooltip"></div>
       <div class="map-panel" id="map-panel">
         <div class="map-panel-hdr"><span id="mp-title">NODE</span><button data-action="close-map-panel">✕</button></div>
