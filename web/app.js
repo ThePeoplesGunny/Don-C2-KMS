@@ -697,6 +697,11 @@ function initMap(){
 
   // Load style and create map
   fetch('data/dark-style.json').then(r=>r.json()).then(style=>{
+    // Resolve PMTiles and sprite URLs to absolute for Tauri compatibility
+    const baseUrl=window.location.href.replace(/\/[^/]*$/,'/');
+    style.sources.protomaps.url='pmtiles://'+baseUrl+'data/planet-z6.pmtiles';
+    style.sprite=baseUrl+'sprites/v4/dark';
+
     MAP.gl=new maplibregl.Map({
       container:'maplibre-map',
       style:style,
