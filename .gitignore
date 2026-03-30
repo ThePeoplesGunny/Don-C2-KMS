@@ -19,3 +19,9 @@ node_modules/
 
 # Logs
 *.log
+
+# Rust / Tauri
+src-tauri/target/
+
+# Package lock
+package-lock.json
