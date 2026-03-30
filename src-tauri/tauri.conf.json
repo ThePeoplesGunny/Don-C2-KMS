@@ -4,7 +4,7 @@
   "version": "7.1.0",
   "identifier": "mil.navy.don-c2-kms",
   "build": {
-    "frontendDist": "../",
+    "frontendDist": "../web",
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
   },

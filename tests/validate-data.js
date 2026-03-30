@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load kms-data.js by evaluating it (it declares a const KMS_DATA)
-const dataPath = path.resolve(__dirname, '..', 'data', 'kms-data.js');
+const dataPath = path.resolve(__dirname, '..', 'web', 'data', 'kms-data.js');
 const src = fs.readFileSync(dataPath, 'utf-8');
 const fn = new Function(src + '\nreturn KMS_DATA;');
 const KMS_DATA = fn();
