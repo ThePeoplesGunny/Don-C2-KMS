@@ -705,38 +705,26 @@ function initMap(){
   });
   MAP.svg.call(MAP.zoom);
 
-  // Load world TopoJSON (local file)
-  d3.json('data/world-110m.json').then(topo=>{
-    MAP.topo=topo;
-    const countries=topojson.feature(topo,topo.objects.countries);
+  // World TopoJSON loaded via script tag (WORLD_TOPO global)
+  MAP.topo=WORLD_TOPO;
+  const countries=topojson.feature(WORLD_TOPO,WORLD_TOPO.objects.countries);
 
-    // Graticule (lat/lon grid)
-    const graticule=d3.geoGraticule().step([30,20]);
-    MAP.g.append('path').datum(graticule()).attr('class','graticule').attr('d',MAP.path);
+  // Graticule (lat/lon grid)
+  const graticule=d3.geoGraticule().step([30,20]);
+  MAP.g.append('path').datum(graticule()).attr('class','graticule').attr('d',MAP.path);
 
-    // Country boundaries
-    MAP.g.selectAll('.country').data(countries.features).enter()
-      .append('path').attr('class','country').attr('d',MAP.path);
+  // Country boundaries
+  MAP.g.selectAll('.country').data(countries.features).enter()
+    .append('path').attr('class','country').attr('d',MAP.path);
 
-    // Layer groups for overlays, lines, nodes
-    MAP.g.append('g').attr('id','g-aor');
-    MAP.g.append('g').attr('id','g-auth-lines');
-    MAP.g.append('g').attr('id','g-nodes');
+  // Layer groups for overlays, lines, nodes
+  MAP.g.append('g').attr('id','g-aor');
+  MAP.g.append('g').attr('id','g-auth-lines');
+  MAP.g.append('g').attr('id','g-nodes');
 
-    MAP.ready=true;
-    renderMapLayer();
-    document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
-  }).catch(()=>{
-    // Fallback if JSON fails — draw graticule only
-    const graticule=d3.geoGraticule().step([30,20]);
-    MAP.g.append('path').datum(graticule()).attr('class','graticule').attr('d',MAP.path);
-    MAP.g.append('g').attr('id','g-aor');
-    MAP.g.append('g').attr('id','g-auth-lines');
-    MAP.g.append('g').attr('id','g-nodes');
-    MAP.ready=true;
-    renderMapLayer();
-    document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
-  });
+  MAP.ready=true;
+  renderMapLayer();
+  document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
 }
 
 function renderMapLayer(){
