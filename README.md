@@ -1,45 +1,61 @@
-# DoN C2 KMS
+# DoN C2 KMS v1.0
 
 **Department of the Navy — Command & Control Knowledge Management System**
 
 > **NOTIONAL — FOR TRAINING AND DEMONSTRATION PURPOSES ONLY**
 
-An interactive, offline-capable application for visualizing the Department of the Navy's command and control structure, authority relationships, and organizational hierarchy from National Command Authority through all echelons.
+A desktop application for visualizing the Department of the Navy's command and control structure, authority relationships, and organizational hierarchy from National Command Authority through all echelons.
 
 ## Quick Start
 
-1. **Extract** the project folder (do not open directly from a `.zip`)
-2. Open **`don-c2-kms-v7.1.html`** in any modern browser
-3. No server, build tools, or internet connection required
+### Run the application
+Double-click **`app.exe`** — no installer or dependencies required.
 
-### Required Folder Structure
+### Development
+```bash
+npm install
+npm run dev       # Launch in dev mode
+npm run build     # Build production executable
+npm test          # Run data integrity tests
+```
+
+Requires [Node.js](https://nodejs.org/) and [Rust](https://rustup.rs/) for development builds.
+
+## Project Structure
 
 ```
 don-c2-kms/
-  don-c2-kms-v7.1.html   <- open this
-  data/kms-data.js
-  lib/
-  fonts/
+  web/                  <- Frontend (HTML/CSS/JS)
+    index.html          <- App entry point
+    app.css             <- Styles
+    app.js              <- Application logic
+    data/
+      kms-data.js       <- Organizational data
+      planet-z6.pmtiles <- Offline map tiles (zoom 0-6)
+      dark-style.json   <- Map style
+    lib/                <- D3, MapLibre GL, PMTiles
+    fonts/              <- Bundled WOFF2 fonts
+    sprites/            <- Map sprite assets
+  src-tauri/            <- Tauri desktop shell (Rust)
+  tests/                <- Data integrity tests
 ```
-
-All files must remain in the same directory structure for the application to load correctly.
 
 ## Features
 
-- **Organizational Charts** — 11 preset views (Strategic, OSD, DoN, Navy Admin, USMC Admin, Geographic COCOMs, Functional COCOMs, DACO/Cyber, Acquisition, Technical Authority, MALS Detail) plus a custom chart builder
-- **Authority Visualization** — 7 authority line types: COCOM, ADCON, OPCON, TACON, DACO/Cyber, Technical Authority, and LCSP Return
-- **Geographic Map** — 100+ geolocated nodes with Area of Responsibility overlays (fully offline via D3 geo + TopoJSON)
+- **Organizational Charts** — 11 preset views plus a custom chart builder
+- **Authority Visualization** — 7 authority line types: COCOM, ADCON, OPCON, TACON, DACO/Cyber, Technical Authority, LCSP Return
+- **Geographic Map** — MapLibre GL + PMTiles dark vector basemap, fully offline, with AOR overlays and node markers
 - **Directives Library** — 20+ sourced OPNAVINSTs and statutes with full reference linking
 - **Timeline** — Chronological view of command structure changes and milestones
 - **Data Registry** — Audit table of all registered documents with validation
 - **Custom Charts** — Build ad-hoc org views by selecting nodes
 - **Document Management** — Add, edit, and delete user directives (persisted in localStorage)
 - **Export** — PNG chart export, data file export
-- **Offline Operation** — Fully functional without internet
+- **Fully Offline** — No internet connection required
 
 ## Data
 
-All organizational data lives in `data/kms-data.js` (v7.1):
+All organizational data lives in `web/data/kms-data.js`:
 
 - **140+** organizational nodes from POTUS through squadron level
 - **300+** authority relationship entries
@@ -58,22 +74,20 @@ Data is sourced from:
 
 | Component | Technology |
 |-----------|-----------|
-| App Shell | Single-file HTML5 |
-| Visualization | D3.js v7 |
-| Mapping | D3 geo + TopoJSON (offline) |
-| Styling | Inline CSS (dark theme) |
+| Desktop Shell | Tauri v2 (Rust + WebView) |
+| Org Charts | D3.js v7 |
+| Map | MapLibre GL JS + PMTiles (Protomaps dark) |
+| Styling | CSS (dark theme) |
 | Persistence | localStorage |
 | Fonts | IBM Plex Sans, Rajdhani, Space Mono (bundled WOFF2) |
-
-No frameworks, no build step, no server — vanilla HTML/CSS/JS designed for maximum portability.
-
-## Browser Support
-
-Any modern browser with ES6 and SVG support (Chrome, Edge, Firefox, Safari). localStorage must be available for user document persistence.
 
 ## Classification
 
 This system is **UNCLASSIFIED** and marked **NOTIONAL**. All organizational relationships are for training and demonstration purposes only. Do not use as an authoritative source for operational command relationships.
+
+## Legacy
+
+The `web/` directory contains the original v7.1 single-file web application preserved for reference. The v1.0 release marks the transition to a Tauri desktop application.
 
 ## License
 

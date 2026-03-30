@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "DoN C2 KMS",
-  "version": "7.1.0",
+  "version": "1.0.0",
   "identifier": "mil.navy.don-c2-kms",
   "build": {
     "frontendDist": "../web",
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "DoN C2 KMS v7.1",
+        "title": "DoN C2 KMS v1.0",
         "width": 1440,
         "height": 900,
         "minWidth": 1024,
