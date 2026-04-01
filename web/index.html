@@ -6,9 +6,6 @@
 <title>DoN C2 KMS v1.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230a0e18'/><circle cx='16' cy='16' r='11' fill='none' stroke='%23c9a84c' stroke-width='1.5'/><text x='16' y='21' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='14' fill='%23c9a84c'>C2</text></svg>"/>
 <script src="lib/d3.v7.min.js"></script>
-<script src="lib/pmtiles.js"></script>
-<link rel="stylesheet" href="lib/maplibre-gl.css"/>
-<script src="lib/maplibre-gl.js"></script>
 <script src="data/kms-data.js"></script>
 <script>
 // Startup check — detect if opened from inside a zip or broken path
@@ -45,9 +42,7 @@ if(typeof KMS_DATA==='undefined'){
   <div class="tab on" data-action="show-panel" data-arg="org">⬡ Org Chart <span class="tbadge" id="tb-org"></span></div>
   <div class="tab" data-action="show-panel" data-arg="orders">⊟ Directives <span class="tbadge" id="tb-orders"></span></div>
   <div class="tab" data-action="show-panel" data-arg="timeline">◷ Timeline <span class="tbadge" id="tb-tl"></span></div>
-  <div class="tab" data-action="show-panel" data-arg="map">◉ Geo Map <span class="tbadge" id="tb-map"></span></div>
   <div class="tab" data-action="show-panel" data-arg="registry">⊞ Registry <span class="tbadge" id="tb-reg"></span></div>
-  <div class="tab" data-action="show-panel" data-arg="relnotes">📋 Release Notes <span class="tbadge" style="background:rgba(170,255,0,.15);color:#aaff00;border-color:rgba(170,255,0,.3)">v7.0</span></div>
   <div class="tab" data-action="show-panel" data-arg="accuracy">⊘ Data Accuracy <span class="tbadge" id="tb-acc">0</span></div>
 </nav>
 <div class="content">
@@ -65,30 +60,38 @@ if(typeof KMS_DATA==='undefined'){
           <option value="navair_auth">NAVAIR Authority — Acquisition | Industrial | TYCOM</option>
           <option value="usmc">Marine Corps — CMC Chain</option>
           <option value="acq">Acquisition — ASN(RD&amp;A) Chain</option>
-          <option value="ta_view">Technical Authority — TA Flow to Fleet</option>
+          <option value="ta_navair">TA — NAVAIR Aviation Weapon Systems</option>
+          <option value="ta_navsea">TA — NAVSEA Ship/Sub Weapon Systems</option>
+          <option value="ta_navwar">TA — NAVWAR C4I/Cyber Systems</option>
           <option value="mals">MALS — Authority Convergence</option>
           <option value="cyber">DACO — Cyber Command Chain</option>
           <option value="custom" style="color:#c9a84c;font-weight:bold">⊞ Custom Chart — Build Your Own</option>
         </select>
         <label>Auth Filter:</label>
-        <select id="oc-auth" data-change="render-org">
+        <select id="oc-auth" data-change="filter-auth">
           <option value="all">All Lines</option>
+          <option value="nca">NCA (Art II)</option>
+          <option value="dac">DAC (10 USC §113)</option>
           <option value="cocom">COCOM</option>
           <option value="adcon">ADCON</option>
           <option value="opcon">OPCON</option>
-          <option value="tacon">TACON</option>
-          <option value="cyber">DACO/Cyber</option>
+          <option value="tacon">TACON (JP 1, operational)</option>
+          <option value="cyber">DACO (DoDI 8530.01)</option>
+          <option value="aa">Acq Authority (§8016)</option>
           <option value="ta">Technical Authority</option>
           <option value="lcsp">LCSP Data Return</option>
           <option value="align">Host/Support Align</option>
         </select>
         <button id="btn-clear" style="display:none" data-action="clear-filter">✕ Clear</button>
         <div class="legend">
+          <div class="li"><div class="ls" style="background:#e6c619"></div>NCA</div>
+          <div class="li"><div class="ls" style="background:#b07cd8"></div>DAC</div>
           <div class="li"><div class="ls" style="background:#c9a84c"></div>COCOM</div>
           <div class="li"><div class="ls" style="background:#3a88ff;opacity:.7"></div>ADCON</div>
           <div class="li"><div class="ls" style="background:#ff7733;opacity:.7"></div>OPCON</div>
           <div class="li"><div class="ls" style="background:#ff3355;opacity:.6"></div>TACON</div>
           <div class="li"><div class="ls" style="background:#00cccc"></div>DACO</div>
+          <div class="li"><div class="ls" style="background:#e05599"></div>Acq Auth</div>
           <div class="li"><div class="ls" style="background:#dd44bb"></div>Tech Auth</div><div class="li"><div class="ls" style="background:#6a9900;opacity:.8"></div>LCSP Return↑</div>
           <div class="li" style="margin-left:5px"><div class="lsq" style="background:#1a3f7a;border-color:#3a6faa"></div>USN</div>
           <div class="li"><div class="lsq" style="background:#7a1010;border-color:#aa2020"></div>USMC</div>
@@ -114,9 +117,13 @@ if(typeof KMS_DATA==='undefined'){
           <div class="cc-add-results" id="cc-add-results"></div>
         </div>
         <div class="cc-toggles">
+          <span class="cc-toggle" data-auth="nca" style="color:#e6c619;border-color:#e6c619" data-action="toggle-auth">NCA</span>
+          <span class="cc-toggle" data-auth="dac" style="color:#b07cd8;border-color:#b07cd8" data-action="toggle-auth">DAC</span>
           <span class="cc-toggle on" data-auth="adcon" style="color:#3a88ff;border-color:#3a88ff" data-action="toggle-auth">ADCON</span>
           <span class="cc-toggle" data-auth="opcon" style="color:#ff7733;border-color:#ff7733" data-action="toggle-auth">OPCON</span>
+          <span class="cc-toggle" data-auth="tacon" style="color:#ff3355;border-color:#ff3355" data-action="toggle-auth">TACON</span>
           <span class="cc-toggle" data-auth="cocom" style="color:#c9a84c;border-color:#c9a84c" data-action="toggle-auth">COCOM</span>
+          <span class="cc-toggle" data-auth="aa" style="color:#e05599;border-color:#e05599" data-action="toggle-auth">AA</span>
           <span class="cc-toggle" data-auth="ta" style="color:#dd44bb;border-color:#dd44bb" data-action="toggle-auth">TA</span>
           <span class="cc-toggle" data-auth="cyber" style="color:#00cccc;border-color:#00cccc" data-action="toggle-auth">DACO</span>
           <span class="cc-toggle" data-auth="lcsp" style="color:#6a9900;border-color:#6a9900" data-action="toggle-auth">LCSP</span>
@@ -157,216 +164,12 @@ if(typeof KMS_DATA==='undefined'){
     <div class="tl-wrap"><div class="tl-cnt" id="tl-cnt"></div></div>
   </div>
   <!-- MAP -->
-  <div class="panel" id="p-map">
-    <div class="map-bar">
-      <label>Service:</label>
-      <select id="map-svc" data-change="render-map">
-        <option value="all">All Services</option>
-        <option value="navy">USN</option><option value="usmc">USMC</option>
-        <option value="army">Army</option><option value="airforce">AF/SF</option>
-        <option value="joint">Joint/COCOM</option><option value="cyber">Cyber</option>
-        <option value="acq">Acquisition</option>
-      </select>
-      <label>Auth Lines:</label>
-      <select id="map-auth" data-change="render-map">
-        <option value="none">No Lines</option>
-        <option value="adcon">ADCON</option>
-        <option value="opcon">OPCON</option>
-        <option value="cocom">COCOM</option>
-        <option value="cyber">DACO/Cyber</option>
-        <option value="ta">Technical Auth</option>
-      </select>
-      <label>AOR:</label>
-      <select id="map-aor" data-change="render-map">
-        <option value="all">All AORs</option>
-        <option value="NORTHCOM">NORTHCOM</option>
-        <option value="SOUTHCOM">SOUTHCOM</option>
-        <option value="EUCOM">EUCOM</option>
-        <option value="CENTCOM">CENTCOM</option>
-        <option value="AFRICOM">AFRICOM</option>
-        <option value="INDOPACOM">INDOPACOM</option>
-        <option value="GLOBAL">Global/No AOR</option>
-      </select>
-      <button data-action="toggle-aor" id="btn-aor">AOR Overlay</button>
-      <button data-action="reset-map">Reset View</button>
-      <span id="map-count" style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t2);margin-left:4px"></span>
-    </div>
-    <div id="map-wrap">
-      <div id="maplibre-map"></div>
-      <div class="map-tooltip" id="map-tooltip"></div>
-      <div class="map-panel" id="map-panel">
-        <div class="map-panel-hdr"><span id="mp-title">NODE</span><button data-action="close-map-panel">✕</button></div>
-        <div class="map-panel-body" id="mp-body"></div>
-      </div>
-    </div>
-  </div>
   <!-- REGISTRY -->
   <div class="panel" id="p-registry">
     <div class="reg-bar"><h2>⊞ File Registry</h2><button data-action="open-modal">+ Register Document</button></div>
     <div class="reg-wrap" id="reg-wrap"></div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- RELEASE NOTES PANEL -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="panel" id="p-relnotes" style="flex-direction:column;overflow:hidden">
-    <div style="background:var(--bg2);border-bottom:1px solid var(--b2);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0">
-      <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--t1)">Release Notes &amp; Build Specification</span>
-      <span style="font-family:'Space Mono',monospace;font-size:8px;background:rgba(170,255,0,.12);color:#aaff00;border:1px solid rgba(170,255,0,.25);padding:2px 8px;border-radius:2px">v7.0 DELIVERED</span>
-      <span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--t3);margin-left:auto">11 MAR 2026</span>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding:24px 32px;max-width:1100px;margin:0 auto;width:100%">
-
-      <!-- clf -->
-      <div style="background:#002200;text-align:center;padding:4px;font-family:'Space Mono',monospace;font-size:7px;color:#44ee44;letter-spacing:3px;border-radius:2px;margin-bottom:20px">UNCLASSIFIED // NOTIONAL — VISUAL SPECIFICATION PROTOTYPE // NOT A REAL MILITARY SYSTEM</div>
-
-      <!-- ── SESSION MILESTONE HISTORY ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SESSION HISTORY</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">Design &amp; Build Milestones</h2>
-      <div style="position:relative;padding-left:28px;margin-bottom:32px">
-        <div style="position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--gold),rgba(201,168,76,.1))"></div>
-        <div id="rn-milestones"></div>
-      </div>
-
-      <!-- ── LOCKED SPEC ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTION 01</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">Locked Visual Specification</h2>
-      <p style="color:var(--t2);font-size:12px;margin-bottom:14px">The following design parameters are locked from the interactive selection session. All v5.1 rendering implements these exactly.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:20px">
-        <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:12px 14px">
-          <div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Multi-Relationship Lines</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--gold)">Parallel Offset Curves</div>
-          <div style="font-size:10.5px;color:var(--t2);margin-top:5px">Each authority type draws its own bezier curve laterally offset from the shared path. Bundle width communicates relationship complexity.</div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:12px 14px">
-          <div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">TA Line Color</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#aaff00">Lime #AAFF00</div>
-          <div style="font-size:10.5px;color:var(--t2);margin-top:5px">Maximum contrast on dark background. Forces the question "what is that?" from personnel unfamiliar with Technical Authority.</div>
-          <div style="width:100%;height:4px;background:#aaff00;border-radius:2px;margin-top:8px"></div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:12px 14px">
-          <div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">TA Terminus at Receiving Unit</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--gold)">Diamond ◇</div>
-          <div style="font-size:10.5px;color:var(--t2);margin-top:5px">Signals technical obligation, not command. Distinguishes TA from ADCON/OPCON in kind, not just color.</div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--b2);border-radius:3px;padding:12px 14px">
-          <div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Node Color Style</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--gold)">Style C</div>
-          <div style="font-size:10.5px;color:var(--t2);margin-top:5px">Near-black fill, bold 2.5px stroke, high-saturation colors. Navy: royal blue stroke. USMC: scarlet stroke.</div>
-        </div>
-      </div>
-
-      <!-- line palette -->
-      <h3 style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--stat-acc,#7aaaee);margin:16px 0 8px;border-bottom:1px solid var(--b1);padding-bottom:4px">Complete Authority Line Palette — v5.1</h3>
-      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:24px">
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px solid #f4f4f4"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#f4f4f4">COCOM #F4F4F4</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px dashed #c9a84c"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#c9a84c">ADCON #C9A84C</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px dotted #2e78ff"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#2e78ff">OPCON #2E78FF</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px dotted #6699cc"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#6699cc">TACON #6699CC</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px dashed #00e0ff"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#00e0ff">DACO/Cyber #00E0FF</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:2px dashed #aaff00"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#aaff00">TA (↓ down) ◇ #AAFF00</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:1.5px dashed #6a9900"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#6a9900">LCSP Return (↑ up) ○ #6A9900 <span style="color:#88dd88">NEW</span></span></div>
-        <div style="display:flex;align-items:center;gap:7px"><div style="width:36px;border-top:1px dashed #7a9a30"></div><span style="font-family:'Space Mono',monospace;font-size:8px;color:#7a9a30">GADMIN #7A9A30</span></div>
-      </div>
-
-      <!-- ── STATUTORY FRAMEWORK ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTION 02</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">Title 10 Statutory Authority Framework</h2>
-      <p style="color:var(--t2);font-size:12px;margin-bottom:12px">Per directive: naming, rendering, and data attribution for all new elements derives from <strong style="color:var(--t1)">Title 10 statutory authority</strong>, not convention. Every new tool element is mapped to its primary statutory basis below.</p>
-      <div style="overflow-x:auto;margin-bottom:24px">
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Visual Element</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">10 USC Section</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Authority Name</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Practical Meaning</th>
-        </tr></thead>
-        <tbody id="rn-stat-tbody"></tbody>
-      </table>
-      </div>
-
-      <!-- ── LCSP RETURN LINE ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTION 03</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">New Line Type — LCSP Configuration Data Return Path</h2>
-      <p style="color:var(--t2);font-size:12px;margin-bottom:10px">The TA line (lime ↓, diamond ◇) represents <strong style="color:var(--t1)">authority from PM to operator</strong>. A second relationship must be represented: the <strong style="color:#aaff00">mandatory return</strong> of maintenance data, configuration changes, and deficiency reports from operating/maintenance activities back to the PM. 10 USC § 4324 requires PM to maintain configuration currency throughout the system life cycle — this is not optional.</p>
-      <div style="background:var(--bg3);border:1px solid var(--b2);border-left:3px solid var(--navy,#1e3f8a);border-radius:3px;padding:12px 16px;margin-bottom:12px">
-        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--t2);margin-bottom:8px">STATUTORY BASIS</div>
-        <ul style="margin:0 0 0 16px;padding:0">
-          <li style="color:var(--t2);font-size:11.5px;margin-bottom:5px"><strong style="color:var(--t1)">10 USC § 4324(b)(1)(G):</strong> Requires technical data and IP management plan for product support — PM must have the data to execute this.</li>
-          <li style="color:var(--t2);font-size:11.5px;margin-bottom:5px"><strong style="color:var(--t1)">10 USC § 4324(b)(1)(H–I):</strong> Sustainment metrics, materiel availability, reliability tracking — all require continuous data return from the operating force.</li>
-          <li style="color:var(--t2);font-size:11.5px;margin-bottom:5px"><strong style="color:var(--t1)">COMNAVAIRFORINST 4790.2E, Ch. 5:</strong> MDS — maintenance actions, man-hours, and discrepancies at all levels captured and reported upward.</li>
-          <li style="color:var(--t2);font-size:11.5px"><strong style="color:var(--t1)">COMNAVAIRFORINST 4790.2E, Ch. 8:</strong> Aircraft logbooks and records — configuration data held by operating activities reported to PM/SYSCOM. This is the data NAVAIR holds as platform designer.</li>
-        </ul>
-      </div>
-      <div style="overflow-x:auto;margin-bottom:24px">
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left;width:160px">Attribute</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">LCSP Return Path Specification</th>
-        </tr></thead>
-        <tbody id="rn-lcsp-tbody"></tbody>
-      </table>
-      </div>
-
-      <!-- ── MAINTENANCE LEVELS ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTION 04</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">Three Maintenance Levels as Navigable Architecture</h2>
-      <p style="color:var(--t2);font-size:12px;margin-bottom:12px">COMNAVAIRFORINST 4790.2E defines three levels. These are <strong style="color:var(--t1)">capability designations, not organizational echelons</strong> — they may be co-located (MALS performs both O and I; depot FRCs perform both I and D). Each maintenance-capable node will display a level badge.</p>
-      <div style="overflow-x:auto;margin-bottom:14px">
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left;width:60px">Level</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left;width:130px">Designation</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Definition</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Tool Nodes</th>
-        </tr></thead>
-        <tbody>
-          <tr><td style="padding:7px 10px;border:1px solid var(--b1);font-family:'Rajdhani',sans-serif;font-weight:700;color:#88dd88;font-size:14px">O</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t1);font-weight:500">Organizational</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">On-equipment maintenance, servicing, inspections, TD incorporation, flight-line operations. Aircraft remains at the unit.</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">All squadrons (VFA, VMFA, VMM, HMH, HSM, HC, VP); CVN AIMD O-level dept</td></tr>
-          <tr style="background:rgba(255,255,255,.02)"><td style="padding:7px 10px;border:1px solid var(--b1);font-family:'Rajdhani',sans-serif;font-weight:700;color:#c9a84c;font-size:14px">I</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t1);font-weight:500">Intermediate</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">Off-aircraft component repair, test bench work, limited overhaul. Supports O-level by repairing removed components.</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">MALS (O/I), FRC Mid-Atlantic, FRC West, FRC Northwest, FRC WestPac, CVN AIMD I-level</td></tr>
-          <tr><td style="padding:7px 10px;border:1px solid var(--b1);font-family:'Rajdhani',sans-serif;font-weight:700;color:#ff9500;font-size:14px">D</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t1);font-weight:500">Depot</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">Major overhaul, structural repair, engine overhaul, rebuilding of assemblies. Requires industrial facilities.</td><td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2)">FRCE (Cherry Point), FRCSE (Jacksonville), FRCSW (North Island), FRCWP (Atsugi) — all I/D</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <!-- ── COMFRC ENTERPRISE ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTION 05</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">COMFRC Enterprise Node Inventory</h2>
-      <p style="color:var(--t2);font-size:12px;margin-bottom:10px"><strong style="color:var(--t1)">Source:</strong> NAVAIR.mil/COMFRC (official), COMFRC official pages. <em style="color:var(--t3)">COMFRC HQ: 47060 McLeod Rd, Bldg 447, Patuxent River MD. Authority: CNO → NAVAIRSYSCOM → COMFRC per 10 USC §§ 8013, 8033.</em></p>
-      <div style="overflow-x:auto;margin-bottom:14px">
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Code</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Full Name</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Location</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Lvl</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Platforms &amp; Notes</th>
-        </tr></thead>
-        <tbody id="rn-frc-tbody"></tbody>
-      </table>
-      </div>
-
-      <!-- ── NEW VIEWS ── -->
-      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px">SECTIONS 06–09</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(--t1);border-bottom:2px solid var(--b2);padding-bottom:8px;margin-bottom:14px">New Views, Tabs, Documents &amp; Preserved Elements</h2>
-      <div style="overflow-x:auto;margin-bottom:20px">
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left;width:220px">Element</th>
-          <th style="background:var(--bg3);color:var(--t2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 10px;border:1px solid var(--b2);text-align:left">Description</th>
-        </tr></thead>
-        <tbody id="rn-new-tbody"></tbody>
-      </table>
-      </div>
-
-      <!-- ── DELIVERED NOTICE ── -->
-      <div style="background:#001a00;border:2px solid #44cc44;border-radius:4px;padding:20px 24px;margin-top:10px">
-        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#44cc44;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">✓ v7.0 Delivered — 10 March 2026</div>
-        <p style="color:var(--t2);font-size:12px;margin-bottom:8px">All elements from this specification are implemented. v7.0 scope: +5 OPNAVINST reference documents ingested, +15 organizational nodes (NAWCAD, NAWCWD, NAVRMC, CNIC, NAVRESFOR, NAVSPECWAR, CHNAVPERS, NAVSAFECEN, MSC, NECC, NWDC, CNMOC, 10th Fleet), +30 AUTH entries expanded, +views updated (CNO Service Authority, NAVAIR Authority, DACO/Cyber). All v5.2 content preserved.</p>
-        <p style="color:#c9a84c;font-style:italic;font-size:11px">Scope increase from v5.2: +5 OPNAVINST source documents (5450.350B NAVAIR, 5450.340A NAVSEA, 5440.77C USFFC, 5450.352B OPNAV, 5450.345 FLTCYBERCOM). +15 new organizational nodes. +30 AUTH matrix entries. NAVSEA TA and NAVWAR TA lines drawn per OPNAVINST 5440.77C para 7b. All v5.2 content preserved.</p>
-      </div>
-
-    </div><!-- /scroll body -->
-  </div><!-- /p-relnotes -->
 
   <!-- DATA ACCURACY -->
   <div class="panel" id="p-accuracy" style="flex-direction:column;overflow:hidden">
@@ -374,7 +177,6 @@ if(typeof KMS_DATA==='undefined'){
       <h2>Data Accuracy</h2>
       <div class="acc-stats" id="acc-stats"></div>
       <div class="acc-actions">
-        <button class="btn btn-p" data-action="open-cmd-editor">+ Add Command</button>
         <button class="btn btn-p" data-action="export-data">⤓ Export Data</button>
         <button class="btn btn-s" data-action="run-validation">↻ Re-Validate</button>
       </div>
@@ -414,66 +216,6 @@ if(typeof KMS_DATA==='undefined'){
     <div class="m-foot">
       <button class="btn btn-s" data-action="close-modal">Cancel</button>
       <button class="btn btn-p" data-action="save-doc">Save Document</button>
-    </div>
-  </div>
-</div>
-<!-- MODAL — Command Editor -->
-<div class="overlay" id="ce-overlay">
-  <div class="modal modal-wide">
-    <div class="m-hdr"><h3 id="ce-title">Add Command</h3><button class="m-close" data-action="close-cmd-editor">✕</button></div>
-    <div class="m-body">
-      <div class="ce-section">
-        <div class="ce-section-t">Identity (Required)</div>
-        <div class="fg">
-          <div class="fr"><label>Command ID <span style="color:#ee5555">*</span></label><input id="ce-id" placeholder="e.g. navair (lowercase, no spaces)"><div class="hint">Unique key — cannot be changed after creation.</div></div>
-          <div class="fr"><label>Display Label <span style="color:#ee5555">*</span></label><input id="ce-lbl" placeholder="e.g. NAVAIR"></div>
-          <div class="fr fr-full"><label>Full Name <span style="color:#ee5555">*</span></label><input id="ce-sub" placeholder="e.g. Naval Air Systems Command"></div>
-          <div class="fr"><label>Service <span style="color:#ee5555">*</span></label>
-            <select id="ce-svc"><option value="navy">USN</option><option value="usmc">USMC</option><option value="army">Army</option><option value="airforce">Air Force</option><option value="joint">Joint</option><option value="civ">OSD / Civilian</option><option value="cyber">Cyber</option><option value="acq">Acquisition</option></select>
-          </div>
-          <div class="fr"><label>Billet</label><input id="ce-billet" placeholder="e.g. VADM (3-Star)"></div>
-        </div>
-      </div>
-      <div class="ce-section">
-        <div class="ce-section-t">Identification Codes (Optional)</div>
-        <div class="fg">
-          <div class="fr"><label>UIC</label><input id="ce-uic" placeholder="e.g. N00019"></div>
-          <div class="fr"><label>PUC</label><input id="ce-puc" placeholder="e.g. N00000"></div>
-          <div class="fr"><label>Logo Path</label><input id="ce-logo" placeholder="e.g. img/navair.png"></div>
-          <div class="fr"><label>Maintenance Level</label>
-            <select id="ce-maint"><option value="">(none)</option><option value="O">O</option><option value="I">I</option><option value="D">D</option><option value="O/I">O/I</option><option value="I/D">I/D</option></select>
-          </div>
-        </div>
-      </div>
-      <div class="ce-section">
-        <div class="ce-section-t">Location (Optional)</div>
-        <div class="fg">
-          <div class="fr"><label>Installation</label><input id="ce-install" placeholder="e.g. NAS Patuxent River"></div>
-          <div class="fr"><label>City</label><input id="ce-city" placeholder="e.g. Patuxent River, MD"></div>
-          <div class="fr"><label>Latitude</label><input id="ce-lat" type="number" step="0.0001" placeholder="38.2842"></div>
-          <div class="fr"><label>Longitude</label><input id="ce-lon" type="number" step="0.0001" placeholder="-76.4118"></div>
-          <div class="fr"><label>AOR</label>
-            <select id="ce-aor"><option value="GLOBAL">GLOBAL</option><option value="INDOPACOM">INDOPACOM</option><option value="NORTHCOM">NORTHCOM</option><option value="EUCOM">EUCOM</option><option value="CENTCOM">CENTCOM</option><option value="SOUTHCOM">SOUTHCOM</option><option value="AFRICOM">AFRICOM</option></select>
-          </div>
-          <div class="fr"><label>Dual-Hat</label><input id="ce-dh" placeholder="e.g. 10th Fleet"></div>
-        </div>
-      </div>
-      <div class="ce-section">
-        <div class="ce-section-t">Authority Matrix</div>
-        <div class="fg">
-          <div class="fr fr-full"><label>OPCON Chain (comma-separated node IDs)</label><input id="ce-opcon" placeholder="e.g. potus,secdef,indopacom"></div>
-          <div class="fr fr-full"><label>ADCON Chain (comma-separated node IDs)</label><input id="ce-adcon" placeholder="e.g. cno,navair"></div>
-          <div class="fr fr-full"><label>Technical Authority Chain</label><input id="ce-ta" placeholder="e.g. secnav,asn_rda,navair"></div>
-          <div class="fr fr-full"><label>DACO / Cyber Chain</label><input id="ce-daco" placeholder="e.g. cybercom,fltcybercom"></div>
-          <div class="fr fr-full"><label>LCSP Data Return Chain</label><input id="ce-lcsp" placeholder="e.g. pma265,pma299"></div>
-          <div class="fr fr-full"><label>Authority Notes</label><textarea id="ce-note" placeholder="Doctrinal explanation of authority relationships..."></textarea></div>
-        </div>
-      </div>
-    </div>
-    <div class="m-foot">
-      <button class="btn btn-s" data-action="close-cmd-editor">Cancel</button>
-      <button class="btn btn-s" data-action="delete-command" id="ce-del-btn" style="display:none;border-color:#992222;color:#dd4444">Delete</button>
-      <button class="btn btn-p" data-action="save-command">Save Command</button>
     </div>
   </div>
 </div>

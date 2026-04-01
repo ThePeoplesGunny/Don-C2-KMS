@@ -8,9 +8,6 @@
     "test": "tests"
   },
   "scripts": {
-    "tauri": "tauri",
-    "dev": "tauri dev",
-    "build": "tauri build",
     "test": "node tests/validate-data.js",
     "validate": "node tests/validate-data.js"
   },
@@ -26,10 +23,6 @@
     "url": "https://github.com/ThePeoplesGunny/Don-C2-KMS/issues"
   },
   "homepage": "https://github.com/ThePeoplesGunny/Don-C2-KMS#readme",
-  "devDependencies": {
-    "@tauri-apps/cli": "^2.10.1"
-  },
-  "dependencies": {
-    "@protomaps/basemaps": "^5.7.2"
-  }
+  "devDependencies": {},
+  "dependencies": {}
 }

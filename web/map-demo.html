@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DoN C2 KMS — Map Rendering Demo v2</title>
+<script src="lib/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0e18; color:#b8d4ee; font-family:'Segoe UI',system-ui,sans-serif; overflow:hidden; }
+.controls { position:fixed; top:0; left:0; right:0; z-index:10; background:#0d1220ee; border-bottom:1px solid #1e3458; padding:10px 20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; backdrop-filter:blur(6px); }
+.controls label { font-size:11px; color:#6a8cba; text-transform:uppercase; letter-spacing:1px; }
+.controls select, .controls button { background:#111d33; color:#b8d4ee; border:1px solid #1e3458; padding:5px 12px; border-radius:3px; font-size:12px; cursor:pointer; transition:all 0.15s; }
+.controls button:hover { border-color:#3a88ff88; }
+.controls button.active { background:#1e3458; border-color:#3a88ff; color:#fff; }
+.controls .sep { width:1px; height:24px; background:#1e3458; }
+.legend { position:fixed; bottom:20px; right:20px; background:#0d1220ee; border:1px solid #1e3458; border-radius:4px; padding:12px 16px; font-size:11px; z-index:10; backdrop-filter:blur(6px); }
+.legend div { display:flex; align-items:center; gap:8px; margin:4px 0; }
+.legend .swatch { width:24px; height:3px; border-radius:1px; }
+.status { position:fixed; bottom:20px; left:20px; font-size:10px; color:#3a5577; z-index:10; }
+svg { display:block; }
+.land { fill:#0f1a2e; stroke:#1e3458; stroke-width:0.4; }
+.state-border { fill:none; stroke:#1a2a44; stroke-width:0.3; }
+.graticule { fill:none; stroke:#0e1628; stroke-width:0.3; }
+.node-label { font-family:'Segoe UI',system-ui,sans-serif; font-size:8px; fill:#6a8cba; text-anchor:middle; pointer-events:none; }
+.node-label.hub { font-size:10px; fill:#c9a84c; font-weight:700; }
+.cluster-badge { font-family:'Segoe UI',system-ui,sans-serif; font-size:7px; fill:#0a0e18; text-anchor:middle; pointer-events:none; font-weight:700; }
+.tooltip { position:fixed; background:#111d33ee; border:1px solid #2a55a0; border-radius:3px; padding:8px 12px; font-size:11px; pointer-events:none; z-index:20; display:none; max-width:300px; backdrop-filter:blur(6px); }
+.tooltip .tt-lbl { color:#c9a84c; font-weight:700; font-size:12px; }
+.tooltip .tt-sub { color:#6a8cba; font-size:10px; }
+.tooltip .tt-loc { color:#5a7ea0; font-size:10px; margin-top:4px; }
+.tooltip .tt-list { color:#5a7ea0; font-size:9px; margin-top:4px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label>View:</label>
+  <select id="sel-view">
+    <option value="cno-fleet">CNO → Fleet Authority</option>
+    <option value="navair-frc">NAVAIR → FRC Authority</option>
+    <option value="acquisition">Acquisition Authority</option>
+    <option value="both">All Overlaid</option>
+  </select>
+  <div class="sep"></div>
+  <label>Projection:</label>
+  <button id="btn-proj-natural" class="active" onclick="setProj('natural')">Natural Earth</button>
+  <button id="btn-proj-ortho" onclick="setProj('ortho')">Globe</button>
+  <div class="sep"></div>
+  <label>Authority:</label>
+  <button id="btn-auth-adcon" class="active" onclick="toggleAuth('adcon')">ADCON</button>
+  <button id="btn-auth-opcon" onclick="toggleAuth('opcon')">OPCON</button>
+  <button id="btn-auth-ta" class="active" onclick="toggleAuth('ta')">TA</button>
+  <button id="btn-auth-lcsp" onclick="toggleAuth('lcsp')">LCSP</button>
+  <button id="btn-auth-aa" onclick="toggleAuth('aa')">AA</button>
+</div>
+
+<div class="legend">
+  <div style="color:#c9a84c;font-weight:700;margin-bottom:6px">Authority Lines</div>
+  <div><span class="swatch" style="background:#3a88ff"></span> ADCON</div>
+  <div><span class="swatch" style="background:#ff7733"></span> OPCON</div>
+  <div><span class="swatch" style="background:#dd44bb"></span> Technical Authority</div>
+  <div><span class="swatch" style="background:#6a9900"></span> LCSP Return</div>
+  <div><span class="swatch" style="background:#e05599"></span> Admin Authority (AA)</div>
+  <div style="margin-top:8px;color:#c9a84c;font-weight:700;margin-bottom:6px">Nodes</div>
+  <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0a1a32;border:1.5px solid #3a88ff"></span> Navy</div>
+  <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#140f28;border:1.5px solid #bb99ee"></span> Civilian</div>
+  <div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0a1828;border:1.5px solid #4488aa"></span> Acquisition</div>
+  <div style="margin-top:6px;font-size:9px;color:#3a5577">Scroll to zoom • Drag to pan</div>
+  <div style="font-size:9px;color:#3a5577">Zoom into clusters to expand</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<div class="status" id="status">Loading map data...</div>
+
+<svg id="map"></svg>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// NODE DATA (from kms-data.js v8.0)
+// ═══════════════════════════════════════════════════════
+const NODES = {
+  secdef:    { lbl:"SECDEF",    sub:"Secretary of Defense",               svc:"civ",  lat:38.8719, lon:-77.0563 },
+  secnav:    { lbl:"SECNAV",    sub:"Secretary of the Navy",              svc:"civ",  lat:38.8719, lon:-77.0563 },
+  cno:       { lbl:"CNO",       sub:"Chief of Naval Operations",          svc:"navy", lat:38.8719, lon:-77.0563 },
+  usffc:     { lbl:"USFFC",     sub:"Fleet Forces Command",              svc:"navy", lat:36.9456, lon:-76.3093 },
+  compacflt: { lbl:"COMPACFLT", sub:"Commander Pacific Fleet",            svc:"navy", lat:21.359,  lon:-157.9751 },
+  fl2:       { lbl:"2nd Fleet", sub:"US 2nd Fleet / JFC Norfolk",         svc:"navy", lat:36.9456, lon:-76.3093 },
+  fl3:       { lbl:"3rd Fleet", sub:"US 3rd Fleet — Point Loma",          svc:"navy", lat:32.6902, lon:-117.2345 },
+  fl7:       { lbl:"7th Fleet", sub:"US 7th Fleet — Yokosuka, Japan",     svc:"navy", lat:35.2924, lon:139.6743 },
+  naveur:    { lbl:"NAVEUR",    sub:"Naval Forces Europe-Africa — Naples", svc:"navy", lat:40.8359, lon:14.1952 },
+  navcent:   { lbl:"NAVCENT",   sub:"Naval Forces Central — Bahrain",     svc:"navy", lat:26.2172, lon:50.5856 },
+  navso:     { lbl:"NAVSO",     sub:"Naval Forces Southern — Mayport",    svc:"navy", lat:30.3894, lon:-81.4223 },
+  navair:    { lbl:"NAVAIR",    sub:"Naval Air Systems Command",          svc:"navy", lat:38.2842, lon:-76.4118 },
+  comfrc:    { lbl:"COMFRC",    sub:"Cmdr Fleet Readiness Centers",       svc:"navy", lat:38.27,   lon:-76.41 },
+  frce:      { lbl:"FRCE",      sub:"FRC East — Cherry Point, NC",        svc:"navy", lat:34.9,    lon:-76.88 },
+  frcse:     { lbl:"FRCSE",     sub:"FRC Southeast — Jacksonville, FL",   svc:"navy", lat:30.23,   lon:-81.68 },
+  frcsw:     { lbl:"FRCSW",     sub:"FRC Southwest — North Island, CA",   svc:"navy", lat:32.7,    lon:-117.2 },
+  frcma:     { lbl:"FRCMA",     sub:"FRC Mid-Atlantic — Oceana, VA",      svc:"navy", lat:36.82,   lon:-76.03 },
+  frcw:      { lbl:"FRCW",      sub:"FRC West — Lemoore, CA",             svc:"navy", lat:36.33,   lon:-119.95 },
+  frcnw:     { lbl:"FRCNW",     sub:"FRC Northwest — Whidbey Island, WA", svc:"navy", lat:48.35,   lon:-122.66 },
+  frcwp:     { lbl:"FRCWP",     sub:"FRC WestPac — Atsugi, Japan",        svc:"navy", lat:35.45,   lon:139.45 },
+  // ASN / PEOs
+  asn_rda:   { lbl:"ASN(RD&A)", sub:"Asst SECNAV Research, Dev & Acq",    svc:"civ",  lat:38.8719, lon:-77.0563 },
+  peo_a:     { lbl:"PEO(A)",    sub:"PEO Aviation",                       svc:"acq",  lat:38.2842, lon:-76.4118 },
+  peo_uw:    { lbl:"PEO(U&W)",  sub:"PEO Unmanned & Strike Weapons",      svc:"acq",  lat:35.6852, lon:-117.6836 },
+  peo_t:     { lbl:"PEO(T)",    sub:"PEO Tactical Aircraft Programs",     svc:"acq",  lat:28.5383, lon:-81.3792 },
+  peo_ships: { lbl:"PEO(Ships)",sub:"PEO Ships",                          svc:"acq",  lat:38.8729, lon:-77.0013 },
+  peo_subs:  { lbl:"PEO(Subs)", sub:"PEO Submarines",                     svc:"acq",  lat:41.354,  lon:-72.0906 },
+  peo_cvn:   { lbl:"PEO(CVN)",  sub:"PEO Aircraft Carriers",             svc:"acq",  lat:38.8729, lon:-77.0013 },
+  peo_iws:   { lbl:"PEO(IWS)",  sub:"PEO Integrated Warfare Systems",    svc:"acq",  lat:38.8729, lon:-77.0013 },
+  peo_lmw:   { lbl:"PEO(USC)",  sub:"PEO Unmanned & Small Combatants",   svc:"acq",  lat:38.8729, lon:-77.0013 },
+  peo_c4i:   { lbl:"PEO(C4I)",  sub:"PEO Command, Control, Comms, Intel",svc:"acq",  lat:32.7239, lon:-117.1644 },
+  peo_dig:   { lbl:"PEO(Digital)",sub:"PEO Digital & Enterprise Services",svc:"acq",  lat:32.7239, lon:-117.1644 },
+  // PMAs — Pax River cluster
+  pma265:    { lbl:"PMA-265",   sub:"F/A-18 E/F & EA-18G Growler",        svc:"acq",  lat:38.292,  lon:-76.42 },
+  pma299:    { lbl:"PMA-299",   sub:"H-60 Multi-Mission Helicopters",     svc:"acq",  lat:38.292,  lon:-76.42 },
+  pma261:    { lbl:"PMA-261",   sub:"CH-53E/K Heavy Lift Helicopters",    svc:"acq",  lat:38.292,  lon:-76.42 },
+  pma272:    { lbl:"PMA-272",   sub:"MV-22B / CMV-22B Osprey",            svc:"acq",  lat:38.292,  lon:-76.42 },
+  pma276:    { lbl:"PMA-276",   sub:"H-1 Huey / AH-1Z / UH-1Y",          svc:"acq",  lat:38.293,  lon:-76.418 },
+  pma281:    { lbl:"PMA-281",   sub:"Strike Planning & Execution Systems",svc:"acq",  lat:38.285,  lon:-76.415 },
+  pma262:    { lbl:"PMA-262",   sub:"Tactical Airborne Weapons Systems",  svc:"acq",  lat:35.6852, lon:-117.6836 },
+  pma263:    { lbl:"PMA-263",   sub:"Small Tactical UAS",                 svc:"acq",  lat:38.29,   lon:-76.41 },
+  pma275:    { lbl:"PMA-275",   sub:"E-2D Advanced Hawkeye / C-2A COD",   svc:"acq",  lat:38.29,   lon:-76.415 },
+  pma207:    { lbl:"PMA-207",   sub:"KC-130J / C-130T Tactical Airlift",  svc:"acq",  lat:38.285,  lon:-76.415 },
+};
+
+const SVC_COL = {
+  navy: { fill:"#0a1a32", stroke:"#2a55a0" },
+  civ:  { fill:"#140f28", stroke:"#7755cc" },
+  acq:  { fill:"#0a1828", stroke:"#4488aa" },
+};
+
+const AUTH_COL   = { adcon:"#3a88ff", opcon:"#ff7733", ta:"#dd44bb", lcsp:"#6a9900", aa:"#e05599" };
+const AUTH_DASH  = { adcon:"6,3", opcon:"3,3", ta:"9,3,2,3", lcsp:"8,4", aa:"4,2,2,2" };
+const AUTH_WIDTH = { adcon:1.8, opcon:1.8, ta:1.8, lcsp:1.1, aa:1.8 };
+
+// ═══════════════════════════════════════════════════════
+// AUTHORITY RELATIONSHIPS
+// ═══════════════════════════════════════════════════════
+const LINKS = {
+  "cno-fleet": {
+    adcon: [
+      ["cno","usffc"],["cno","compacflt"],["cno","naveur"],["cno","navcent"],["cno","navso"],
+      ["usffc","fl2"],["compacflt","fl3"],["compacflt","fl7"]
+    ],
+    opcon: [
+      ["secdef","usffc"],["secdef","compacflt"],
+      ["secdef","naveur"],["secdef","navcent"],["secdef","navso"]
+    ],
+    ta: [], lcsp: []
+  },
+  "navair-frc": {
+    adcon: [
+      ["navair","comfrc"],
+      ["comfrc","frce"],["comfrc","frcse"],["comfrc","frcsw"],["comfrc","frcma"],
+      ["comfrc","frcnw"],["comfrc","frcwp"],["frcsw","frcw"]
+    ],
+    opcon: [],
+    ta: [
+      ["navair","comfrc"],
+      ["navair","frce"],["navair","frcse"],["navair","frcsw"],["navair","frcma"],
+      ["navair","frcw"],["navair","frcnw"],["navair","frcwp"],
+      ["navair","peo_a"],["navair","peo_uw"],["navair","peo_t"]
+    ],
+    lcsp: [
+      ["frce","pma261"],["frce","pma276"],["frce","pma272"],
+      ["frcse","pma261"],["frcse","pma276"],["frcse","pma272"],
+      ["frcsw","pma261"],["frcsw","pma276"],["frcsw","pma272"],
+      ["frcwp","pma261"],["frcwp","pma272"]
+    ],
+    aa: [
+      ["asn_rda","peo_a"],["asn_rda","peo_uw"],["asn_rda","peo_t"],
+      ["peo_a","pma261"],["peo_a","pma272"],["peo_a","pma276"],["peo_a","pma299"],["peo_a","pma207"],
+      ["peo_uw","pma262"],["peo_uw","pma263"],["peo_uw","pma281"],
+      ["peo_t","pma265"],["peo_t","pma275"]
+    ]
+  },
+  "acquisition": {
+    adcon: [],
+    opcon: [],
+    ta: [
+      ["navair","peo_a"],["navair","peo_uw"],["navair","peo_t"],
+      ["navair","peo_ships"],["navair","peo_subs"],["navair","peo_cvn"],
+      ["navair","peo_iws"],["navair","peo_lmw"],["navair","peo_c4i"],["navair","peo_dig"]
+    ],
+    lcsp: [],
+    aa: [
+      ["asn_rda","peo_a"],["asn_rda","peo_uw"],["asn_rda","peo_t"],
+      ["asn_rda","peo_ships"],["asn_rda","peo_subs"],["asn_rda","peo_cvn"],
+      ["asn_rda","peo_iws"],["asn_rda","peo_lmw"],["asn_rda","peo_c4i"],["asn_rda","peo_dig"],
+      ["peo_a","pma261"],["peo_a","pma272"],["peo_a","pma276"],["peo_a","pma299"],["peo_a","pma207"],
+      ["peo_uw","pma262"],["peo_uw","pma263"],["peo_uw","pma281"],
+      ["peo_t","pma265"],["peo_t","pma275"]
+    ]
+  }
+};
+LINKS["both"] = {
+  adcon: [...LINKS["cno-fleet"].adcon, ...LINKS["navair-frc"].adcon],
+  opcon: [...LINKS["cno-fleet"].opcon],
+  ta:    [...LINKS["navair-frc"].ta],
+  lcsp:  [...LINKS["navair-frc"].lcsp],
+  aa:    [...(LINKS["navair-frc"].aa || [])]
+};
+
+// ═══════════════════════════════════════════════════════
+// INSTALLATIONS — map markers represent physical locations,
+// not individual commands. Multiple commands per installation.
+// ═══════════════════════════════════════════════════════
+
+// Group nodes by physical location (rounded lat/lon to ~1km precision)
+function locationKey(node) {
+  return (Math.round(node.lat * 100) / 100) + "," + (Math.round(node.lon * 100) / 100);
+}
+
+// Installation names — keyed by location
+const INSTALL_NAMES = {
+  "38.87,-77.06": "The Pentagon",
+  "38.87,-77": "Washington Navy Yard",
+  "38.28,-76.41": "NAS Patuxent River",
+  "38.29,-76.42": "NAS Patuxent River",
+  "38.29,-76.41": "NAS Patuxent River",
+  "38.29,-76.42": "NAS Patuxent River",
+  "38.27,-76.41": "NAS Patuxent River",
+  "36.95,-76.31": "NS Norfolk",
+  "36.82,-76.03": "NAS Oceana",
+  "34.9,-76.88": "MCAS Cherry Point",
+  "30.23,-81.68": "NAS Jacksonville",
+  "30.39,-81.42": "NS Mayport",
+  "32.7,-117.2": "NAS North Island",
+  "32.69,-117.23": "NB Point Loma",
+  "32.72,-117.16": "NAVWAR San Diego",
+  "36.33,-119.95": "NAS Lemoore",
+  "48.35,-122.66": "NAS Whidbey Island",
+  "21.36,-157.98": "JBPHH Pearl Harbor",
+  "35.29,139.67": "CFAY Yokosuka",
+  "35.45,139.45": "NAF Atsugi",
+  "40.84,14.2": "NSA Naples",
+  "26.22,50.59": "NSA Bahrain",
+  "35.69,-117.68": "NAS China Lake",
+  "28.54,-81.38": "Orlando Sim Center",
+  "41.35,-72.09": "NSB New London",
+};
+
+function getInstallName(node) {
+  var key = locationKey(node);
+  return INSTALL_NAMES[key] || node.sub || "Unknown Installation";
+}
+
+// Build installation groups from active view nodes
+function buildInstallations(nodeIds) {
+  var instMap = {}; // locationKey → { nodes:[], lat, lon, name }
+
+  for (var i = 0; i < nodeIds.length; i++) {
+    var id = nodeIds[i];
+    var n = NODES[id];
+    if (!n) continue;
+    var key = locationKey(n);
+    if (!instMap[key]) {
+      instMap[key] = { nodes: [], lat: n.lat, lon: n.lon, name: getInstallName(n) };
+    }
+    instMap[key].nodes.push({ id: id, node: n });
+  }
+
+  return Object.values(instMap);
+}
+
+// Semantic zoom clustering — merge nearby installations at low zoom
+const CLUSTER_RADIUS_BASE = 28;
+
+function clusterInstallations(installations, zoomScale) {
+  var threshold = CLUSTER_RADIUS_BASE / Math.max(zoomScale, 0.5);
+  var projected = [];
+
+  for (var i = 0; i < installations.length; i++) {
+    var inst = installations[i];
+    var p = projectToScreen([inst.lon, inst.lat]);
+    if (!p) continue;
+    projected.push({ inst: inst, x: p[0], y: p[1] });
+  }
+
+  // Sort: larger installations first (they anchor clusters)
+  projected.sort(function (a, b) { return b.inst.nodes.length - a.inst.nodes.length; });
+
+  var used = new Set();
+  var clusters = [];
+
+  for (var i = 0; i < projected.length; i++) {
+    if (used.has(i)) continue;
+    var cl = { members: [projected[i]], cx: projected[i].x, cy: projected[i].y };
+    used.add(i);
+
+    for (var j = i + 1; j < projected.length; j++) {
+      if (used.has(j)) continue;
+      var dx = projected[j].x - cl.cx;
+      var dy = projected[j].y - cl.cy;
+      if (Math.sqrt(dx * dx + dy * dy) < threshold) {
+        cl.members.push(projected[j]);
+        used.add(j);
+        cl.cx = cl.members.reduce(function (s, m) { return s + m.x; }, 0) / cl.members.length;
+        cl.cy = cl.members.reduce(function (s, m) { return s + m.y; }, 0) / cl.members.length;
+      }
+    }
+
+    clusters.push(cl);
+  }
+
+  return clusters;
+}
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let currentView = "cno-fleet";
+let currentProj = "natural";
+let activeAuth  = new Set(["adcon", "ta"]);
+let worldTopo   = null;
+let usTopo      = null;
+let currentZoomScale = 1;
+
+const W = window.innerWidth;
+const H = window.innerHeight;
+
+const svg = d3.select("#map").attr("width", W).attr("height", H);
+const g   = svg.append("g"); // only used for zoom reference
+
+let renderTimeout = null;
+let currentTransform = d3.zoomIdentity;
+const zoomBehavior = d3.zoom()
+  .scaleExtent([0.5, 60])
+  .on("zoom", function (e) {
+    currentTransform = e.transform;
+    // Apply zoom to base geography only
+    baseGroup && baseGroup.attr("transform", e.transform);
+    // Overlay gets repositioned but elements stay constant size
+    currentZoomScale = e.transform.k;
+    if (renderTimeout) clearTimeout(renderTimeout);
+    renderTimeout = setTimeout(renderNodesAndLinks, 80);
+  });
+svg.call(zoomBehavior);
+
+// Projections
+function makeProjections() {
+  return {
+    natural: d3.geoNaturalEarth1().scale(W / 5.5).translate([W / 2, H / 2 + 30]),
+    ortho:   d3.geoOrthographic().scale(Math.min(W, H) / 3).translate([W / 2, H / 2 + 30]).rotate([95, -35])
+  };
+}
+let projections = makeProjections();
+let proj    = projections[currentProj];
+let pathGen = d3.geoPath(proj);
+
+// ═══════════════════════════════════════════════════════
+// LOAD WORLD DATA
+// ═══════════════════════════════════════════════════════
+Promise.all([
+  fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r => r.json()).catch(() => null),
+  fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(r => r.json()).catch(() => null)
+]).then(([world, us]) => {
+  worldTopo = world;
+  usTopo = us;
+  document.getElementById("status").textContent = "Map loaded. Scroll to zoom into clusters.";
+  renderBase();
+  renderNodesAndLinks();
+}).catch(() => {
+  document.getElementById("status").textContent = "Map data failed — showing nodes only.";
+  renderBase();
+  renderNodesAndLinks();
+});
+
+// ═══════════════════════════════════════════════════════
+// LINE RENDERING — all in screen coordinates
+// ═══════════════════════════════════════════════════════
+
+// Screen-coordinate line path (used by overlay which is NOT zoom-transformed)
+function makeLinePathScreen(fromNode, toNode) {
+  var s1 = projectToScreen([fromNode.lon, fromNode.lat]);
+  var s2 = projectToScreen([toNode.lon, toNode.lat]);
+  if (!s1 || !s2) return null;
+
+  var lonDiff = Math.abs(fromNode.lon - toNode.lon);
+
+  if (currentProj === "ortho") {
+    return makeGreatCircleScreen(fromNode, toNode);
+  }
+
+  // Natural Earth: check for problematic great circles
+  if (lonDiff > 120) {
+    return makeScreenCurve(s1, s2);
+  }
+
+  try {
+    var interp = d3.geoInterpolate([fromNode.lon, fromNode.lat], [toNode.lon, toNode.lat]);
+    var midGeo = interp(0.5);
+    var maxLat = Math.max(fromNode.lat, toNode.lat);
+    var minLat = Math.min(fromNode.lat, toNode.lat);
+    if (midGeo[1] > maxLat + 15 || midGeo[1] < minLat - 15) {
+      return makeScreenCurve(s1, s2);
+    }
+    return makeGreatCircleScreen(fromNode, toNode);
+  } catch (e) {
+    return makeScreenCurve(s1, s2);
+  }
+}
+
+function makeGreatCircleScreen(fromNode, toNode) {
+  try {
+    var interp = d3.geoInterpolate([fromNode.lon, fromNode.lat], [toNode.lon, toNode.lat]);
+    var nSteps = 60;
+    var points = [];
+    for (var i = 0; i <= nSteps; i++) {
+      var coord = interp(i / nSteps);
+      var px = projectToScreen(coord);
+      if (px) points.push(px);
+    }
+    if (points.length < 2) return null;
+
+    // On flat projection, detect wrapping jumps
+    if (currentProj === "natural") {
+      var filtered = [points[0]];
+      for (var j = 1; j < points.length; j++) {
+        var jumpDx = Math.abs(points[j][0] - points[j - 1][0]);
+        if (jumpDx > W * 0.3) break;
+        filtered.push(points[j]);
+      }
+      if (filtered.length < 2) {
+        var s1 = projectToScreen([fromNode.lon, fromNode.lat]);
+        var s2 = projectToScreen([toNode.lon, toNode.lat]);
+        return (s1 && s2) ? makeScreenCurve(s1, s2) : null;
+      }
+      return "M" + filtered.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join("L");
+    }
+
+    return "M" + points.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join("L");
+  } catch (e) {
+    var s1 = projectToScreen([fromNode.lon, fromNode.lat]);
+    var s2 = projectToScreen([toNode.lon, toNode.lat]);
+    return (s1 && s2) ? makeScreenCurve(s1, s2) : null;
+  }
+}
+
+function makeScreenCurve(p1, p2) {
+  var mx = (p1[0] + p2[0]) / 2;
+  var my = (p1[1] + p2[1]) / 2;
+  var dx = p2[0] - p1[0];
+  var dy = p2[1] - p1[1];
+  var dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist < 1) return null;
+  var bulge = Math.min(dist * 0.2, 80);
+  var cx = mx;
+  var cy = my - bulge;
+  return "M" + p1[0].toFixed(1) + "," + p1[1].toFixed(1) +
+         " Q" + cx.toFixed(1) + "," + cy.toFixed(1) +
+         " " + p2[0].toFixed(1) + "," + p2[1].toFixed(1);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — split into base (geo) and overlay (nodes/links)
+// ═══════════════════════════════════════════════════════
+let baseGroup, overlayGroup;
+
+function renderBase() {
+  svg.selectAll("g").remove();
+  proj = projections[currentProj];
+  pathGen = d3.geoPath(proj);
+
+  // Base geography lives inside the zoom-transformed group
+  baseGroup = svg.append("g").attr("class", "base");
+  if (currentTransform !== d3.zoomIdentity) {
+    baseGroup.attr("transform", currentTransform);
+  }
+  // Overlay (nodes/lines) renders in screen coordinates — NOT zoom-transformed
+  overlayGroup = svg.append("g").attr("class", "overlay");
+
+  // Sphere
+  baseGroup.append("path")
+    .datum({ type: "Sphere" })
+    .attr("d", pathGen)
+    .attr("fill", "#060a14")
+    .attr("stroke", "#1e3458")
+    .attr("stroke-width", 0.5);
+
+  // Graticule
+  baseGroup.append("path")
+    .datum(d3.geoGraticule10())
+    .attr("d", pathGen)
+    .attr("class", "graticule");
+
+  // Countries
+  try {
+    if (worldTopo) {
+      const countries = topojson.feature(worldTopo, worldTopo.objects.countries);
+      baseGroup.selectAll(".land")
+        .data(countries.features)
+        .join("path")
+        .attr("class", "land")
+        .attr("d", pathGen);
+    }
+  } catch (e) { console.warn("Country render:", e); }
+
+  // US States
+  try {
+    if (usTopo) {
+      const states = topojson.feature(usTopo, usTopo.objects.states);
+      baseGroup.selectAll(".state-border")
+        .data(states.features)
+        .join("path")
+        .attr("class", "state-border")
+        .attr("d", pathGen);
+    }
+  } catch (e) { console.warn("State render:", e); }
+}
+
+// Project a [lon, lat] to screen coordinates accounting for zoom transform
+function projectToScreen(lonlat) {
+  var p = proj(lonlat);
+  if (!p) return null;
+  return [
+    currentTransform.applyX(p[0]),
+    currentTransform.applyY(p[1])
+  ];
+}
+
+function renderNodesAndLinks() {
+  if (!overlayGroup) {
+    overlayGroup = svg.append("g").attr("class", "overlay");
+  }
+  overlayGroup.selectAll("*").remove();
+
+  proj = projections[currentProj];
+  pathGen = d3.geoPath(proj);
+
+  var viewLinks = LINKS[currentView];
+  var viewNodeIds = getViewNodes();
+
+  // ── Build installation markers from active nodes ──
+  var installations = buildInstallations(viewNodeIds);
+  var clusters = clusterInstallations(installations, currentZoomScale);
+
+  // Map each nodeId → the cluster its installation belongs to
+  var nodeToCluster = {};
+  for (var ci = 0; ci < clusters.length; ci++) {
+    var cl = clusters[ci];
+    for (var mi = 0; mi < cl.members.length; mi++) {
+      var nodes = cl.members[mi].inst.nodes;
+      for (var ni = 0; ni < nodes.length; ni++) {
+        nodeToCluster[nodes[ni].id] = cl;
+      }
+    }
+  }
+
+  // ── Authority lines — route to installation locations ──
+  var linkGroup = overlayGroup.append("g");
+  var lineCount = 0;
+  var drawnLines = new Set();
+
+  var authTypes = ["opcon", "adcon", "ta", "lcsp", "aa"];
+  for (var ai = 0; ai < authTypes.length; ai++) {
+    var authType = authTypes[ai];
+    if (!activeAuth.has(authType)) continue;
+    var links = viewLinks[authType];
+    if (!links || !links.length) continue;
+
+    for (var li = 0; li < links.length; li++) {
+      var fromId = links[li][0], toId = links[li][1];
+      var fromNode = NODES[fromId], toNode = NODES[toId];
+      if (!fromNode || !toNode) continue;
+
+      var fromCl = nodeToCluster[fromId];
+      var toCl = nodeToCluster[toId];
+
+      // Skip lines between nodes at the same installation/cluster
+      if (fromCl && toCl && fromCl === toCl) continue;
+
+      // Dedup same-type lines between same locations
+      var fci = fromCl ? clusters.indexOf(fromCl) : fromId;
+      var tci = toCl ? clusters.indexOf(toCl) : toId;
+      var clKey = authType + ":" + fci + ">" + tci;
+      if (drawnLines.has(clKey)) continue;
+      drawnLines.add(clKey);
+
+      var pathD = makeLinePathScreen(fromNode, toNode);
+      if (!pathD) continue;
+
+      linkGroup.append("path")
+        .attr("d", pathD)
+        .attr("fill", "none")
+        .attr("stroke", AUTH_COL[authType])
+        .attr("stroke-width", AUTH_WIDTH[authType])
+        .attr("stroke-dasharray", AUTH_DASH[authType] || null)
+        .attr("opacity", 0.75)
+        .attr("stroke-linecap", "round");
+      lineCount++;
+    }
+  }
+
+  // ── Installation markers ──
+  var nodeGroup = overlayGroup.append("g");
+  var nodeCount = 0;
+  var instCount = 0;
+
+  for (var ci = 0; ci < clusters.length; ci++) {
+    var cl = clusters[ci];
+
+    // Collect all nodes and installation names in this cluster
+    var allNodes = [];
+    var instNames = [];
+    for (var mi = 0; mi < cl.members.length; mi++) {
+      var inst = cl.members[mi].inst;
+      allNodes = allNodes.concat(inst.nodes);
+      if (instNames.indexOf(inst.name) < 0) instNames.push(inst.name);
+    }
+
+    var count = allNodes.length;
+    var isSingleInst = cl.members.length === 1;
+    var r = count > 8 ? 7.5 : count > 3 ? 6 : count > 1 ? 5 : 4;
+
+    // Primary service color
+    var primarySvc = "navy";
+    if (allNodes.some(function (n) { return n.node.svc === "civ"; })) primarySvc = "civ";
+    else if (allNodes.some(function (n) { return n.node.svc === "navy"; })) primarySvc = "navy";
+    else primarySvc = "acq";
+    var sc = SVC_COL[primarySvc] || SVC_COL.navy;
+
+    // Build tooltip data via closure
+    var tooltipData = { allNodes: allNodes, instNames: instNames, count: count,
+      lat: cl.members[0].inst.lat, lon: cl.members[0].inst.lon };
+
+    var ng = nodeGroup.append("g")
+      .attr("transform", "translate(" + cl.cx.toFixed(1) + "," + cl.cy.toFixed(1) + ")")
+      .style("cursor", "pointer")
+      .datum(tooltipData)
+      .on("mouseover", function (ev) {
+        var d = d3.select(this).datum();
+        showInstallationTooltip(ev, d);
+        d3.select(this).select(".marker").attr("r", r * 1.4);
+      })
+      .on("mouseout", function () {
+        hideTooltip();
+        d3.select(this).select(".marker").attr("r", r);
+      });
+
+    // Glow
+    ng.append("circle").attr("r", r * 3).attr("fill", sc.stroke).attr("opacity", 0.08);
+    ng.append("circle").attr("r", r * 1.8).attr("fill", sc.stroke).attr("opacity", 0.12);
+
+    // Main marker
+    ng.append("circle").attr("class", "marker").attr("r", r)
+      .attr("fill", sc.fill).attr("stroke", sc.stroke).attr("stroke-width", 2);
+
+    // Count ring + badge for multi-command installations
+    if (count > 1) {
+      ng.append("circle").attr("r", r + 3).attr("fill", "none")
+        .attr("stroke", "#c9a84c").attr("stroke-width", 0.5).attr("opacity", 0.5)
+        .attr("stroke-dasharray", "2,2");
+      ng.append("text").attr("class", "cluster-badge").attr("dy", 3)
+        .attr("fill", "#c9a84c").text(count);
+    }
+
+    // Label
+    var label;
+    if (isSingleInst) {
+      label = count === 1 ? allNodes[0].node.lbl : cl.members[0].inst.name;
+    } else {
+      label = instNames[0] + " area";
+    }
+    ng.append("text").attr("class", "node-label hub").attr("dy", -(r + 6)).text(label);
+
+    nodeCount += count;
+    instCount++;
+  }
+
+  document.getElementById("status").textContent =
+    currentView + " | " + nodeCount + " commands at " + instCount + " locations | " +
+    lineCount + " authority lines | zoom: " + currentZoomScale.toFixed(1) + "x";
+}
+
+function getViewNodes() {
+  var s = new Set();
+  var vl = LINKS[currentView];
+  for (var key in vl) {
+    if (!vl.hasOwnProperty(key)) continue;
+    var arr = vl[key];
+    for (var i = 0; i < arr.length; i++) { s.add(arr[i][0]); s.add(arr[i][1]); }
+  }
+  return Array.from(s);
+}
+
+// ═══════════════════════════════════════════════════════
+// TOOLTIPS — installation-based
+// ═══════════════════════════════════════════════════════
+const tt = document.getElementById("tooltip");
+
+function showInstallationTooltip(ev, data) {
+  var locStr = data.lat.toFixed(2) + '°N, ' + Math.abs(data.lon).toFixed(2) + '°' + (data.lon < 0 ? 'W' : 'E');
+
+  // Group nodes by service type for organized display
+  var grouped = {};
+  for (var i = 0; i < data.allNodes.length; i++) {
+    var n = data.allNodes[i];
+    var svc = n.node.svc;
+    if (!grouped[svc]) grouped[svc] = [];
+    grouped[svc].push(n);
+  }
+
+  var svcLabels = { civ: "Civilian Leadership", navy: "Naval Commands", acq: "Acquisition Programs" };
+  var html = '<div class="tt-lbl">' + data.instNames.join(" / ") + '</div>';
+  html += '<div class="tt-loc" style="margin-bottom:6px">' + data.count + ' commands — ' + locStr + '</div>';
+
+  var svcOrder = ["civ", "navy", "acq"];
+  for (var si = 0; si < svcOrder.length; si++) {
+    var svc = svcOrder[si];
+    if (!grouped[svc]) continue;
+    var svcCol = (SVC_COL[svc] || SVC_COL.navy).stroke;
+    html += '<div style="color:' + svcCol + ';font-size:9px;font-weight:600;margin:5px 0 2px;text-transform:uppercase;letter-spacing:1px">' + (svcLabels[svc] || svc) + '</div>';
+    for (var ni = 0; ni < grouped[svc].length; ni++) {
+      var node = grouped[svc][ni];
+      html += '<div style="margin:1px 0;padding-left:10px;border-left:2px solid ' + svcCol + '">' +
+        '<span style="color:#c9a84c;font-weight:600">' + node.node.lbl + '</span>' +
+        '<span style="color:#5a7ea0"> — ' + node.node.sub + '</span></div>';
+    }
+  }
+
+  tt.innerHTML = html;
+  positionTooltip(ev);
+}
+
+function positionTooltip(ev) {
+  tt.style.display = "block";
+  var pad = 14;
+  tt.style.left = (ev.clientX + pad) + "px";
+  tt.style.top = (ev.clientY - 10) + "px";
+  var rect = tt.getBoundingClientRect();
+  if (rect.right > W - 10) tt.style.left = (ev.clientX - rect.width - pad) + "px";
+  if (rect.bottom > H - 10) tt.style.top = (ev.clientY - rect.height - pad) + "px";
+}
+
+function hideTooltip() { tt.style.display = "none"; }
+
+// ═══════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════
+document.getElementById("sel-view").addEventListener("change", function () {
+  currentView = this.value;
+  renderNodesAndLinks();
+});
+
+function setProj(p) {
+  currentProj = p;
+  proj = projections[p];
+  pathGen = d3.geoPath(proj);
+  document.querySelectorAll('[id^="btn-proj-"]').forEach(b => b.classList.remove("active"));
+  document.getElementById("btn-proj-" + p).classList.add("active");
+  // Reset zoom
+  currentTransform = d3.zoomIdentity;
+  currentZoomScale = 1;
+  svg.call(zoomBehavior.transform, d3.zoomIdentity);
+  renderBase();
+  renderNodesAndLinks();
+}
+
+function toggleAuth(a) {
+  var btn = document.getElementById("btn-auth-" + a);
+  if (activeAuth.has(a)) { activeAuth.delete(a); btn.classList.remove("active"); }
+  else { activeAuth.add(a); btn.classList.add("active"); }
+  renderNodesAndLinks();
+}
+</script>
+</body>
+</html>

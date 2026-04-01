@@ -19,7 +19,7 @@ Object.keys(NODES).forEach(k => NODES[k].id = k);
 var _storedDocs='[]',_storedLogos='{}';
 try{_storedDocs=localStorage.getItem('kms7-docs')||'[]';}catch(e){}
 try{_storedLogos=localStorage.getItem('kms7-logos')||'{}';}catch(e){}
-const S = { activeNode: null, focusNode: null, highlight: new Set(), docs: JSON.parse(_storedDocs), logos: JSON.parse(_storedLogos), editId: null, logoTarget: null };
+const S = { activeNode: null, focusNode: null, highlight: new Set(), docs: JSON.parse(_storedDocs), logos: JSON.parse(_storedLogos), logoTarget: null };
 
 function load(){try{S.logos=JSON.parse(localStorage.getItem('kms7-logos')||'{}');}catch(e){} try{S.docs=JSON.parse(localStorage.getItem('kms7-docs')||'[]');}catch(e){}}
 function saveLogos(){try{localStorage.setItem('kms7-logos',JSON.stringify(S.logos));}catch(e){}}
@@ -37,140 +37,43 @@ function allNodeIds(){const s=new Set();Object.values(VIEWS).forEach(v=>v.ids.fo
 function nlbl(id){return NODES[id]?NODES[id].lbl:id;}
 function tclr(t){return TCOL[t]||'#888899';}
 function tlbl(t){return TLK[t]||t;}
+function dhLabel(nodeId,dh){var cv=VIEWS[document.getElementById('oc-view').value];return(cv&&cv.dh_map&&cv.dh_map[nodeId])||dh[0];}
 
-// ═══════════════════════════════════════════════════════
-// RELEASE NOTES DATA
-// ═══════════════════════════════════════════════════════
-(function buildReleaseNotes(){
-  // ── Milestone timeline ──
-  const milestones=[
-    {date:'11 MAR 2026',ver:'v7.0',color:'#aaff00',title:'v7.0 Full Build — 5 OPNAVINST Source Documents, +15 Nodes, +30 AUTH Entries, TA/ADCON Corrections',tags:['BUILD','OPNAVINST','AUDIT','TITLE 10'],
-     body:'Major data integrity release driven by full audit of reference documents. Five OPNAVINST instructions (5450.350B NAVAIR, 5450.340A NAVSEA, 5440.77C USFFC, 5450.352B OPNAV, 5450.345 FLTCYBERCOM) ingested into Directives library — these are the primary source authorities for NAVAIR TA, NAVSEA TA, USFFC subordination, CNO echelon 2 listing, and FLTCYBERCOM/10th Fleet cyber operations. +15 organizational nodes added: NAWCAD, NAWCWD (warfare centers under NAVAIR), NAVRMC (NAVSEA maintenance bridge), CNIC, NAVRESFOR, NAVSPECWAR, CHNAVPERS, NAVSAFECEN (echelon 2 under CNO), MSC, NECC, NWDC, CNMOC (echelon 3 under USFFC), 10th Fleet (cyber). +30 AUTH matrix entries expanded for all fleet commanders, TYCOMs, new nodes, and PEOs. NAVSEA TA and NAVWAR TA lines drawn per OPNAVINST 5440.77C para 7b. Views updated: DoN, CNO Service Authority, NAVAIR Authority, DACO/Cyber. Version badge corrected. All v5.2 content preserved.'},
-    {date:'06 MAR 2026',ver:'v5.2',color:'#aaff00',title:'v5.2 Full Build — COMFRC Enterprise, LCSP Return Line, Maintenance Levels, 6 New Statutes',tags:['BUILD','COMFRC','TITLE 10','NAMP'],
-     body:'COMFRC HQ + 9 FRCs + 5 key detachments added as fully geolocated nodes. Maintenance level badges (O/I/D) rendered on all FRC and MALS nodes. LCSP/MDS Data Return line type (#6A9900, dashed 8-4, 0.9px, ↑ upward) implemented in Maintenance Levels view and auth filter. Two new views: COMFRC Enterprise (full administrative hierarchy) and Maintenance Levels (O/I/D capability grouping with TA + LCSP Return lines). Auth matrix expanded with LCSP row. Six new statutory documents: 10 USC §§ 4324, 4614, 4618, 4622, 3771-3774, COMNAVAIRFORINST 4790.2E (NAMP). Legend updated. All v5.1 content preserved. +15 nodes, +2 views, +6 docs, +1 line type rendered.'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#aaff00',title:'Viewport Centering — Auto-Center on POTUS / Selected Node',tags:['UX','CORE'],
-     body:'Identified that maximizing screen real estate is a primary function. Implemented: (1) On every view render, tool automatically centers and scales to POTUS if present — otherwise to topmost node. (2) On node selection, view smoothly transitions to center the selected unit in available canvas (accounting for 270px detail panel). Animated transition 420ms. D3 zoom behavior exposed as module-level reference. Node pixel positions stored post-render in <code>ORG.nodePos</code> map. Zero impact on existing zoom/pan — user can still freely scroll after auto-center fires.'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#aaff00',title:'Release Notes Panel — Embedded in Application',tags:['UI','DOCS'],
-     body:'Pre-build specification document from v5.1 design session embedded as Tab 6 in the main tab bar. Accessible at runtime without external file. Covers: locked visual spec, Title 10 statutory framework table, LCSP return line full spec, three maintenance level definitions, COMFRC enterprise inventory (all 9 FRCs with geolocations), new views/tabs planned, new library documents. Self-populating from JS data at load time. This milestone history section added in same session.'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#6a9900',title:'LCSP / MDS Data Return Path — 7th Authority Line Type Specified',tags:['SPEC','TITLE 10'],
-     body:'New upward authority line specified: FRC/MALS/Squadron → PM. Muted lime #6A9900 (darker than TA lime, same family). 0.9px weight, 8-4 long-dash, open circle ○ terminus at PM. Statutory basis: 10 USC § 4324(b)(1)(G–I) — PM must maintain configuration currency throughout system life cycle. COMNAVAIRFORINST 4790.2E Ch. 5 (MDS) and Ch. 8 (aircraft logbooks) establish the data return obligation. Toggle default: OFF. This closes the lifecycle loop: TA flows down (authority), MDS returns up (configuration currency).'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#7aaaee',title:'Three Maintenance Levels as Navigable Architecture',tags:['SPEC','NAMP'],
-     body:'O/I/D levels defined per COMNAVAIRFORINST 4790.2E. Key doctrine: levels are capability designations, not organizational echelons — nodes may be co-located (MALS performs O+I; depot FRCs perform I+D). Node badge spec: lower-right corner "O", "I", "D", "O/I", "I/D". Maintenance Level filter added to filter panel — toggle each level independently. Use case: D-only filter reveals all depot facilities and their PM authority relationships. Three new views planned: Maintenance Levels View, COMFRC Enterprise View.'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#c9a84c',title:'COMFRC Enterprise — 9 FRCs + Detachments Fully Specified',tags:['SPEC','NODES'],
-     body:'All 9 Fleet Readiness Centers inventoried with location, maintenance level, primary platforms, and detachment sites. FRCE (Cherry Point), FRCSE (Jacksonville), FRCSW (North Island), FRCMA (Oceana), FRCW (Lemoore), FRCNW (Whidbey Island), FRCWP (Atsugi), FRC ASE (Patuxent River), FRC RMW (Fort Worth). FRCSW sites include Yuma AZ, Kaneohe Bay HI, MCAS Pendleton CA, Pt. Mugu CA. ~40 new nodes specified. Authority source: CNO → NAVAIRSYSCOM → COMFRC per 10 USC §§ 8013, 8033.'},
-    {date:'06 MAR 2026',ver:'v5.1',color:'#c9a84c',title:'Title 10 Statutory Framework — All New Elements Grounded',tags:['SPEC','TITLE 10'],
-     body:'User directive: all naming/authority decisions derive from Title 10 USC, not convention. Statutory table produced mapping every new visual element to its authorizing section: § 4324 (LCSP/TA), § 3774 (technical data rights), § 2460/4614 (depot definition), § 2464/4618 (core depot capability), § 2466/4622 (50% contract ceiling), §§ 8013/8033 (CNO/NAVAIRSYSCOM). COMNAVAIRFORINST 4790.2E (NAMP) incorporated as regulatory implementation of statute.'},
-    {date:'06 MAR 2026',ver:'v5.0',color:'#f4f4f4',title:'v5.0 Delivered — 132KB, 140+ Nodes, 6 Authority Line Types',tags:['BUILD','BASELINE'],
-     body:'Delivered single-file HTML at 132KB. 140+ nodes across 11 views: Strategic, OSD, DoN, Navy Admin, USMC Admin, Geographic COCOMs, Functional COCOMs, DACO/Cyber, Acquisition, Technical Authority, MALS Detail. 6 authority line types: COCOM, ADCON, OPCON, TACON, DACO/Cyber, Technical Authority. 5 tabs: Org Chart, Directives (15+ documents), Timeline, Geo Map (Leaflet, ~100 geolocated nodes), Registry. Authority matrix panel per node. COCOM AOR overlays. UIC/PUC attributes. Logo upload capability.'},
-    {date:'06 MAR 2026',ver:'v5.0',color:'#888',title:'Visual Specification Locked — Interactive Selection Session',tags:['SPEC','DESIGN'],
-     body:'Interactive visual selection tool delivered (50KB). User confirmed: parallel offset curves for multi-relationship rendering; TA line lime #AAFF00; diamond ◇ terminus at receiving unit; Style C nodes (near-black fill, bold 2.5px stroke). Selection tool archived at don-c2-visual-spec.html.'},
-    {date:'06 MAR 2026',ver:'Pre-v5',color:'#555',title:'Doctrine Research — COMFRC, NAMP, Title 10 Depot Framework',tags:['RESEARCH'],
-     body:'Researched and verified: 10 USC §§ 2460, 2464, 2466, 4324, 3771–3774; COMNAVAIRFORINST 4790.2E (NAMP) Chs. 2, 4, 5, 8, 12; COMFRC HQ location and chain; 9 FRC official designations and platforms. NAVAIR lifecycle obligation: contractually produces aircraft, retains configuration baseline authority and technical data rights for system life. When maintenance data fails to return from FRC to PMA, configuration visibility breaks and airworthiness certifications become unreliable.'},
-  ];
-
-  const mb=document.getElementById('rn-milestones');
-  if(mb){
-    mb.innerHTML=milestones.map((m,i)=>`
-      <div style="position:relative;margin-bottom:20px">
-        <div style="position:absolute;left:-21px;top:4px;width:12px;height:12px;border-radius:50%;background:${m.color};border:2px solid var(--bg1);box-shadow:0 0 6px ${m.color}66"></div>
-        <div style="background:var(--bg2);border:1px solid var(--b2);border-left:3px solid ${m.color};border-radius:3px;padding:10px 14px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
-            <span style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t3)">${m.date}</span>
-            <span style="font-family:'Space Mono',monospace;font-size:7px;background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;padding:1px 5px;border-radius:2px">${m.ver}</span>
-            ${m.tags.map(t=>`<span style="font-family:'Space Mono',monospace;font-size:6.5px;color:var(--t3);border:1px solid var(--b2);padding:1px 4px;border-radius:2px">${t}</span>`).join('')}
-          </div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--t1);margin-bottom:5px">${m.title}</div>
-          <div style="font-size:11px;color:var(--t2);line-height:1.55">${m.body}</div>
-        </div>
-      </div>`).join('');
+// Compute full authority chain for a node by walking immediate parents upward.
+// Chain keys (opcon/adcon/daco) store only [immediateParent].
+// List keys (ta/lcsp/aa) are peer arrays — returned as-is.
+function resolveChain(nodeId, authKey) {
+  var a = AUTH[nodeId];
+  if (!a || !a[authKey] || !a[authKey].length) return [];
+  // ta/lcsp/aa are peer lists, not chains — return directly
+  if (authKey === 'ta' || authKey === 'lcsp' || authKey === 'aa') return a[authKey];
+  // Walk upward through immediate parents to build full chain
+  var chain = [];
+  var current = a[authKey][0]; // immediate parent
+  var seen = new Set();
+  seen.add(nodeId);
+  while (current && !seen.has(current)) {
+    chain.push(current);
+    seen.add(current);
+    var parentAuth = AUTH[current];
+    if (!parentAuth || !parentAuth[authKey] || !parentAuth[authKey].length) break;
+    current = parentAuth[authKey][0];
   }
+  return chain;
+}
 
-  const td=(txt,key)=>`<td style="padding:7px 10px;border:1px solid var(--b1);color:${key?'var(--t1)':'var(--t2)'};${key?'font-family:Rajdhani,sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;white-space:nowrap;color:#7aaaee':'font-size:11px'}">${txt}</td>`;
-  const tr=(cells,alt)=>`<tr style="${alt?'background:rgba(255,255,255,.02)':''}">${cells.map((c,i)=>td(c,i===0)).join('')}</tr>`;
-
-  // Stat table
-  const statRows=[
-    ['TA line (↓)','§ 4324 + TA policy','Life-Cycle Mgmt &amp; Product Support','PM accountable lifecycle inception→disposal. LCSP mandates TA over configuration baseline. Flows: ASN(RD&amp;A)→SYSCOM→PEO→PM→unit.'],
-    ['TA data label','§ 3774','Long-Term Technical Data Rights','PM must assess and acquire technical data rights to sustain system over life cycle. NAVAIR holds configuration baseline data record.'],
-    ['LCSP Return (↑) <span style="color:#88dd88;font-size:9px">NEW</span>','§ 4324(b)(1)(G–I)','LCSP Data Return Obligation','PM must maintain configuration currency. Maintenance data, deficiency reports, ECPs must flow from operating/maintenance activities back to PM.'],
-    ['Depot node type','§ 2460 / § 4614','Depot-Level Maintenance Definition','Overhaul, upgrading, or rebuilding of parts/assemblies; testing/reclamation. Source-of-funds neutral.'],
-    ['Core depot badge','§ 2464 / § 4618','Core Logistics Capability','DoD must maintain organic depot capability. Required assessment at MS-A (§ 4251) and MS-B (§ 4252).'],
-    ['50% rule note','§ 2466 / § 4622','Contract Depot Maintenance Ceiling','Max 50% of depot workload to contractors. SECDEF sole waiver authority. COMFRC organic capacity is statutory floor.'],
-    ['COMFRC chain','§ 8013 + § 8033','SECNAV / CNO Organizational Authority','SECNAV organizes DoN; CNO prescribes maintenance policy. NAVAIRSYSCOM → COMFRC authorized through these sections.'],
-    ['O/I/D levels','COMNAVAIRFORINST 4790.2E','Naval Aviation Maintenance Program','Defines three levels. All FRC nodes carry level designation badge in v5.1.'],
-  ];
-  const sb=document.getElementById('rn-stat-tbody');
-  if(sb)sb.innerHTML=statRows.map((r,i)=>tr(r,i%2)).join('');
-
-  // LCSP table
-  const lcspRows=[
-    ['Line name','LCSP / MDS Data Return'],
-    ['Color','Muted lime <span style="color:#6a9900;font-weight:700">#6A9900</span> — related to TA lime but darker/dimmer. Same family = same domain. "Reporting up" vs "authority down."'],
-    ['Direction','↑ Upward only — FRC / MALS / Squadron → PM'],
-    ['Weight','0.9px — subordinate to 1.8px TA downward line. Present but not dominant.'],
-    ['Dash pattern','8, 4 — long-dash, distinct from TA down pattern (7,3,2,3)'],
-    ['Terminus at PM','Open circle ○ — "data received and held by PM." Distinct from TA diamond ◇ which signals obligation issued downward.'],
-    ['Toggle default','OFF — enable in filter panel alongside other authority line toggles'],
-    ['Applies to','All O/I/D maintenance activities upward to their responsible PMA. Key paths: FRCE→PMA-265; FRCSW→PMA-272; MALS-16→PMA-281, PMA-272, PMA-276'],
-  ];
-  const lb=document.getElementById('rn-lcsp-tbody');
-  if(lb)lb.innerHTML=lcspRows.map((r,i)=>tr(r,i%2)).join('');
-
-  // FRC table
-  const frcRows=[
-    ['FRCE','FRC East','MCAS Cherry Point NC','I/D','F/A-18, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC.'],
-    ['FRCSE','FRC Southeast','NAS Jacksonville FL','I/D','F/A-18, F-35, E-2/C-2, P-8A, T-45, E-6B. Engines: F414, F404, J52, T700, T56, TF34. DETs: Mayport, Key West, Tinker AFB, Cecil Field.'],
-    ['FRCSW','FRC Southwest','NAS North Island CA','I/D','F/A-18A-F, EA-18G, E-2C/D, AV-8B, MV-22B, MH-60. Sites: Yuma AZ, Kaneohe Bay HI, Pt. Mugu CA, MCAS Pendleton CA.'],
-    ['FRCMA','FRC Mid-Atlantic','NAS Oceana VA','I','Strike fighter, component repair. DET NAS Norfolk.'],
-    ['FRCW','FRC West','NAS Lemoore CA','I/D','F/A-18 all series, PMI/MOD line. DETs: Fallon NV, Fort Worth TX, China Lake CA.'],
-    ['FRCNW','FRC Northwest','NAS Whidbey Island WA','I','EA-18G, P-8A, E-2/C-2, component repair.'],
-    ['FRCWP','FRC WestPac','NAF Atsugi Japan','I/D','INDOPACOM/CENTCOM forward depot. Origin: FAWPRA(1950s)→NAPRA(1980)→FRC WestPac(2008).'],
-    ['FRC ASE','FRC Avn Support Equip','Patuxent River MD','I','Aviation support equipment repair, calibration, SE overhaul.'],
-    ['FRC RMW','FRC Reserve Mid-West','NAS Fort Worth JRB TX','I','Reserve component intermediate maintenance. USNR and USMCR aviation units.'],
-  ];
-  const lvlColor={'I/D':'#ff9500','I':'#c9a84c','O':'#88dd88','O/I':'#88dd88'};
-  const fb=document.getElementById('rn-frc-tbody');
-  if(fb)fb.innerHTML=frcRows.map((r,i)=>{
-    const lvl=r[3];const lc=lvlColor[lvl]||'#c9a84c';
-    return `<tr style="${i%2?'background:rgba(255,255,255,.02)':''}">
-      <td style="padding:7px 10px;border:1px solid var(--b1);font-family:Rajdhani,sans-serif;font-weight:700;font-size:11px;color:#7aaaee">${r[0]}</td>
-      <td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t1);font-size:11px">${r[1]}</td>
-      <td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2);font-size:11px">${r[2]}</td>
-      <td style="padding:7px 10px;border:1px solid var(--b1);font-family:Rajdhani,sans-serif;font-weight:700;font-size:13px;color:${lc};text-align:center">${lvl}</td>
-      <td style="padding:7px 10px;border:1px solid var(--b1);color:var(--t2);font-size:11px">${r[4]}</td>
-    </tr>`;
-  }).join('');
-
-  // New elements table
-  const newRows=[
-    ['Tab 6 — Maintenance Levels View','Dedicated view grouping all maintenance activities by O/I/D capability. Demonstrates that maintenance level is a capability designation, not an echelon. Shows which PMAs hold TA over which FRCs.'],
-    ['Tab 7 — COMFRC Enterprise View','Full COMFRC → FRC → Detachment/Site hierarchy. All 9 FRCs with dets. UIC, location, maintenance level badge, primary platforms, authority matrix.'],
-    ['Maintenance Level Filter','Added to filter panel. Toggle O / I / D independently. Use case: isolate D-level to see all depot facilities and their PM authority relationships.'],
-    ['LCSP Return Line Toggle','Added to authority line toggles. Off by default. When enabled: muted-lime dashed lines draw UPWARD from FRC/MALS/squadron nodes to responsible PMAs.'],
-    ['Map View — FRC Layer','FRC nodes and dets on existing Leaflet map. Maintenance level badge on marker. FRCSW USMC sites shown with MAG/MALS relationships.'],
-    ['Authority Matrix Expansion','For selected FRC node: platforms supported → PMAs holding TA → MDS return path back to each PMA. Full lifecycle loop traceable.'],
-    ['10 USC §§ 2460, 2464, 2466 (Library)','Depot maintenance definition, core capability, 50% contract ceiling. Statutory basis for COMFRC existence and workload balance.'],
-    ['10 USC § 4324 (Library)','Life-cycle management and product support. Primary statutory basis for LCSP Return line.'],
-    ['10 USC §§ 3771–3774 (Library)','Rights in technical data. PM long-term data needs assessment. NAVAIR configuration baseline data rights.'],
-    ['COMNAVAIRFORINST 4790.2E (Library)','NAMP — O/I/D level definitions, MDS data return, MALS organization, depot-level industrial program.'],
-    ['All v5 nodes, views, tabs, docs','Preserved. v5.1 is additive only. No existing content modified.'],
-  ];
-  const nb=document.getElementById('rn-new-tbody');
-  if(nb)nb.innerHTML=newRows.map((r,i)=>tr(r,i%2)).join('');
-})();
-
+// ═══════════════════════════════════════════════════════
 // PANEL NAV
 // ═══════════════════════════════════════════════════════
 function showPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('p-'+id).classList.add('on');
-  var map={org:0,orders:1,timeline:2,map:3,registry:4,relnotes:5,accuracy:6};
+  var map={org:0,orders:1,timeline:2,registry:3,accuracy:4};
   document.querySelectorAll('.tab')[map[id]].classList.add('on');
-  if(id==='org')setTimeout(renderOrg,50);
+  if(id==='org')setTimeout(function(){renderOrg(true);},50);
   if(id==='orders')renderOrders();
   if(id==='timeline')renderTimeline();
-  if(id==='map')initMap();
   if(id==='registry')renderRegistry();
   if(id==='accuracy')runValidation();
 }
@@ -298,6 +201,100 @@ function buildFocusLayout(rootId, viewLinks, availW, maxDepth){
   return{nodeIds:[...visited],pos,links:focusLinks};
 }
 
+// ── AUTO-LAYOUT: compute positions for views without (or with partial) manual positions ──
+// Uses the view's own links to determine hierarchy, then lays out with subtree-aware spacing.
+// Manual position overrides (view.pos) are applied after algorithmic placement.
+function autoLayoutView(view, W, H){
+  var ids=view.ids||[];
+  var links=view.links||[];
+  if(!ids.length)return {};
+
+  // Build directed graph from links
+  var incoming={}, outgoing={}, childOf={};
+  ids.forEach(function(id){incoming[id]=0;outgoing[id]=[];});
+  links.forEach(function(lk){
+    if(ids.indexOf(lk.s)>=0&&ids.indexOf(lk.t)>=0){
+      if(!outgoing[lk.s])outgoing[lk.s]=[];
+      outgoing[lk.s].push(lk.t);
+      incoming[lk.t]=(incoming[lk.t]||0)+1;
+      childOf[lk.t]=lk.s; // last parent wins (for tree structure)
+    }
+  });
+
+  // Find roots (no incoming edges)
+  var roots=ids.filter(function(id){return !incoming[id]||incoming[id]===0;});
+  if(!roots.length)roots=[ids[0]];
+
+  // BFS to assign depth and build tree
+  var depth={}, children={}, visited=new Set();
+  roots.forEach(function(r){depth[r]=0;children[r]=[];visited.add(r);});
+  var queue=roots.slice();
+  while(queue.length){
+    var cur=queue.shift();
+    (outgoing[cur]||[]).forEach(function(ch){
+      if(!visited.has(ch)){
+        visited.add(ch);
+        depth[ch]=(depth[cur]||0)+1;
+        if(!children[cur])children[cur]=[];
+        children[cur].push(ch);
+        if(!children[ch])children[ch]=[];
+        queue.push(ch);
+      }
+    });
+  }
+  // Assign unvisited nodes to depth 0
+  ids.forEach(function(id){
+    if(depth[id]===undefined){depth[id]=0;visited.add(id);if(!children[id])children[id]=[];}
+  });
+
+  // Subtree leaf counting for proportional spacing
+  function leafCount(id){
+    var ch=children[id]||[];
+    if(!ch.length)return 1;
+    var s=0;for(var i=0;i<ch.length;i++)s+=leafCount(ch[i]);
+    return s;
+  }
+
+  // Assign positions — subtree-aware horizontal spacing
+  var HPAD=NW+22, VGAP=NH+55;
+  var totalLeaves=0;
+  roots.forEach(function(r){totalLeaves+=leafCount(r);});
+  if(!totalLeaves)totalLeaves=1;
+  var unitW=Math.max(HPAD, Math.floor((W-80)/totalLeaves));
+
+  var posMap={};
+  var leafCursor=0;
+
+  function assignPos(id, d){
+    var ch=children[id]||[];
+    if(!ch.length){
+      posMap[id]=[40+leafCursor*unitW, 36+d*VGAP];
+      leafCursor++;
+    }else{
+      var startLeaf=leafCursor;
+      for(var i=0;i<ch.length;i++)assignPos(ch[i],d+1);
+      var endLeaf=leafCursor;
+      var leftX=40+startLeaf*unitW;
+      var rightX=40+(endLeaf-1)*unitW+NW;
+      posMap[id]=[Math.round((leftX+rightX-NW)/2), 36+d*VGAP];
+    }
+  }
+
+  // Layout each root's subtree sequentially
+  roots.forEach(function(r){assignPos(r,depth[r]||0);});
+
+  // Apply manual position overrides if present
+  if(view.pos){
+    var manualIds=Object.keys(view.pos);
+    for(var i=0;i<manualIds.length;i++){
+      var mid=manualIds[i];
+      if(view.pos[mid])posMap[mid]=view.pos[mid];
+    }
+  }
+
+  return posMap;
+}
+
 // ── SHARED DEFS SETUP ──
 function setupDefs(svg){
   const defs=svg.append('defs');
@@ -354,7 +351,7 @@ function drawNodes(G, nodes, posMap, activeId, hiSet, isFocus){
       ng.append('rect').attr('x',0).attr('y',NH-14).attr('width',NW).attr('height',14).attr('rx',1)
         .attr('fill',dhCol).attr('opacity',.85);
       ng.append('text').attr('x',NW/2).attr('y',NH-3).attr('text-anchor','middle').attr('font-family','Space Mono,monospace').attr('font-weight','700').attr('font-size',7.5)
-        .attr('fill',sc2.fill).text('\u25c6 '+n.dh[0]);
+        .attr('fill',sc2.fill).text('\u25c6 '+dhLabel(n.id,n.dh));
     }
     const logo=n.logo||S.logos[n.id],tx=logo?38:8;
     if(logo){
@@ -378,13 +375,44 @@ function drawNodes(G, nodes, posMap, activeId, hiSet, isFocus){
   });
 }
 
-function renderOrg(){
+// Track last render state for incremental updates
+var _lastRenderView=null, _lastRenderFocus=null, _lastRenderNodes=null, _lastRenderLinks=null, _lastRenderPosMap=null;
+
+function renderOrg(forceRebuild){
   var vk=document.getElementById('oc-view').value;
   var af=document.getElementById('oc-auth').value;
-  var svg=d3.select('#oc-svg');svg.selectAll('*').remove();
+  var svg=d3.select('#oc-svg');
   var svgEl=document.getElementById('oc-svg');
   var W=svgEl.clientWidth||900;
   var H=svgEl.clientHeight||580;
+
+  // Fast path: if only the auth filter or highlight changed (same view, same focus), just redraw links + update node styles
+  var sameStructure=!forceRebuild&&_lastRenderView===vk&&_lastRenderFocus===S.focusNode&&_lastRenderNodes&&_lastRenderPosMap;
+  if(sameStructure&&vk!=='custom'){
+    svg.selectAll('*').remove();
+    setupDefs(svg);
+    var G=svg.append('g');
+    var isFocus=!!S.focusNode;
+    drawLinks(G, _lastRenderLinks, _lastRenderPosMap, af, S.highlight, isFocus);
+    drawNodes(G, _lastRenderNodes, _lastRenderPosMap, S.activeNode, S.highlight, isFocus);
+    if(isFocus&&_lastRenderPosMap[S.focusNode]){
+      G.append('text').attr('x',_lastRenderPosMap[S.focusNode].x+NW/2).attr('y',16)
+        .attr('text-anchor','middle').attr('font-family','Space Mono,monospace').attr('font-size',7)
+        .attr('fill','#c9a84c').attr('opacity',.6).text('click a subordinate to go deeper  │  click background to restore');
+    }
+    svg.on('click',()=>{S.focusNode=null;S.activeNode=null;S.highlight.clear();renderOrg();closeSide();updateBadge();document.getElementById('btn-clear').style.display='none';});
+    ORG.zb=d3.zoom().scaleExtent([.12,4]).on('zoom',e=>G.attr('transform',e.transform));
+    svg.call(ORG.zb);
+    requestAnimationFrame(()=>{
+      var root=S.focusNode||S.activeNode;
+      if(root&&ORG.nodePos[root])centerOnNode(root,1.0,S.focusNode?0.15:0.4);
+      else fitAllNodes(0);
+    });
+    return;
+  }
+
+  // Full rebuild
+  svg.selectAll('*').remove();
 
   // Toggle custom chart toolbar visibility
   var ccBar=document.getElementById('cc-bar');
@@ -399,7 +427,7 @@ function renderOrg(){
 
   var view=VIEWS[vk];if(!view)return;
   setupDefs(svg);
-  const G=svg.append('g');
+  var G=svg.append('g');
 
   if(S.focusNode && view.ids.includes(S.focusNode)){
     // FOCUS MODE: re-layout rooted at selected node, subordinates cascade down
@@ -416,9 +444,23 @@ function renderOrg(){
       .attr('text-anchor','middle').attr('font-family','Space Mono,monospace').attr('font-size',7)
       .attr('fill','#c9a84c').attr('opacity',.6).text('click a subordinate to go deeper  │  click background to restore');
     document.getElementById('tb-org').textContent=focusNodes.length+' of '+view.ids.length;
+    // Cache for incremental updates
+    _lastRenderView=vk;_lastRenderFocus=S.focusNode;
+    _lastRenderNodes=focusNodes;_lastRenderLinks=layout.links;_lastRenderPosMap=layout.pos;
   } else {
-    // NORMAL MODE: preset positions
-    const nodes=view.ids.map(id=>{const n=NODES[id];if(!n)return null;const p=view.pos[id]||[0,0];return{...n,x:p[0],y:p[1]};}).filter(Boolean);
+    // NORMAL MODE: use manual positions if complete, auto-layout if missing/partial
+    // Check if all nodes have manual positions
+    var hasPos=view.pos&&view.ids.every(function(id){return view.pos[id];});
+    var rawPos;
+    if(hasPos){
+      // All positions manual — use them directly
+      rawPos={};
+      view.ids.forEach(function(id){rawPos[id]=view.pos[id];});
+    }else{
+      // Auto-layout with manual overrides
+      rawPos=autoLayoutView(view, W, H);
+    }
+    const nodes=view.ids.map(id=>{const n=NODES[id];if(!n)return null;const p=rawPos[id]||[0,0];return{...n,x:p[0],y:p[1]};}).filter(Boolean);
     if(!nodes.length)return;
     const xs=nodes.map(n=>n.x),ys=nodes.map(n=>n.y);
     const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
@@ -435,6 +477,9 @@ function renderOrg(){
     drawLinks(G, view.links, posMap, af, S.highlight, false);
     drawNodes(G, nodes, posMap, S.activeNode, S.highlight, false);
     document.getElementById('tb-org').textContent=view.ids.length;
+    // Cache for incremental updates
+    _lastRenderView=vk;_lastRenderFocus=S.focusNode;
+    _lastRenderNodes=nodes;_lastRenderLinks=view.links;_lastRenderPosMap=posMap;
   }
 
   svg.on('click',()=>{
@@ -464,7 +509,7 @@ function selectNode(id){
     const sel=document.getElementById('oc-view');
     if(sel){sel.value=NODE_HOME_VIEW[id];S.focusNode=null;}
   }
-  renderOrg();
+  renderOrg(true);
   openSide(id,related);
   updateBadge();
   requestAnimationFrame(()=>{if(ORG.nodePos[id])centerOnNode(id,1.0,0);});
@@ -490,13 +535,14 @@ function openSide(id,related){
     const axes=[
       {key:'opcon',lbl:'OPCON',col:ACOL.opcon},
       {key:'adcon',lbl:'ADCON / MTE',col:ACOL.adcon},
+      {key:'aa',lbl:'Acq Authority',col:ACOL.aa},
       {key:'ta',lbl:'Tech Authority',col:ACOL.ta},
-      {key:'daco',lbl:'DACO / Cyber',col:ACOL.cyber},
+      {key:'daco',lbl:'DACO',col:ACOL.cyber},
       {key:'lcsp',lbl:'LCSP Data Return ↑',col:ACOL.lcsp}
     ];
     matrixHTML='<div class="auth-matrix">';
     axes.forEach(ax=>{
-      const chain=auth[ax.key]||[];
+      const chain=resolveChain(id,ax.key);
       matrixHTML+=`<div class="am-row"><div class="am-lbl" style="color:${ax.col}">${ax.lbl}</div><div class="am-chain">`;
       if(!chain.length){matrixHTML+='<span class="am-na">N/A</span>';}
       else{
@@ -521,8 +567,8 @@ function openSide(id,related){
   // Location chip
   const loc=n.loc;
   const aorCol=loc?AOR_COL[loc.aor]||'#888':'#888';
-  const locHTML=loc?`<div class="loc-chip" data-action="jump-to-map" data-arg="${id}">
-    <span class="loc-icon">📍</span>
+  const locHTML=loc?`<div class="loc-chip">
+    <span class="loc-icon">\ud83d\udccd</span>
     <div class="loc-text"><strong>${loc.install}</strong><br>${loc.city}</div>
     <span class="loc-aor" style="background:${aorCol}22;color:${aorCol};border:1px solid ${aorCol}44">${loc.aor}</span>
   </div>`:'';
@@ -549,7 +595,6 @@ function openSide(id,related){
 }
 function closeSide(){document.getElementById('oc-side').classList.remove('open');}
 function jumpToNode(id){showPanel('org');setTimeout(()=>selectNode(id),80);}
-function jumpToMap(id){showPanel('map');setTimeout(()=>{initMap();zoomMapToNode(id);},200);}
 
 // Logo picker
 function pickLogo(nodeId){S.logoTarget=nodeId;document.getElementById('logo-picker').click();}
@@ -573,7 +618,7 @@ function showTT(e,n){
     <div class="tt-r"><span class="tt-k">UIC</span><span class="tt-v" style="color:var(--gold)">${n.uic||'—'}</span></div>
     <div class="tt-r"><span class="tt-k">PUC</span><span class="tt-v">${n.puc||'—'}</span></div>
     <div class="tt-r"><span class="tt-k">Location</span><span class="tt-v">${locStr}</span></div>
-    ${n.dh?`<div class="tt-r"><span class="tt-k">Dual-Hat</span><span class="tt-v" style="color:var(--gold)">${n.dh[0]}</span></div>`:''}
+    ${n.dh?`<div class="tt-r"><span class="tt-k">Dual-Hat</span><span class="tt-v" style="color:var(--gold)">${dhLabel(n.id,n.dh)}</span></div>`:''}
     <div class="tt-hint">Click → authority profile · Dbl-click → load logo</div>`;
   t.style.opacity='1';moveTT(e);
 }
@@ -675,212 +720,11 @@ function renderTimeline(){
 }
 
 // ═══════════════════════════════════════════════════════
-// MAP — D3 Geo (fully offline, no tile server)
+// MAP — placeholder for D3 geo implementation
 // ═══════════════════════════════════════════════════════
-const MAP={gl:null,ready:false,aorOn:false,markers:[],lineLayer:null};
 
-const AOR_BOUNDS=[
-  {name:'NORTHCOM',coords:[[-170,15],[-50,85]],col:'#3366cc'},
-  {name:'SOUTHCOM',coords:[[-90,-60],[-30,15]],col:'#228833'},
-  {name:'EUCOM',coords:[[-15,30],[50,75]],col:'#8833cc'},
-  {name:'CENTCOM',coords:[[25,-5],[75,50]],col:'#cc8833'},
-  {name:'AFRICOM',coords:[[-20,-40],[55,40]],col:'#cc6644'},
-  {name:'INDOPACOM',coords:[[35,-55],[180,60]],col:'#3388aa'},
-];
 
-function initMap(){
-  if(MAP.ready){renderMapLayer();return;}
-  if(MAP.loading)return;
-  MAP.loading=true;
 
-  // Register PMTiles protocol
-  const protocol=new pmtiles.Protocol();
-  maplibregl.addProtocol('pmtiles',protocol.tile);
-
-  // Load PMTiles into memory as Blob URL (Tauri asset server doesn't support Range requests)
-  Promise.all([
-    fetch('data/dark-style.json').then(r=>r.json()),
-    fetch('data/planet-z6.pmtiles').then(r=>r.blob()).then(b=>URL.createObjectURL(b))
-  ]).then(([style,tileBlobUrl])=>{
-    // Point sources at the blob URL and resolve sprite path
-    style.sources.protomaps.url='pmtiles://'+tileBlobUrl;
-    const baseUrl=window.location.href.replace(/\/[^/]*$/,'/');
-    style.sprite=baseUrl+'sprites/v4/dark';
-
-    MAP.gl=new maplibregl.Map({
-      container:'maplibre-map',
-      style:style,
-      center:[10,25],
-      zoom:2,
-      attributionControl:false
-    });
-    MAP.gl.addControl(new maplibregl.NavigationControl(),'top-left');
-    MAP.gl.addControl(new maplibregl.AttributionControl({compact:true}));
-
-    MAP.gl.on('load',function(){
-      MAP.ready=true;
-      renderMapLayer();
-      document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
-    });
-
-    // Close tooltip on map click (not on marker)
-    MAP.gl.on('click',function(){closeMapTooltip();});
-  });
-}
-
-function renderMapLayer(){
-  if(!MAP.ready)return;
-  const svcFilter=document.getElementById('map-svc').value;
-  const authFilter=document.getElementById('map-auth').value;
-  const aorFilter=document.getElementById('map-aor').value;
-
-  // Filter visible nodes
-  const visNodes=Object.values(NODES).filter(n=>{
-    if(!n.loc)return false;
-    if(svcFilter!=='all'&&n.svc!==svcFilter)return false;
-    if(aorFilter!=='all'&&n.loc.aor!==aorFilter)return false;
-    return true;
-  });
-
-  // --- Clear existing markers ---
-  MAP.markers.forEach(m=>m.remove());
-  MAP.markers=[];
-
-  // --- Authority lines (GeoJSON source/layer) ---
-  if(MAP.gl.getLayer('auth-lines'))MAP.gl.removeLayer('auth-lines');
-  if(MAP.gl.getSource('auth-lines'))MAP.gl.removeSource('auth-lines');
-
-  if(authFilter!=='none'){
-    const features=[];
-    const drawnLinks=new Set();
-    Object.values(VIEWS).forEach(view=>{
-      (view.links||[]).forEach(lk=>{
-        if(lk.a!==authFilter)return;
-        const key=[lk.s,lk.t].sort().join('-');
-        if(drawnLinks.has(key))return;
-        const src=NODES[lk.s],tgt=NODES[lk.t];
-        if(!src||!tgt||!src.loc||!tgt.loc)return;
-        if(svcFilter!=='all'&&src.svc!==svcFilter&&tgt.svc!==svcFilter)return;
-        drawnLinks.add(key);
-        features.push({type:'Feature',geometry:{type:'LineString',coordinates:[[src.loc.lon,src.loc.lat],[tgt.loc.lon,tgt.loc.lat]]},properties:{auth:lk.a}});
-      });
-    });
-    if(features.length){
-      const col=ACOL[authFilter]||'#888';
-      MAP.gl.addSource('auth-lines',{type:'geojson',data:{type:'FeatureCollection',features:features}});
-      MAP.gl.addLayer({id:'auth-lines',type:'line',source:'auth-lines',paint:{
-        'line-color':col,
-        'line-width':authFilter==='cyber'?2.5:authFilter==='ta'?2:1.5,
-        'line-opacity':authFilter==='cyber'?0.9:authFilter==='ta'?0.85:0.6,
-        'line-dasharray':authFilter==='adcon'?[6,4]:authFilter==='opcon'?[3,3]:authFilter==='ta'?[8,3,2,3]:authFilter==='cyber'?[4,2]:[1,0]
-      }});
-    }
-  }
-
-  // --- Node markers (HTML markers) ---
-  let count=0;
-  visNodes.forEach(n=>{
-    const sc=SVC[n.svc]||SVC.civ;
-    const isSel=n.id===S.activeNode;
-    const sz=isSel?16:10;
-    const el=document.createElement('div');
-    el.style.cssText='width:'+sz+'px;height:'+sz+'px;border-radius:50%;cursor:pointer;background:'+sc.fill+';border:'+( isSel?'2.5':'1.5')+'px solid '+sc.stroke+';box-shadow:0 0 '+(isSel?'8':'4')+'px rgba(0,0,0,.6)';
-    if(isSel)el.style.boxShadow='0 0 0 3px '+sc.stroke+'44, 0 0 8px rgba(0,0,0,.6)';
-    el.title=n.lbl;
-
-    const marker=new maplibregl.Marker({element:el,anchor:'center'})
-      .setLngLat([n.loc.lon,n.loc.lat])
-      .addTo(MAP.gl);
-
-    el.addEventListener('click',function(event){
-      event.stopPropagation();
-      showMapTooltip(n,event);
-    });
-
-    MAP.markers.push(marker);
-    count++;
-  });
-
-  document.getElementById('map-count').textContent=count+' units plotted';
-
-  // Re-render AOR if active
-  if(MAP.aorOn)drawAorOverlay();
-}
-
-function showMapTooltip(n,event){
-  const tooltip=document.getElementById('map-tooltip');
-  const sc=SVC[n.svc]||SVC.civ;
-  const auth=AUTH[n.id];
-  const aorCol=AOR_COL[n.loc.aor]||'#888';
-  const authSummary=auth?`<div style="margin-top:5px;font-size:9px;color:#aaa">
-    <div>OPCON: ${auth.opcon&&auth.opcon.length?nlbl(auth.opcon[0])+'...':'N/A'}</div>
-    <div>ADCON: ${auth.adcon&&auth.adcon.length?nlbl(auth.adcon[0])+'...':'N/A'}</div>
-    <div style="color:${ACOL.ta}">TA: ${auth.ta&&auth.ta.length?auth.ta.map(t=>nlbl(t)).join(', '):'N/A'}</div>
-    <div style="color:${ACOL.cyber}">DACO: ${auth.daco&&auth.daco.length?nlbl(auth.daco[0])+'...':'N/A'}</div>
-  </div>`:'';
-  tooltip.innerHTML=`
-    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:${sc.text};margin-bottom:3px">${n.lbl}</div>
-    <div style="font-size:9.5px;color:#5a7ea0;margin-bottom:4px">${n.sub}</div>
-    <div style="font-family:'Space Mono',monospace;font-size:7.5px;color:#c9a84c">UIC: ${n.uic||'\u2014'} \u00b7 PUC: ${n.puc||'\u2014'}</div>
-    <div style="font-family:'Space Mono',monospace;font-size:7.5px;color:#aaa;margin-top:2px">\ud83d\udccd ${n.loc.install}</div>
-    <div style="font-family:'Space Mono',monospace;font-size:7.5px;color:#aaa">${n.loc.city}</div>
-    <span style="font-family:'Space Mono',monospace;font-size:7px;padding:1px 5px;border-radius:2px;background:${aorCol}22;color:${aorCol};border:1px solid ${aorCol}44;margin-top:3px;display:inline-block">${n.loc.aor}</span>
-    ${authSummary}
-    <button data-action="jump-to-node" data-arg="${n.id}" style="margin-top:5px;background:#1e3458;border:1px solid #2a4870;color:#7aaaee;font-family:'Space Mono',monospace;font-size:7px;padding:2px 7px;border-radius:2px;cursor:pointer;width:100%">View in Org Chart \u2192</button>`;
-  tooltip.classList.add('open');
-
-  const wrap=document.getElementById('map-wrap');
-  const wr=wrap.getBoundingClientRect();
-  let x=event.clientX-wr.left+12,y=event.clientY-wr.top-10;
-  if(x+260>wr.width)x=x-280;
-  if(y+200>wr.height)y=wr.height-210;
-  if(y<5)y=5;
-  tooltip.style.left=x+'px';tooltip.style.top=y+'px';
-}
-
-function closeMapTooltip(){document.getElementById('map-tooltip').classList.remove('open');}
-
-function closeMapPanel(){document.getElementById('map-panel').classList.remove('open');}
-
-function resetMapView(){
-  if(!MAP.gl)return;
-  MAP.gl.flyTo({center:[10,25],zoom:2,duration:500});
-}
-
-function zoomMapToNode(id){
-  const n=NODES[id];if(!n||!n.loc||!MAP.gl)return;
-  MAP.gl.flyTo({center:[n.loc.lon,n.loc.lat],zoom:8,duration:600});
-  S.activeNode=id;
-  setTimeout(renderMapLayer,50);
-}
-
-function drawAorOverlay(){
-  AOR_BOUNDS.forEach((aor,i)=>{
-    const sid='aor-'+i;
-    if(MAP.gl.getLayer(sid+'-fill'))return; // already drawn
-    const [[x0,y0],[x1,y1]]=aor.coords;
-    MAP.gl.addSource(sid,{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]]]}}});
-    MAP.gl.addLayer({id:sid+'-fill',type:'fill',source:sid,paint:{'fill-color':aor.col,'fill-opacity':0.04}});
-    MAP.gl.addLayer({id:sid+'-line',type:'line',source:sid,paint:{'line-color':aor.col,'line-width':1.5,'line-opacity':0.7,'line-dasharray':[6,4]}});
-    MAP.gl.addLayer({id:sid+'-label',type:'symbol',source:sid,layout:{'text-field':aor.name,'text-size':11,'text-font':['Noto Sans Regular']},paint:{'text-color':aor.col,'text-opacity':0.7,'text-halo-color':'#000','text-halo-width':1}});
-  });
-}
-
-function removeAorOverlay(){
-  AOR_BOUNDS.forEach((aor,i)=>{
-    const sid='aor-'+i;
-    ['fill','line','label'].forEach(s=>{if(MAP.gl.getLayer(sid+'-'+s))MAP.gl.removeLayer(sid+'-'+s);});
-    if(MAP.gl.getSource(sid))MAP.gl.removeSource(sid);
-  });
-}
-
-function toggleAorOverlay(){
-  if(!MAP.ready)return;
-  MAP.aorOn=!MAP.aorOn;
-  document.getElementById('btn-aor').classList.toggle('on',MAP.aorOn);
-  if(MAP.aorOn)drawAorOverlay();
-  else removeAorOverlay();
-}
 
 // ═══════════════════════════════════════════════════════
 // REGISTRY
@@ -938,7 +782,7 @@ function buildNodeViewIndex(){
 var NODE_VIEW_INDEX=buildNodeViewIndex();
 
 // Preferred view order — NAVAIR-centric audience
-var VIEW_PRIORITY=['navair_auth','navy_syscom','ta_view','mals','acq','don','navy_fleet','usmc','cocoms','cyber','strategic'];
+var VIEW_PRIORITY=['navair_auth','navy_syscom','ta_navair','ta_navsea','ta_navwar','mals','acq','don','navy_fleet','usmc','cocoms','cyber','strategic'];
 
 function bestViewForNode(id){
   var views=NODE_VIEW_INDEX[id]||[];
@@ -993,7 +837,7 @@ function navigateToNode(id){
   S.highlight=new Set([id]);
   var auth=AUTH[id];
   if(auth){
-    var axes=['opcon','adcon','ta','daco','lcsp'];
+    var axes=['opcon','adcon','aa','ta','daco','lcsp'];
     for(var i=0;i<axes.length;i++){
       var chain=auth[axes[i]];
       if(chain){for(var j=0;j<chain.length;j++){S.highlight.add(chain[j]);}}
@@ -1012,141 +856,131 @@ function navigateToNode(id){
 // Make globally accessible for event delegation
 window.navigateToNode=navigateToNode;
 
-// Search UI state
-const SEARCH={activeIdx:-1,results:[]};
+// ═══════════════════════════════════════════════════════
+// REUSABLE SEARCH BOX — keyboard nav, results, selection
+// ═══════════════════════════════════════════════════════
+function initSearchBox(opts){
+  // opts: { inputId, resultsId, wrapClass, onSelect(id), renderItem(result,query,idx,activeIdx), onClose? }
+  var input=document.getElementById(opts.inputId);
+  var container=document.getElementById(opts.resultsId);
+  if(!input||!container)return null;
 
-function renderSearchResults(query){
-  var container=document.getElementById('search-results');
-  if(!container)return;
-  if(!SEARCH.results.length){
-    if(query&&query.length>=1){
-      container.innerHTML='<div class="sr-empty">No commands match "'+query+'"</div>';
-      container.classList.add('open');
-    }else{
-      container.classList.remove('open');
+  var state={results:[],activeIdx:-1};
+
+  function render(query){
+    if(!state.results.length){
+      if(query&&query.length>=1){
+        container.innerHTML='<div class="sr-empty">No commands match "'+query+'"</div>';
+        container.classList.add('open');
+      }else{
+        container.classList.remove('open');
+      }
+      return;
     }
-    return;
-  }
-  var html='';
-  for(var i=0;i<SEARCH.results.length;i++){
-    var r=SEARCH.results[i];
-    var sc=SVC[r.node.svc]||SVC.civ;
-    var bv=bestViewForNode(r.id);
-    var viewLbl='';
-    if(bv&&VIEWS[bv]&&VIEWS[bv].label){
-      var parts=VIEWS[bv].label.split('—');
-      viewLbl=parts[0].trim();
+    var html='';
+    for(var i=0;i<state.results.length;i++){
+      html+=opts.renderItem(state.results[i],query,i,state.activeIdx);
     }
-    html+='<div class="sr-item'+(i===SEARCH.activeIdx?' active':'')+'" data-id="'+r.id+'">';
-    html+='<div class="sr-svc" style="background:'+sc.stroke+'"></div>';
-    html+='<div class="sr-text">';
-    html+='<div class="sr-lbl">'+highlightMatch(r.node.lbl,query)+'</div>';
-    html+='<div class="sr-sub">'+highlightMatch(r.node.sub,query)+'</div>';
-    html+='</div>';
-    if(viewLbl)html+='<div class="sr-view">'+viewLbl+'</div>';
-    html+='</div>';
+    container.innerHTML=html;
+    container.classList.add('open');
   }
-  container.innerHTML=html;
-  container.classList.add('open');
-}
 
-function updateSearchActive(){
-  var items=document.querySelectorAll('.sr-item');
-  for(var i=0;i<items.length;i++){
-    if(i===SEARCH.activeIdx)items[i].classList.add('active');
-    else items[i].classList.remove('active');
+  function updateActive(){
+    var items=container.querySelectorAll('.sr-item');
+    for(var i=0;i<items.length;i++){
+      if(i===state.activeIdx)items[i].classList.add('active');
+      else items[i].classList.remove('active');
+    }
+    if(state.activeIdx>=0&&items[state.activeIdx])items[state.activeIdx].scrollIntoView({block:'nearest'});
   }
-  if(SEARCH.activeIdx>=0&&items[SEARCH.activeIdx]){
-    items[SEARCH.activeIdx].scrollIntoView({block:'nearest'});
+
+  function close(){
+    input.value='';
+    container.classList.remove('open');
+    state.results=[];
+    state.activeIdx=-1;
+    if(opts.onClose)opts.onClose();
   }
-}
 
-function closeSearch(){
-  var input=document.getElementById('search-input');
-  var results=document.getElementById('search-results');
-  if(input)input.value='';
-  if(results)results.classList.remove('open');
-  SEARCH.results=[];
-  SEARCH.activeIdx=-1;
-  var kbd=document.getElementById('search-kbd');
-  if(kbd)kbd.style.display='block';
-}
-
-function initSearch(){
-  var input=document.getElementById('search-input');
-  var results=document.getElementById('search-results');
-  var kbd=document.getElementById('search-kbd');
-  if(!input||!results){return;}
-
-  // Input handler
-  input.addEventListener('input',function(e){
+  input.addEventListener('input',function(){
     var q=input.value.trim();
-    SEARCH.results=searchNodes(q);
-    SEARCH.activeIdx=-1;
-    renderSearchResults(q);
-    if(kbd)kbd.style.display=q?'none':'block';
+    state.results=searchNodes(q);
+    state.activeIdx=-1;
+    render(q);
+    if(opts.onInput)opts.onInput(q);
   });
+  input.addEventListener('click',function(e){e.stopPropagation();});
+  container.addEventListener('click',function(e){e.stopPropagation();});
 
-  // Stop clicks inside search from propagating to document close handler
-  input.addEventListener('click',function(e){
-    e.stopPropagation();
-  });
-  results.addEventListener('click',function(e){
-    e.stopPropagation();
-  });
-
-  // Keyboard navigation
   input.addEventListener('keydown',function(e){
     if(e.key==='ArrowDown'){
       e.preventDefault();
-      SEARCH.activeIdx=Math.min(SEARCH.activeIdx+1,SEARCH.results.length-1);
-      updateSearchActive();
+      state.activeIdx=Math.min(state.activeIdx+1,state.results.length-1);
+      updateActive();
     }else if(e.key==='ArrowUp'){
       e.preventDefault();
-      SEARCH.activeIdx=Math.max(SEARCH.activeIdx-1,-1);
-      updateSearchActive();
+      state.activeIdx=Math.max(state.activeIdx-1,-1);
+      updateActive();
     }else if(e.key==='Enter'){
       e.preventDefault();
-      if(SEARCH.activeIdx>=0&&SEARCH.results[SEARCH.activeIdx]){
-        var id=SEARCH.results[SEARCH.activeIdx].id;
-        closeSearch();
-        navigateToNode(id);
-      }else if(SEARCH.results.length===1){
-        var id=SEARCH.results[0].id;
-        closeSearch();
-        navigateToNode(id);
-      }
+      var sel=state.activeIdx>=0?state.results[state.activeIdx]:state.results.length===1?state.results[0]:null;
+      if(sel){close();opts.onSelect(sel.id);}
     }else if(e.key==='Escape'){
-      closeSearch();
+      close();
       input.blur();
     }
   });
 
-  // Event delegation for clicking search results (instead of inline handlers)
-  results.addEventListener('mousedown',function(e){
+  container.addEventListener('mousedown',function(e){
     var item=e.target.closest('.sr-item');
     if(item&&item.dataset.id){
       e.preventDefault();
       e.stopPropagation();
-      var id=item.dataset.id;
-      closeSearch();
-      navigateToNode(id);
+      close();
+      opts.onSelect(item.dataset.id);
     }
   });
 
-  // Reshow results on focus
   input.addEventListener('focus',function(){
-    if(SEARCH.results.length)results.classList.add('open');
+    if(state.results.length)container.classList.add('open');
   });
 
-  // Close on outside click
   document.addEventListener('click',function(e){
-    if(!e.target.closest('.search-wrap')){
-      results.classList.remove('open');
+    if(!e.target.closest('.'+opts.wrapClass))container.classList.remove('open');
+  });
+
+  return {state:state,close:close};
+}
+
+// Global search — uses reusable search box
+function initSearch(){
+  var kbd=document.getElementById('search-kbd');
+  var box=initSearchBox({
+    inputId:'search-input',
+    resultsId:'search-results',
+    wrapClass:'search-wrap',
+    onSelect:function(id){navigateToNode(id);},
+    onInput:function(q){if(kbd)kbd.style.display=q?'none':'block';},
+    onClose:function(){if(kbd)kbd.style.display='block';},
+    renderItem:function(r,query,i,activeIdx){
+      var sc=SVC[r.node.svc]||SVC.civ;
+      var bv=bestViewForNode(r.id);
+      var viewLbl='';
+      if(bv&&VIEWS[bv]&&VIEWS[bv].label){viewLbl=VIEWS[bv].label.split('—')[0].trim();}
+      var html='<div class="sr-item'+(i===activeIdx?' active':'')+'" data-id="'+r.id+'">';
+      html+='<div class="sr-svc" style="background:'+sc.stroke+'"></div>';
+      html+='<div class="sr-text">';
+      html+='<div class="sr-lbl">'+highlightMatch(r.node.lbl,query)+'</div>';
+      html+='<div class="sr-sub">'+highlightMatch(r.node.sub,query)+'</div>';
+      html+='</div>';
+      if(viewLbl)html+='<div class="sr-view">'+viewLbl+'</div>';
+      return html+'</div>';
     }
   });
+  if(!box)return;
 
   // Keyboard shortcut: / to open search
+  var input=document.getElementById('search-input');
   document.addEventListener('keydown',function(e){
     if(e.key==='/'&&document.activeElement!==input&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'&&document.activeElement.tagName!=='SELECT'){
       e.preventDefault();
@@ -1158,144 +992,6 @@ function initSearch(){
 
 // ═══════════════════════════════════════════════════════
 // COMMAND EDITOR (Phase 4)
-// ═══════════════════════════════════════════════════════
-var ceEditId=null; // null = add mode, string = edit mode
-
-function openCommandEditor(editId){
-  ceEditId=editId||null;
-  document.getElementById('ce-title').textContent=ceEditId?'Edit Command':'Add Command';
-  document.getElementById('ce-del-btn').style.display=ceEditId?'inline-block':'none';
-  if(ceEditId){
-    var n=NODES[ceEditId];
-    if(!n)return;
-    document.getElementById('ce-id').value=ceEditId;
-    document.getElementById('ce-id').disabled=true;
-    document.getElementById('ce-lbl').value=n.lbl||'';
-    document.getElementById('ce-sub').value=n.sub||'';
-    document.getElementById('ce-svc').value=n.svc||'navy';
-    document.getElementById('ce-billet').value=n.billet||'';
-    document.getElementById('ce-uic').value=n.uic||'';
-    document.getElementById('ce-puc').value=n.puc||'';
-    document.getElementById('ce-logo').value=n.logo||'';
-    document.getElementById('ce-maint').value=n.maint||'';
-    document.getElementById('ce-dh').value=(n.dh&&n.dh[0])||'';
-    if(n.loc){
-      document.getElementById('ce-install').value=n.loc.install||'';
-      document.getElementById('ce-city').value=n.loc.city||'';
-      document.getElementById('ce-lat').value=n.loc.lat||'';
-      document.getElementById('ce-lon').value=n.loc.lon||'';
-      document.getElementById('ce-aor').value=n.loc.aor||'GLOBAL';
-    }
-    var auth=AUTH[ceEditId]||{};
-    document.getElementById('ce-opcon').value=(auth.opcon||[]).join(',');
-    document.getElementById('ce-adcon').value=(auth.adcon||[]).join(',');
-    document.getElementById('ce-ta').value=(auth.ta||[]).join(',');
-    document.getElementById('ce-daco').value=(auth.daco||[]).join(',');
-    document.getElementById('ce-lcsp').value=(auth.lcsp||[]).join(',');
-    document.getElementById('ce-note').value=auth.note||'';
-  }else{
-    clearCommandEditor();
-    document.getElementById('ce-id').disabled=false;
-  }
-  document.getElementById('ce-overlay').classList.add('on');
-}
-
-function clearCommandEditor(){
-  var fields=['ce-id','ce-lbl','ce-sub','ce-billet','ce-uic','ce-puc','ce-logo','ce-install','ce-city','ce-lat','ce-lon','ce-dh','ce-opcon','ce-adcon','ce-ta','ce-daco','ce-lcsp','ce-note'];
-  fields.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('ce-svc').value='navy';
-  document.getElementById('ce-maint').value='';
-  document.getElementById('ce-aor').value='GLOBAL';
-}
-
-function closeCommandEditor(){
-  document.getElementById('ce-overlay').classList.remove('on');
-  ceEditId=null;
-  clearCommandEditor();
-}
-
-function parseChain(val){
-  if(!val)return[];
-  return val.split(',').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});
-}
-
-function saveCommand(){
-  var id=document.getElementById('ce-id').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
-  var lbl=document.getElementById('ce-lbl').value.trim();
-  var sub=document.getElementById('ce-sub').value.trim();
-  var svc=document.getElementById('ce-svc').value;
-  if(!id){alert('Command ID is required.');return;}
-  if(!lbl){alert('Display Label is required.');return;}
-  if(!sub){alert('Full Name is required.');return;}
-  if(!ceEditId&&NODES[id]){alert('Command ID "'+id+'" already exists. Choose a unique ID.');return;}
-  var nodeId=ceEditId||id;
-  var node={
-    id:nodeId,
-    lbl:lbl,
-    sub:sub,
-    svc:svc,
-    billet:document.getElementById('ce-billet').value.trim()||undefined,
-    uic:document.getElementById('ce-uic').value.trim()||undefined,
-    puc:document.getElementById('ce-puc').value.trim()||undefined,
-    logo:document.getElementById('ce-logo').value.trim()||undefined,
-    maint:document.getElementById('ce-maint').value||undefined
-  };
-  var dh=document.getElementById('ce-dh').value.trim();
-  if(dh)node.dh=[dh];
-  var install=document.getElementById('ce-install').value.trim();
-  var city=document.getElementById('ce-city').value.trim();
-  var lat=parseFloat(document.getElementById('ce-lat').value);
-  var lon=parseFloat(document.getElementById('ce-lon').value);
-  if(install||city||(lat&&lon)){
-    node.loc={install:install,city:city,lat:lat||0,lon:lon||0,aor:document.getElementById('ce-aor').value};
-  }
-  NODES[nodeId]=node;
-  var opcon=parseChain(document.getElementById('ce-opcon').value);
-  var adcon=parseChain(document.getElementById('ce-adcon').value);
-  var ta=parseChain(document.getElementById('ce-ta').value);
-  var daco=parseChain(document.getElementById('ce-daco').value);
-  var lcsp=parseChain(document.getElementById('ce-lcsp').value);
-  var note=document.getElementById('ce-note').value.trim();
-  if(opcon.length||adcon.length||ta.length||daco.length||lcsp.length||note){
-    AUTH[nodeId]={opcon:opcon,adcon:adcon,ta:ta,daco:daco,lcsp:lcsp,note:note||undefined};
-  }
-  closeCommandEditor();
-  if(document.getElementById('p-org').classList.contains('on'))renderOrg();
-  if(document.getElementById('p-accuracy').classList.contains('on'))runValidation();
-  NODE_VIEW_INDEX=buildNodeViewIndex();
-}
-
-function deleteCommand(){
-  if(!ceEditId)return;
-  if(!confirm('Delete command "'+(ceEditId)+'"? This cannot be undone.'))return;
-  delete NODES[ceEditId];
-  delete AUTH[ceEditId];
-  Object.keys(VIEWS).forEach(function(vk){
-    var v=VIEWS[vk];
-    if(v.ids){v.ids=v.ids.filter(function(id){return id!==ceEditId;});}
-    if(v.links){v.links=v.links.filter(function(lk){return lk.s!==ceEditId&&lk.t!==ceEditId;});}
-    if(v.pos)delete v.pos[ceEditId];
-  });
-  closeCommandEditor();
-  closeSide();
-  renderOrg();
-  NODE_VIEW_INDEX=buildNodeViewIndex();
-}
-
-// Add "Edit Command" to side panel — inject button into openSide
-var origOpenSide=openSide;
-openSide=function(id,related){
-  origOpenSide(id,related);
-  var sideBody=document.getElementById('side-body');
-  if(sideBody&&NODES[id]){
-    var editBtn=document.createElement('button');
-    editBtn.className='btn btn-p';
-    editBtn.style.cssText='width:100%;margin-top:8px;font-size:9px';
-    editBtn.textContent='✎ Edit Command';
-    editBtn.dataset.action='open-cmd-editor';editBtn.dataset.arg=id;
-    sideBody.appendChild(editBtn);
-  }
-};
 
 // ═══════════════════════════════════════════════════════
 // DATA ACCURACY — Validation Engine (Phase 4)
@@ -1326,7 +1022,7 @@ function runValidation(){
       findings.push({sev:'error',node:id,rule:'ORPHAN_AUTH',msg:'AUTH entry exists but no matching node in NODES.'});
       return;
     }
-    var chains=['opcon','adcon','ta','daco','lcsp'];
+    var chains=['opcon','adcon','aa','ta','daco','lcsp'];
     chains.forEach(function(ax){
       var chain=auth[ax];
       if(!chain)return;
@@ -1369,7 +1065,7 @@ function runValidation(){
   // Rule 7: AUTH entry with all empty chains
   Object.keys(AUTH).forEach(function(id){
     var a=AUTH[id];
-    if(NODES[id]&&(!a.opcon||!a.opcon.length)&&(!a.adcon||!a.adcon.length)&&(!a.ta||!a.ta.length)&&(!a.daco||!a.daco.length)&&(!a.lcsp||!a.lcsp.length)&&!a.note){
+    if(NODES[id]&&(!a.opcon||!a.opcon.length)&&(!a.adcon||!a.adcon.length)&&(!a.aa||!a.aa.length)&&(!a.ta||!a.ta.length)&&(!a.daco||!a.daco.length)&&(!a.lcsp||!a.lcsp.length)&&!a.note){
       findings.push({sev:'info',node:id,rule:'EMPTY_AUTH',msg:'AUTH entry exists but all chains are empty.'});
     }
   });
@@ -1408,7 +1104,7 @@ function renderAccuracy(findings){
     html+='<td style="font-family:Space Mono,monospace;font-size:8px;color:var(--t2)">'+f.rule+'</td>';
     html+='<td class="acc-msg">'+f.msg+'</td>';
     html+='<td>';
-    if(NODES[f.node])html+='<button class="btn btn-s" style="font-size:7px;padding:2px 6px" data-action="open-cmd-editor" data-arg="'+f.node+'">Edit</button>';
+    if(NODES[f.node])html+='<button class="btn btn-s" style="font-size:7px;padding:2px 6px" data-action="jump-to-node" data-arg="'+f.node+'">View</button>';
     html+='</td>';
     html+='</tr>';
   });
@@ -1423,9 +1119,7 @@ const CUSTOM={
   roots:[],           // Node IDs explicitly added by user
   nodes:new Set(),    // All nodes currently visible (roots + chain expansions)
   links:[],           // Links to draw
-  auth:{adcon:true,opcon:false,cocom:false,ta:false,cyber:false,lcsp:false},
-  addResults:[],
-  addIdx:-1
+  auth:{nca:false,dac:false,adcon:true,opcon:false,tacon:false,cocom:false,aa:false,ta:false,cyber:false,lcsp:false},
 };
 
 function isCustomMode(){
@@ -1448,8 +1142,6 @@ function addToCustomChart(id){
   if(input)input.value='';
   var results=document.getElementById('cc-add-results');
   if(results)results.classList.remove('open');
-  CUSTOM.addResults=[];
-  CUSTOM.addIdx=-1;
 }
 
 function removeFromCustomChart(id){
@@ -1506,59 +1198,12 @@ function rebuildCustomChart(){
 }
 
 function layoutCustomChart(nodeIds,links,W,H){
-  // Build adjacency: find hierarchy levels via BFS from nodes with no incoming edges
-  var incoming={};
-  var outgoing={};
-  nodeIds.forEach(function(id){incoming[id]=[];outgoing[id]=[];});
-  links.forEach(function(lk){
-    if(nodeIds.indexOf(lk.s)>=0&&nodeIds.indexOf(lk.t)>=0){
-      if(!outgoing[lk.s])outgoing[lk.s]=[];
-      outgoing[lk.s].push(lk.t);
-      if(!incoming[lk.t])incoming[lk.t]=[];
-      incoming[lk.t].push(lk.s);
-    }
-  });
-  // Find roots — nodes with no incoming
-  var roots=nodeIds.filter(function(id){return !incoming[id]||incoming[id].length===0;});
-  if(!roots.length)roots=[nodeIds[0]]; // fallback
-  // BFS to assign depth levels
-  var depth={};
-  var visited=new Set();
-  var queue=[];
-  roots.forEach(function(r){depth[r]=0;visited.add(r);queue.push(r);});
-  while(queue.length){
-    var cur=queue.shift();
-    var children=outgoing[cur]||[];
-    children.forEach(function(ch){
-      if(!visited.has(ch)){
-        visited.add(ch);
-        depth[ch]=(depth[cur]||0)+1;
-        queue.push(ch);
-      }
-    });
-  }
-  // Assign unvisited nodes (disconnected) to depth 0
-  nodeIds.forEach(function(id){if(depth[id]===undefined)depth[id]=0;});
-  // Group by depth
-  var levels={};
-  var maxDepth=0;
-  nodeIds.forEach(function(id){
-    var d=depth[id];
-    if(!levels[d])levels[d]=[];
-    levels[d].push(id);
-    if(d>maxDepth)maxDepth=d;
-  });
-  // Position: spread each level horizontally, levels cascade vertically
+  // Reuse autoLayoutView with a synthetic view object
+  var rawPos=autoLayoutView({ids:nodeIds,links:links},W,H);
   var posMap={};
-  var VGAP=NH+60;
-  var HGAP=NW+30;
-  for(var d=0;d<=maxDepth;d++){
-    var row=levels[d]||[];
-    var totalW=row.length*HGAP;
-    var startX=(W-totalW)/2;
-    row.forEach(function(id,i){
-      posMap[id]={x:startX+i*HGAP, y:40+d*VGAP};
-    });
+  for(var i=0;i<nodeIds.length;i++){
+    var p=rawPos[nodeIds[i]]||[0,0];
+    posMap[nodeIds[i]]={x:p[0],y:p[1]};
   }
   return posMap;
 }
@@ -1665,92 +1310,24 @@ function exportCustomPNG(){
   img.src=url;
 }
 
-// Custom chart search-to-add
+// Custom chart search-to-add — uses reusable search box
 function initCustomChartSearch(){
-  var input=document.getElementById('cc-add');
-  var results=document.getElementById('cc-add-results');
-  if(!input||!results)return;
-  input.addEventListener('input',function(){
-    var q=input.value.trim();
-    CUSTOM.addResults=searchNodes(q);
-    CUSTOM.addIdx=-1;
-    renderCCAddResults(q);
-  });
-  input.addEventListener('click',function(e){e.stopPropagation();});
-  results.addEventListener('click',function(e){e.stopPropagation();});
-  input.addEventListener('keydown',function(e){
-    if(e.key==='ArrowDown'){
-      e.preventDefault();
-      CUSTOM.addIdx=Math.min(CUSTOM.addIdx+1,CUSTOM.addResults.length-1);
-      updateCCAddActive();
-    }else if(e.key==='ArrowUp'){
-      e.preventDefault();
-      CUSTOM.addIdx=Math.max(CUSTOM.addIdx-1,-1);
-      updateCCAddActive();
-    }else if(e.key==='Enter'){
-      e.preventDefault();
-      if(CUSTOM.addIdx>=0&&CUSTOM.addResults[CUSTOM.addIdx]){
-        addToCustomChart(CUSTOM.addResults[CUSTOM.addIdx].id);
-      }else if(CUSTOM.addResults.length===1){
-        addToCustomChart(CUSTOM.addResults[0].id);
-      }
-    }else if(e.key==='Escape'){
-      input.value='';
-      results.classList.remove('open');
-      CUSTOM.addResults=[];
-      CUSTOM.addIdx=-1;
+  initSearchBox({
+    inputId:'cc-add',
+    resultsId:'cc-add-results',
+    wrapClass:'cc-add-wrap',
+    onSelect:function(id){addToCustomChart(id);},
+    renderItem:function(r,query,i,activeIdx){
+      var sc=SVC[r.node.svc]||SVC.civ;
+      var already=CUSTOM.roots.indexOf(r.id)>=0;
+      var html='<div class="sr-item'+(i===activeIdx?' active':'')+(already?' dimmed':'')+'" data-id="'+r.id+'">';
+      html+='<div class="sr-svc" style="background:'+sc.stroke+'"></div>';
+      html+='<div class="sr-text">';
+      html+='<div class="sr-lbl">'+highlightMatch(r.node.lbl,query)+(already?' <span style="font-size:7px;color:var(--t3)">(added)</span>':'')+'</div>';
+      html+='<div class="sr-sub">'+highlightMatch(r.node.sub,query)+'</div>';
+      return html+'</div></div>';
     }
   });
-  results.addEventListener('mousedown',function(e){
-    var item=e.target.closest('.sr-item');
-    if(item&&item.dataset.id){
-      e.preventDefault();
-      e.stopPropagation();
-      addToCustomChart(item.dataset.id);
-    }
-  });
-  input.addEventListener('focus',function(){
-    if(CUSTOM.addResults.length)results.classList.add('open');
-  });
-  document.addEventListener('click',function(e){
-    if(!e.target.closest('.cc-add-wrap'))results.classList.remove('open');
-  });
-}
-
-function renderCCAddResults(query){
-  var container=document.getElementById('cc-add-results');
-  if(!CUSTOM.addResults.length){
-    if(query&&query.length>=1){
-      container.innerHTML='<div class="sr-empty">No commands match "'+query+'"</div>';
-      container.classList.add('open');
-    }else{
-      container.classList.remove('open');
-    }
-    return;
-  }
-  var html='';
-  for(var i=0;i<CUSTOM.addResults.length;i++){
-    var r=CUSTOM.addResults[i];
-    var sc=SVC[r.node.svc]||SVC.civ;
-    var already=CUSTOM.roots.indexOf(r.id)>=0;
-    html+='<div class="sr-item'+(i===CUSTOM.addIdx?' active':'')+(already?' dimmed':'')+'" data-id="'+r.id+'">';
-    html+='<div class="sr-svc" style="background:'+sc.stroke+'"></div>';
-    html+='<div class="sr-text">';
-    html+='<div class="sr-lbl">'+highlightMatch(r.node.lbl,query)+(already?' <span style="font-size:7px;color:var(--t3)">(added)</span>':'')+'</div>';
-    html+='<div class="sr-sub">'+highlightMatch(r.node.sub,query)+'</div>';
-    html+='</div></div>';
-  }
-  container.innerHTML=html;
-  container.classList.add('open');
-}
-
-function updateCCAddActive(){
-  var items=document.querySelectorAll('#cc-add-results .sr-item');
-  for(var i=0;i<items.length;i++){
-    if(i===CUSTOM.addIdx)items[i].classList.add('active');
-    else items[i].classList.remove('active');
-  }
-  if(CUSTOM.addIdx>=0&&items[CUSTOM.addIdx])items[CUSTOM.addIdx].scrollIntoView({block:'nearest'});
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1797,11 +1374,9 @@ load();
 document.getElementById('tb-orders').textContent=BUILTIN.length;
 document.getElementById('tb-tl').textContent=TL.length;
 document.getElementById('tb-reg').textContent=S.docs.length;
-document.getElementById('tb-map').textContent=Object.keys(NODES).filter(id=>NODES[id].loc).length;
 window.addEventListener('load',function(){setTimeout(renderOrg,100);initSearch();initCustomChartSearch();initEvents();});
 window.addEventListener('resize',function(){
   if(document.getElementById('p-org').classList.contains('on'))renderOrg();
-  if(MAP.gl)MAP.gl.resize();
 });
 
 // ═══════════════════════════════════════════════════════
@@ -1818,13 +1393,12 @@ function initEvents(){
     switch(action){
       // Navigation
       case 'show-panel':     showPanel(arg);break;
-      case 'show-ta':        showPanel('org');document.getElementById('oc-view').value='ta_view';renderOrg();break;
+      case 'show-ta':        showPanel('org');document.getElementById('oc-view').value='ta_navair';renderOrg();break;
       case 'show-daco':      showPanel('org');document.getElementById('oc-view').value='cyber';renderOrg();break;
       // Org chart
       case 'clear-filter':   clearFilter();break;
       case 'close-side':     closeSide();break;
-      case 'jump-to-node':   jumpToNode(arg);closeMapTooltip();break;
-      case 'jump-to-map':    jumpToMap(arg);break;
+      case 'jump-to-node':   jumpToNode(arg);break;
       case 'select-node':    selectNode(arg);break;
       case 'pick-logo':      pickLogo(arg);break;
       case 'select-order':   showPanel('orders');setTimeout(()=>selectOrder(arg),80);break;
@@ -1834,22 +1408,12 @@ function initEvents(){
       case 'export-png':     exportCustomPNG();break;
       case 'add-custom':     addToCustomChart(arg);break;
       case 'remove-custom':  removeFromCustomChart(arg);break;
-      // Map
-      case 'toggle-aor':     toggleAorOverlay();break;
-      case 'reset-map':      resetMapView();break;
-      case 'close-map-panel':closeMapPanel();break;
-      case 'close-tooltip':  closeMapTooltip();break;
       // Registry & Modals
       case 'open-modal':     openModal();break;
       case 'close-modal':    closeModal();break;
       case 'save-doc':       saveDoc();break;
       case 'edit-doc':       editDoc(arg);break;
       case 'delete-doc':     deleteDoc(arg);break;
-      // Command Editor
-      case 'open-cmd-editor':openCommandEditor(arg||undefined);break;
-      case 'close-cmd-editor':closeCommandEditor();break;
-      case 'save-command':   saveCommand();break;
-      case 'delete-command': deleteCommand();break;
       // Accuracy & Data
       case 'run-validation': runValidation();break;
       case 'export-data':    exportData();break;
@@ -1864,8 +1428,8 @@ function initEvents(){
     const action=el.dataset.change;
 
     switch(action){
-      case 'render-org':     renderOrg();break;
-      case 'render-map':     renderMapLayer();break;
+      case 'render-org':     _lastRenderView=null;renderOrg(true);break;
+      case 'filter-auth':   renderOrg();break;
       case 'render-timeline':renderTimeline();break;
     }
   });

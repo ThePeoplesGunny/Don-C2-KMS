@@ -53,7 +53,7 @@ info('Node field and coordinate checks complete');
 
 // ─── 3. Authority validation ─────────────────────────────────────
 console.log('\n=== Authority Validation ===');
-const authArrayKeys = ['opcon', 'adcon', 'ta', 'daco'];
+const authArrayKeys = ['opcon', 'adcon', 'aa', 'ta', 'daco', 'lcsp'];
 
 for (const [id, entry] of Object.entries(AUTH)) {
   if (!nodeIds.has(id)) error(`Auth entry "${id}" does not match any node`);

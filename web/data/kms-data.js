@@ -1,13 +1,15 @@
-// DoN C2 KMS — Organizational Data v7.1
-// SNDL-verified data update (OPNAVINST 5400.45A, 02 Feb 2026)
+// DoN C2 KMS — Organizational Data v8.1
+// Authority chains normalized to immediate parent (opcon/adcon/daco)
+// ta/lcsp/aa remain as peer relationship arrays
+// Generated: 2026-04-01
 const KMS_DATA = {
- "version": "7.1",
- "lastModified": "2026-03-12",
+ "version": "8.5",
+ "lastModified": "2026-03-31",
  "config": {
   "svc": {
    "navy": {
-    "fill": "#0a1a32",
-    "stroke": "#2a55a0",
+    "fill": "#022a3a",
+    "stroke": "#0076a9",
     "text": "#8abbff"
    },
    "usmc": {
@@ -52,20 +54,22 @@ const KMS_DATA = {
    },
    "acq": {
     "fill": "#0a1828",
-    "stroke": "#2448a0",
+    "stroke": "#0076a9",
     "text": "#99bbdd"
    }
   },
   "acol": {
-   "cocom": "#c9a84c",
-   "adcon": "#3a88ff",
+   "cocom": "#e8b00f",
+   "adcon": "#0096cc",
    "opcon": "#ff7733",
    "tacon": "#ff3355",
    "cyber": "#00cccc",
    "ta": "#dd44bb",
-   "gadmin": "#88bb44",
    "lcsp": "#6a9900",
-   "align": "#cc8800"
+   "align": "#cc8800",
+   "nca": "#e8b00f",
+   "dac": "#b07cd8",
+   "aa": "#e05599"
   },
   "adsh": {
    "cocom": null,
@@ -74,9 +78,11 @@ const KMS_DATA = {
    "tacon": "2,4",
    "cyber": "4,2",
    "ta": "9,3,2,3",
-   "gadmin": "8,2",
    "lcsp": "8,4",
-   "align": "5,3"
+   "align": "5,3",
+   "nca": null,
+   "dac": null,
+   "aa": "4,2,2,2"
   },
   "aw": {
    "cocom": 2.5,
@@ -85,9 +91,11 @@ const KMS_DATA = {
    "tacon": 1.3,
    "cyber": 2.2,
    "ta": 1.8,
-   "gadmin": 1.2,
    "lcsp": 1.1,
-   "align": 1.2
+   "align": 1.2,
+   "nca": 3,
+   "dac": 2.2,
+   "aa": 1.8
   },
   "aor_col": {
    "NORTHCOM": "#3366cc",
@@ -182,7 +190,7 @@ const KMS_DATA = {
   },
   "usd_as": {
    "lbl": "USD(A&S)",
-   "sub": "Under Sec \u2014 Acquisition & Sustainment",
+   "sub": "Under Sec — Acquisition & Sustainment",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00010",
@@ -198,7 +206,7 @@ const KMS_DATA = {
   },
   "usd_re": {
    "lbl": "USD(R&E)",
-   "sub": "Under Sec \u2014 Research & Engineering",
+   "sub": "Under Sec — Research & Engineering",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00011",
@@ -214,7 +222,7 @@ const KMS_DATA = {
   },
   "usd_p": {
    "lbl": "USD(P)",
-   "sub": "Under Secretary \u2014 Policy",
+   "sub": "Under Secretary — Policy",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00012",
@@ -230,7 +238,7 @@ const KMS_DATA = {
   },
   "usd_is": {
    "lbl": "USD(I&S)",
-   "sub": "Under Sec \u2014 Intelligence & Security",
+   "sub": "Under Sec — Intelligence & Security",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00013",
@@ -246,7 +254,7 @@ const KMS_DATA = {
   },
   "usd_comp": {
    "lbl": "USD(C/CFO)",
-   "sub": "Under Sec \u2014 Comptroller/CFO",
+   "sub": "Under Sec — Comptroller/CFO",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00014",
@@ -262,7 +270,7 @@ const KMS_DATA = {
   },
   "usd_pr": {
    "lbl": "USD(P&R)",
-   "sub": "Under Sec \u2014 Personnel & Readiness",
+   "sub": "Under Sec — Personnel & Readiness",
    "billet": "OSD Echelon II",
    "svc": "civ",
    "uic": "OD00015",
@@ -294,7 +302,7 @@ const KMS_DATA = {
   },
   "asd_ncbdp": {
    "lbl": "ASD(NCB)",
-   "sub": "ASD \u2014 Nuclear, Chemical & Bio Defense",
+   "sub": "ASD — Nuclear, Chemical & Bio Defense",
    "billet": "OSD Echelon III",
    "svc": "civ",
    "uic": "OD00022",
@@ -310,7 +318,7 @@ const KMS_DATA = {
   },
   "asd_ha": {
    "lbl": "ASD(HA)",
-   "sub": "ASD \u2014 Health Affairs",
+   "sub": "ASD — Health Affairs",
    "billet": "OSD Echelon III",
    "svc": "civ",
    "uic": "OD00023",
@@ -326,7 +334,7 @@ const KMS_DATA = {
   },
   "asd_solic": {
    "lbl": "ASD(SO/LIC)",
-   "sub": "ASD \u2014 Special Ops / Low Intensity",
+   "sub": "ASD — Special Ops / Low Intensity",
    "billet": "OSD Echelon III",
    "svc": "civ",
    "uic": "OD00024",
@@ -342,7 +350,7 @@ const KMS_DATA = {
   },
   "asd_spa": {
    "lbl": "ASD(SPA)",
-   "sub": "ASD \u2014 Space Policy",
+   "sub": "ASD — Space Policy",
    "billet": "OSD Echelon III",
    "svc": "civ",
    "uic": "OD00025",
@@ -550,7 +558,7 @@ const KMS_DATA = {
   },
   "asn_rda": {
    "lbl": "ASN(RD&A)",
-   "sub": "Asst Sec Navy \u2014 Res., Dev. & Acq.",
+   "sub": "Asst Sec Navy — Res., Dev. & Acq.",
    "billet": "DoN CAE",
    "svc": "civ",
    "uic": "48142",
@@ -566,7 +574,7 @@ const KMS_DATA = {
   },
   "asn_eie": {
    "lbl": "ASN(EI&E)",
-   "sub": "Asst Sec Navy \u2014 Energy & Install.",
+   "sub": "Asst Sec Navy — Energy & Install.",
    "billet": "DoN Echelon II",
    "svc": "civ",
    "uic": "DN00011",
@@ -582,7 +590,7 @@ const KMS_DATA = {
   },
   "asn_fmc": {
    "lbl": "ASN(FM&C)",
-   "sub": "Asst Sec Navy \u2014 Fin. Mgmt & CFO",
+   "sub": "Asst Sec Navy — Fin. Mgmt & CFO",
    "billet": "DoN Echelon II",
    "svc": "civ",
    "uic": "41421",
@@ -598,7 +606,7 @@ const KMS_DATA = {
   },
   "asn_mra": {
    "lbl": "ASN(M&RA)",
-   "sub": "Asst Sec Navy \u2014 Manpower & Reserve",
+   "sub": "Asst Sec Navy — Manpower & Reserve",
    "billet": "DoN Echelon II",
    "svc": "civ",
    "uic": "42217",
@@ -659,6 +667,8 @@ const KMS_DATA = {
     "aor": "NORTHCOM"
    },
    "dh": [
+    "NAVNORTH",
+    "NAVSTRAT",
     "COMLANTFLT",
     "2nd Fleet"
    ],
@@ -1590,6 +1600,41 @@ const KMS_DATA = {
    },
    "id": "pma275"
   },
+  "pma207": {
+   "lbl": "PMA-207",
+   "sub": "KC-130J / C-130T Tactical Airlift",
+   "billet": "Col",
+   "svc": "acq",
+   "uic": "N62207",
+   "puc": "N60610",
+   "loc": {
+    "install": "NAS Patuxent River",
+    "city": "Patuxent River, MD",
+    "lat": 38.285,
+    "lon": -76.415,
+    "aor": "GLOBAL"
+   },
+   "id": "pma207"
+  },
+  "f35jpo": {
+   "lbl": "F-35 JPO",
+   "sub": "F-35 Lightning II Joint Program Office",
+   "billet": "LtGen (3-Star)",
+   "svc": "joint",
+   "uic": "JF3500",
+   "puc": "AF00001",
+   "loc": {
+    "install": "Crystal City",
+    "city": "Arlington, VA",
+    "lat": 38.8561,
+    "lon": -77.0499,
+    "aor": "GLOBAL"
+   },
+   "dh": [
+    "PEO F-35"
+   ],
+   "id": "f35jpo"
+  },
   "pms400": {
    "lbl": "PMS-400",
    "sub": "DDG-51 Arleigh Burke Destroyer",
@@ -1980,6 +2025,86 @@ const KMS_DATA = {
    },
    "id": "tmaw"
   },
+  "fmaw": {
+   "lbl": "4th MAW",
+   "sub": "4th Marine Aircraft Wing",
+   "billet": "MajGen (2-Star)",
+   "svc": "usmc",
+   "uic": "M40000",
+   "puc": "M00030",
+   "loc": {
+    "install": "NAS JRB New Orleans",
+    "city": "Belle Chasse, LA",
+    "lat": 29.8253,
+    "lon": -90.0175,
+    "aor": "NORTHCOM"
+   },
+   "id": "fmaw"
+  },
+  "mag11": {
+   "lbl": "MAG-11",
+   "sub": "Marine Aircraft Group 11",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M10011",
+   "puc": "M10000",
+   "loc": {
+    "install": "MCAS Miramar",
+    "city": "San Diego, CA",
+    "lat": 32.8684,
+    "lon": -117.1426,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag11"
+  },
+  "mag12": {
+   "lbl": "MAG-12",
+   "sub": "Marine Aircraft Group 12",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M30012",
+   "puc": "M30000",
+   "loc": {
+    "install": "MCAS Iwakuni",
+    "city": "Iwakuni, Japan",
+    "lat": 34.1461,
+    "lon": 132.2361,
+    "aor": "INDOPACOM"
+   },
+   "id": "mag12"
+  },
+  "mag13": {
+   "lbl": "MAG-13",
+   "sub": "Marine Aircraft Group 13",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M10013",
+   "puc": "M10000",
+   "loc": {
+    "install": "MCAS Yuma",
+    "city": "Yuma, AZ",
+    "lat": 32.6563,
+    "lon": -114.6061,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag13"
+  },
+  "mag14": {
+   "lbl": "MAG-14",
+   "sub": "Marine Aircraft Group 14",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M20014",
+   "puc": "M20000",
+   "loc": {
+    "install": "MCAS Cherry Point",
+    "city": "Havelock, NC",
+    "lat": 34.9009,
+    "lon": -76.8808,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag14"
+  },
   "mag16": {
    "lbl": "MAG-16",
    "sub": "Marine Aircraft Group 16",
@@ -2028,6 +2153,118 @@ const KMS_DATA = {
    },
    "id": "mag36"
   },
+  "mag24": {
+   "lbl": "MAG-24",
+   "sub": "Marine Aircraft Group 24",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M30024",
+   "puc": "M30000",
+   "loc": {
+    "install": "MCAF Kaneohe Bay",
+    "city": "Kaneohe, HI",
+    "lat": 21.452,
+    "lon": -157.764,
+    "aor": "INDOPACOM"
+   },
+   "id": "mag24"
+  },
+  "mag29": {
+   "lbl": "MAG-29",
+   "sub": "Marine Aircraft Group 29",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M20029",
+   "puc": "M20000",
+   "loc": {
+    "install": "MCAS New River",
+    "city": "Jacksonville, NC",
+    "lat": 34.7083,
+    "lon": -77.4397,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag29"
+  },
+  "mag31": {
+   "lbl": "MAG-31",
+   "sub": "Marine Aircraft Group 31",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M20031",
+   "puc": "M20000",
+   "loc": {
+    "install": "MCAS Beaufort",
+    "city": "Beaufort, SC",
+    "lat": 32.4774,
+    "lon": -80.7193,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag31"
+  },
+  "mag39": {
+   "lbl": "MAG-39",
+   "sub": "Marine Aircraft Group 39",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M10039",
+   "puc": "M10000",
+   "loc": {
+    "install": "MCAS Camp Pendleton",
+    "city": "Oceanside, CA",
+    "lat": 33.3014,
+    "lon": -117.3544,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag39"
+  },
+  "mag41": {
+   "lbl": "MAG-41",
+   "sub": "Marine Aircraft Group 41",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M40041",
+   "puc": "M40000",
+   "loc": {
+    "install": "NAS JRB Fort Worth",
+    "city": "Fort Worth, TX",
+    "lat": 32.7632,
+    "lon": -97.4415,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag41"
+  },
+  "mag42": {
+   "lbl": "MAG-42",
+   "sub": "Marine Aircraft Group 42",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M40042",
+   "puc": "M40000",
+   "loc": {
+    "install": "NAS Atlanta",
+    "city": "Marietta, GA",
+    "lat": 33.9153,
+    "lon": -84.5161,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag42"
+  },
+  "mag49": {
+   "lbl": "MAG-49",
+   "sub": "Marine Aircraft Group 49",
+   "billet": "Col",
+   "svc": "usmc",
+   "uic": "M40049",
+   "puc": "M40000",
+   "loc": {
+    "install": "Stewart ANGB",
+    "city": "Newburgh, NY",
+    "lat": 41.5037,
+    "lon": -74.1048,
+    "aor": "NORTHCOM"
+   },
+   "id": "mag49"
+  },
   "mals14": {
    "lbl": "MALS-14",
    "maint": "O/I",
@@ -2035,7 +2272,7 @@ const KMS_DATA = {
    "billet": "LtCol/Col",
    "svc": "usmc",
    "uic": "M20114",
-   "puc": "M20126",
+   "puc": "M20014",
    "loc": {
     "install": "MCAS Cherry Point",
     "city": "Havelock, NC",
@@ -2096,22 +2333,175 @@ const KMS_DATA = {
    },
    "id": "mals36"
   },
-  "mals40": {
-   "lbl": "MALS-40",
+  "mals11": {
+   "lbl": "MALS-11",
    "maint": "O/I",
-   "sub": "Marine Aviation Logistics Sqdn 40",
+   "sub": "Marine Aviation Logistics Sqdn 11",
    "billet": "LtCol/Col",
    "svc": "usmc",
-   "uic": "M20140",
-   "puc": "M20126",
+   "uic": "M10111",
+   "puc": "M10011",
+   "loc": {
+    "install": "MCAS Miramar",
+    "city": "San Diego, CA",
+    "lat": 32.8684,
+    "lon": -117.1426,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals11"
+  },
+  "mals12": {
+   "lbl": "MALS-12",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 12",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M30112",
+   "puc": "M30012",
+   "loc": {
+    "install": "MCAS Iwakuni",
+    "city": "Iwakuni, Japan",
+    "lat": 34.1461,
+    "lon": 132.2361,
+    "aor": "INDOPACOM"
+   },
+   "id": "mals12"
+  },
+  "mals13": {
+   "lbl": "MALS-13",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 13",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M10113",
+   "puc": "M10013",
+   "loc": {
+    "install": "MCAS Yuma",
+    "city": "Yuma, AZ",
+    "lat": 32.6563,
+    "lon": -114.6061,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals13"
+  },
+  "mals26": {
+   "lbl": "MALS-26",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 26",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M20126",
+   "puc": "M20026",
    "loc": {
     "install": "MCAS New River",
     "city": "Jacksonville, NC",
-    "lat": 34.708,
-    "lon": -77.438,
+    "lat": 34.7083,
+    "lon": -77.4397,
     "aor": "NORTHCOM"
    },
-   "id": "mals40"
+   "id": "mals26"
+  },
+  "mals29": {
+   "lbl": "MALS-29",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 29",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M20129",
+   "puc": "M20029",
+   "loc": {
+    "install": "MCAS New River",
+    "city": "Jacksonville, NC",
+    "lat": 34.7083,
+    "lon": -77.4397,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals29"
+  },
+  "mals31": {
+   "lbl": "MALS-31",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 31",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M20131",
+   "puc": "M20031",
+   "loc": {
+    "install": "MCAS Beaufort",
+    "city": "Beaufort, SC",
+    "lat": 32.4774,
+    "lon": -80.7193,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals31"
+  },
+  "mals39": {
+   "lbl": "MALS-39",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 39",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M10139",
+   "puc": "M10039",
+   "loc": {
+    "install": "MCAS Camp Pendleton",
+    "city": "Oceanside, CA",
+    "lat": 33.3014,
+    "lon": -117.3544,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals39"
+  },
+  "mals41": {
+   "lbl": "MALS-41",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 41",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M40141",
+   "puc": "M40041",
+   "loc": {
+    "install": "NAS JRB Fort Worth",
+    "city": "Fort Worth, TX",
+    "lat": 32.7632,
+    "lon": -97.4415,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals41"
+  },
+  "mals42": {
+   "lbl": "MALS-42",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 42",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M40142",
+   "puc": "M40042",
+   "loc": {
+    "install": "NAS Atlanta",
+    "city": "Marietta, GA",
+    "lat": 33.9153,
+    "lon": -84.5161,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals42"
+  },
+  "mals49": {
+   "lbl": "MALS-49",
+   "maint": "O/I",
+   "sub": "Marine Aviation Logistics Sqdn 49",
+   "billet": "LtCol/Col",
+   "svc": "usmc",
+   "uic": "M40149",
+   "puc": "M40049",
+   "loc": {
+    "install": "Stewart ANGB",
+    "city": "Newburgh, NY",
+    "lat": 41.5037,
+    "lon": -74.1048,
+    "aor": "NORTHCOM"
+   },
+   "id": "mals49"
   },
   "arcyber": {
    "lbl": "ARCYBER",
@@ -2368,6 +2758,25 @@ const KMS_DATA = {
    ],
    "id": "cybercom"
   },
+  "dcdc": {
+   "lbl": "DCDC",
+   "sub": "DoD Cyber Defense Command",
+   "billet": "LTG (3-Star)",
+   "svc": "cyber",
+   "uic": "JC00025",
+   "puc": "JC00024",
+   "loc": {
+    "install": "Fort Meade",
+    "city": "Fort Meade, MD",
+    "lat": 39.1146,
+    "lon": -76.7712,
+    "aor": "GLOBAL"
+   },
+   "dh": [
+    "DISA Director"
+   ],
+   "id": "dcdc"
+  },
   "fltcybercom": {
    "lbl": "FLTCYBERCOM",
    "sub": "Fleet Cyber Command / 10th Fleet",
@@ -2406,7 +2815,7 @@ const KMS_DATA = {
   },
   "frce": {
    "lbl": "FRCE",
-   "sub": "FRC East \u2014 MCAS Cherry Point",
+   "sub": "FRC East — MCAS Cherry Point",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "65923",
@@ -2423,7 +2832,7 @@ const KMS_DATA = {
   },
   "frcse": {
    "lbl": "FRCSE",
-   "sub": "FRC Southeast \u2014 NAS Jacksonville",
+   "sub": "FRC Southeast — NAS Jacksonville",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "65886",
@@ -2440,7 +2849,7 @@ const KMS_DATA = {
   },
   "frcsw": {
    "lbl": "FRCSW",
-   "sub": "FRC Southwest \u2014 NAS North Island",
+   "sub": "FRC Southwest — NAS North Island",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "65888",
@@ -2457,7 +2866,7 @@ const KMS_DATA = {
   },
   "frcma": {
    "lbl": "FRCMA",
-   "sub": "FRC Mid-Atlantic \u2014 NAS Oceana",
+   "sub": "FRC Mid-Atlantic — NAS Oceana",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "44327",
@@ -2474,7 +2883,7 @@ const KMS_DATA = {
   },
   "frcw": {
    "lbl": "FRCW",
-   "sub": "FRC West \u2014 NAS Lemoore",
+   "sub": "FRC West — NAS Lemoore",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "44321",
@@ -2491,7 +2900,7 @@ const KMS_DATA = {
   },
   "frcnw": {
    "lbl": "FRCNW",
-   "sub": "FRC Northwest \u2014 NAS Whidbey Island",
+   "sub": "FRC Northwest — NAS Whidbey Island",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "44329",
@@ -2508,7 +2917,7 @@ const KMS_DATA = {
   },
   "frcwp": {
    "lbl": "FRCWP",
-   "sub": "FRC WestPac \u2014 NAF Atsugi Japan",
+   "sub": "FRC WestPac — NAF Atsugi Japan",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "66021",
@@ -2542,7 +2951,7 @@ const KMS_DATA = {
   },
   "frc_rmw": {
    "lbl": "FRC-RMW",
-   "sub": "FRC Reserve Mid-West \u2014 NAS Ft Worth",
+   "sub": "FRC Reserve Mid-West — NAS Ft Worth",
    "billet": "SES/O-6",
    "svc": "navy",
    "uic": "4828A",
@@ -2559,7 +2968,7 @@ const KMS_DATA = {
   },
   "frcsw_yuma": {
    "lbl": "FRCSW-DET Yuma",
-   "sub": "FRCSW Det \u2014 MCAS Yuma AZ",
+   "sub": "FRCSW Det — MCAS Yuma AZ",
    "billet": "O-5",
    "svc": "navy",
    "uic": "N68701",
@@ -2576,7 +2985,7 @@ const KMS_DATA = {
   },
   "frcsw_hi": {
    "lbl": "FRCSW-DET HI",
-   "sub": "FRCSW Det \u2014 MCAS Kaneohe Bay HI",
+   "sub": "FRCSW Det — MCAS Kaneohe Bay HI",
    "billet": "O-5",
    "svc": "navy",
    "uic": "N68702",
@@ -2593,7 +3002,7 @@ const KMS_DATA = {
   },
   "frcsw_ptmugu": {
    "lbl": "FRCSW-DET Mugu",
-   "sub": "FRCSW Det \u2014 NBVC Pt. Mugu CA",
+   "sub": "FRCSW Det — NBVC Pt. Mugu CA",
    "billet": "O-5",
    "svc": "navy",
    "uic": "N68703",
@@ -2610,7 +3019,7 @@ const KMS_DATA = {
   },
   "frcse_mayport": {
    "lbl": "FRCSE-DET Mayport",
-   "sub": "FRCSE Det \u2014 NS Mayport FL",
+   "sub": "FRCSE Det — NS Mayport FL",
    "billet": "O-5",
    "svc": "navy",
    "uic": "N68501",
@@ -2627,7 +3036,7 @@ const KMS_DATA = {
   },
   "frcw_fallon": {
    "lbl": "FRCW-DET Fallon",
-   "sub": "FRCW Det \u2014 NAS Fallon NV",
+   "sub": "FRCW Det — NAS Fallon NV",
    "billet": "O-5",
    "svc": "navy",
    "uic": "N68801",
@@ -2646,147 +3055,261 @@ const KMS_DATA = {
  "auth": {
   "mals16": {
    "opcon": [
-    "potus",
-    "secdef",
-    "indopacom",
-    "marforpac",
-    "imef",
-    "tmaw",
     "mag16"
    ],
    "adcon": [
-    "tmaw",
-    "imef",
-    "marforpac"
+    "mag16"
    ],
    "ta": [
-    "pma281",
-    "pma272",
-    "pma276",
-    "pma261"
+    "pma261",
+    "pma272"
+   ],
+   "lcsp": [
+    "pma261",
+    "pma272"
    ],
    "daco": [
-    "cybercom",
-    "fltcybercom",
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-16 \u2014 I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "note": "MALS-16 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
   },
   "mals24": {
    "opcon": [
-    "potus",
-    "secdef",
-    "indopacom",
-    "marforpac",
-    "imef",
-    "tmaw"
+    "mag24"
    ],
    "adcon": [
-    "dmaw",
-    "iiimef",
-    "marforpac"
+    "mag24"
    ],
    "ta": [
-    "pma281",
     "pma272",
-    "pma276"
+    "pma263",
+    "pma207"
+   ],
+   "lcsp": [
+    "pma272",
+    "pma263",
+    "pma207"
    ],
    "daco": [
-    "cybercom",
-    "fltcybercom",
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-24 \u2014 I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "note": "MALS-24 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
   },
   "mals36": {
    "opcon": [
-    "potus",
-    "secdef",
-    "indopacom",
-    "marforpac",
-    "iiimef",
-    "dmaw",
     "mag36"
    ],
    "adcon": [
-    "dmaw",
-    "iiimef",
-    "marforpac"
+    "mag36"
    ],
    "ta": [
-    "pma281",
-    "pma272",
-    "pma276",
-    "pma261"
+    "pma272"
+   ],
+   "lcsp": [
+    "pma272"
    ],
    "daco": [
-    "cybercom",
-    "fltcybercom",
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-36 \u2014 I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "note": "MALS-36 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
   },
   "mals14": {
    "opcon": [
-    "potus",
-    "secdef",
-    "northcom",
-    "marforcom",
-    "iimef",
-    "smaw",
-    "mag26"
+    "mag14"
    ],
    "adcon": [
-    "smaw",
-    "iimef",
-    "marforcom"
+    "mag14"
+   ],
+   "ta": [
+    "f35jpo",
+    "pma263",
+    "pma207"
+   ],
+   "lcsp": [
+    "f35jpo",
+    "pma263",
+    "pma207"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "mte": "marforcom",
+   "note": "MALS-14 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+  },
+  "mals11": {
+   "adcon": [
+    "mag11"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma265",
+    "f35jpo",
+    "pma207"
+   ],
+   "lcsp": [
+    "pma265",
+    "f35jpo",
+    "pma207"
+   ],
+   "note": "MALS-11, MAG-11, 3d MAW, I MEF. MCAS Miramar, CA."
+  },
+  "mals12": {
+   "adcon": [
+    "mag12"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "f35jpo",
+    "pma207"
+   ],
+   "lcsp": [
+    "f35jpo",
+    "pma207"
+   ],
+   "note": "MALS-12, MAG-12, 1st MAW, III MEF. MCAS Iwakuni, Japan. Supports F-35B (VMFA-121, VMFA-242) and KC-130J (VMGR-152)."
+  },
+  "mals13": {
+   "adcon": [
+    "mag13"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "f35jpo",
+    "pma263"
+   ],
+   "lcsp": [
+    "f35jpo",
+    "pma263"
+   ],
+   "note": "MALS-13, MAG-13, 3d MAW, I MEF. MCAS Yuma, AZ."
+  },
+  "mals26": {
+   "adcon": [
+    "mag26"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma272"
+   ],
+   "lcsp": [
+    "pma272"
+   ],
+   "note": "MALS-26, MAG-26, 2d MAW, II MEF. MCAS New River, NC."
+  },
+  "mals29": {
+   "adcon": [
+    "mag29"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma261",
+    "pma276"
+   ],
+   "lcsp": [
+    "pma261",
+    "pma276"
+   ],
+   "note": "MALS-29, MAG-29, 2d MAW, II MEF. MCAS New River, NC."
+  },
+  "mals31": {
+   "adcon": [
+    "mag31"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma265",
+    "f35jpo"
+   ],
+   "lcsp": [
+    "pma265",
+    "f35jpo"
+   ],
+   "note": "MALS-31, MAG-31, 2d MAW, II MEF. MCAS Beaufort, SC."
+  },
+  "mals39": {
+   "adcon": [
+    "mag39"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma276",
+    "pma272"
+   ],
+   "lcsp": [
+    "pma276",
+    "pma272"
+   ],
+   "note": "MALS-39, MAG-39, 3d MAW, I MEF. MCAS Camp Pendleton, CA."
+  },
+  "mals41": {
+   "adcon": [
+    "mag41"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [
+    "pma265",
+    "pma276",
+    "pma207"
+   ],
+   "lcsp": [
+    "pma265",
+    "pma276",
+    "pma207"
+   ],
+   "note": "MALS-41, MAG-41, 4th MAW, MARFORRES. NAS JRB Fort Worth, TX."
+  },
+  "mals42": {
+   "adcon": [
+    "mag42"
+   ],
+   "daco": [
+    "marforcyber"
+   ],
+   "ta": [],
+   "lcsp": [],
+   "note": "MALS-42, MAG-42, 4th MAW, MARFORRES. NAS Atlanta, GA."
+  },
+  "mals49": {
+   "adcon": [
+    "mag49"
+   ],
+   "daco": [
+    "marforcyber"
    ],
    "ta": [
     "pma261",
     "pma276",
     "pma272"
    ],
-   "daco": [
-    "cybercom",
-    "fltcybercom",
-    "marforcyber"
-   ],
-   "mte": "marforcom",
-   "note": "MALS-14 \u2014 I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
-  },
-  "mals40": {
-   "opcon": [
-    "potus",
-    "secdef",
-    "northcom",
-    "marforcom",
-    "iimef",
-    "smaw",
-    "mag26"
-   ],
-   "adcon": [
-    "marforres",
-    "cmc"
-   ],
-   "ta": [
-    "pma272",
+   "lcsp": [
+    "pma261",
     "pma276",
-    "pma261"
+    "pma272"
    ],
-   "daco": [
-    "cybercom",
-    "fltcybercom",
-    "marforcyber"
-   ],
-   "mte": "marforcom",
-   "note": "MALS-40 \u2014 I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "note": "MALS-49, MAG-49, 4th MAW, MARFORRES. Stewart ANGB, NY."
   },
   "pma281": {
    "opcon": [],
-   "adcon": [
+   "aa": [
     "peo_uw",
     "asn_rda",
     "secnav"
@@ -2795,7 +3318,6 @@ const KMS_DATA = {
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -2803,7 +3325,7 @@ const KMS_DATA = {
   },
   "pma272": {
    "opcon": [],
-   "adcon": [
+   "aa": [
     "peo_a",
     "asn_rda",
     "secnav"
@@ -2812,15 +3334,14 @@ const KMS_DATA = {
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "PMA-272. KMS lists as V-22 Osprey program. Verification report flagged possible discrepancy \u2014 navair.navy.mil may show different program assignment. Requires further verification."
+   "note": "PMA-272. KMS lists as V-22 Osprey program. Verification report flagged possible discrepancy — navair.navy.mil may show different program assignment. Requires further verification."
   },
   "pma276": {
    "opcon": [],
-   "adcon": [
+   "aa": [
     "peo_a",
     "asn_rda",
     "secnav"
@@ -2829,7 +3350,6 @@ const KMS_DATA = {
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -2837,35 +3357,28 @@ const KMS_DATA = {
   },
   "fltcybercom": {
    "opcon": [
-    "potus",
-    "secdef",
     "cybercom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom"
+    "dcdc"
    ],
    "mte": "usffc",
    "note": "Echelon 2, UIC 00055. ISIC: CNO. Commander is dual-hatted as also heading Naval Space Command (UIC 4840A). DACO authority delegated from CYBERCOM. Source: SNDL Ref B (02 Feb 2026)."
   },
   "marforcyber": {
    "opcon": [
-    "potus",
-    "secdef",
     "cybercom"
    ],
    "adcon": [
-    "cmc",
-    "secnav"
+    "cmc"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
-    "fltcybercom"
+    "dcdc"
    ],
    "mte": "marforcom",
    "note": "Marine Forces Cyberspace Command. CYBERCOM Marine component (peer to FLTCYBERCOM, not subordinate). Fort Meade, MD. Subordinates: MCCOG (DODIN/DCO), MCCYWG (CMF/OCO)."
@@ -2873,15 +3386,13 @@ const KMS_DATA = {
   "navsea": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
-   "ta": [
+   "aa": [
     "secnav",
     "asn_rda"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -2889,43 +3400,31 @@ const KMS_DATA = {
   },
   "airlant": {
    "opcon": [
-    "potus",
-    "secdef",
-    "northcom",
     "usffc"
    ],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Naval Air Force Atlantic. ADCON: CNO\u2192USFFC\u2192AIRLANT. TA: NAVAIR issues airworthiness directives and configuration authority for all USN aircraft operated by AIRLANT squadrons. Dual authority is the key lifecycle management nexus."
+   "note": "Naval Air Force Atlantic. ADCON: CNO→USFFC→AIRLANT. TA: NAVAIR issues airworthiness directives and configuration authority for all USN aircraft operated by AIRLANT squadrons. Dual authority is the key lifecycle management nexus."
   },
   "airpac": {
    "opcon": [
-    "potus",
-    "secdef",
-    "indopacom",
     "compacflt"
    ],
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "compacflt"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "compacflt",
@@ -2934,15 +3433,12 @@ const KMS_DATA = {
   "comfrc": {
    "opcon": [],
    "adcon": [
-    "navair",
-    "cno",
-    "secnav"
+    "navair"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -2951,45 +3447,37 @@ const KMS_DATA = {
   "frce": {
    "opcon": [],
    "adcon": [
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "comfrc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
-    "pma299"
+    "pma261",
+    "pma276",
+    "pma272"
    ],
    "mte": null,
-   "note": "Depot capability: F/A-18, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC. Receives TA from PMA-265 (F/A-18) and PMA-299 (F-35). Returns MDS configuration data to PMAs per 10 USC \u00a7 4324(b)."
+   "note": "Depot capability: F/A-18, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC. Receives TA from PMA-265 (F/A-18) and PMA-299 (F-35). Returns MDS configuration data to PMAs per 10 USC § 4324(b)."
   },
   "frcse": {
    "opcon": [],
    "adcon": [
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "comfrc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
-    "pma299",
     "pma261",
-    "pma275"
+    "pma276",
+    "pma272"
    ],
    "mte": null,
    "note": "Depot: F/A-18, F-35, E-2/C-2, P-8A, T-45, E-6B. Engines: F414, F404, J52, T700, T56, TF34. First F135 power module depot capability. MDS return flows to each PMA holding TA."
@@ -2997,23 +3485,18 @@ const KMS_DATA = {
   "frcsw": {
    "opcon": [],
    "adcon": [
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "comfrc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
-    "pma272",
-    "pma281",
-    "pma261"
+    "pma261",
+    "pma276",
+    "pma272"
    ],
    "mte": null,
    "note": "Depot: F/A-18A-F, EA-18G, E-2C/D, AV-8B, MV-22B, MH-60. Sites: Yuma AZ, Kaneohe Bay HI, Pt. Mugu CA, MCAS Pendleton CA. Primary USMC MV-22 and CH-53 maintenance source."
@@ -3021,20 +3504,18 @@ const KMS_DATA = {
   "frcma": {
    "opcon": [],
    "adcon": [
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "comfrc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265"
+    "pma261",
+    "pma276",
+    "pma272"
    ],
    "mte": null,
    "note": "Intermediate level: Strike fighter support, component repair. DET NAS Norfolk."
@@ -3042,23 +3523,18 @@ const KMS_DATA = {
   "frcw": {
    "opcon": [],
    "adcon": [
-    "frcsw",
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "frcsw"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
     "pma261",
-    "pma275"
+    "pma276",
+    "pma272"
    ],
    "mte": null,
    "note": "Echelon 5, UIC 44321. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL."
@@ -3066,22 +3542,18 @@ const KMS_DATA = {
   "frcnw": {
    "opcon": [],
    "adcon": [
-    "frcsw",
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
+    "frcsw"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
-    "pma275"
+    "pma261",
+    "pma276",
+    "pma272"
    ],
    "mte": null,
    "note": "Echelon 5, UIC 44329. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL."
@@ -3089,40 +3561,31 @@ const KMS_DATA = {
   "frcwp": {
    "opcon": [],
    "adcon": [
-    "comfrc",
-    "navair",
-    "cno",
-    "secnav"
-   ],
-   "ta": [
-    "navair"
-   ],
-   "daco": [
-    "cybercom",
-    "fltcybercom"
-   ],
-   "lcsp": [
-    "pma265",
-    "pma272",
-    "pma281",
-    "pma261",
-    "pma275"
-   ],
-   "mte": null,
-   "note": "INDOPACOM/CENTCOM forward depot. Origin: FAWPRA(1950s)\u2192NAPRA(1980)\u2192FRC WestPac(2008). Forward-deployed configuration data return is critical to PM lifecycle visibility."
-  },
-  "frc_ase": {
-   "opcon": [],
-   "adcon": [
-    "cno",
-    "navair",
     "comfrc"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
+    "fltcybercom"
+   ],
+   "lcsp": [
+    "pma261",
+    "pma276",
+    "pma272"
+   ],
+   "mte": null,
+   "note": "INDOPACOM/CENTCOM forward depot. Origin: FAWPRA(1950s)→NAPRA(1980)→FRC WestPac(2008). Forward-deployed configuration data return is critical to PM lifecycle visibility."
+  },
+  "frc_ase": {
+   "opcon": [],
+   "adcon": [
+    "cno"
+   ],
+   "ta": [
+    "navair"
+   ],
+   "daco": [
     "fltcybercom"
    ],
    "lcsp": [],
@@ -3132,36 +3595,32 @@ const KMS_DATA = {
   "frc_rmw": {
    "opcon": [],
    "adcon": [
-    "navresfor",
-    "cno",
-    "secnav"
+    "navresfor"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "lcsp": [
-    "pma265",
-    "pma261"
+    "pma261",
+    "pma276",
+    "pma272"
    ],
    "mte": null,
-   "note": "Echelon 4, UIC 4828A. ISIC: NAVAIRFORES (CNAF) \u2014 NOT COMFRC. Reserve FRC at NAS Fort Worth. Different ADCON chain from all other FRCs. Source: SNDL."
+   "note": "Echelon 4, UIC 4828A. ISIC: NAVAIRFORES (CNAF) — NOT COMFRC. Reserve FRC at NAS Fort Worth. Different ADCON chain from all other FRCs. Source: SNDL."
   },
   "navair": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
-   "ta": [
+   "aa": [
     "secnav",
     "asn_rda"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3172,7 +3631,7 @@ const KMS_DATA = {
    "adcon": [
     "secnav"
    ],
-   "ta": [
+   "aa": [
     "usd_as",
     "usd_re"
    ],
@@ -3183,15 +3642,12 @@ const KMS_DATA = {
   "nawcad": {
    "opcon": [],
    "adcon": [
-    "navair",
-    "cno",
-    "secnav"
+    "navair"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3200,15 +3656,12 @@ const KMS_DATA = {
   "nawcwd": {
    "opcon": [],
    "adcon": [
-    "navair",
-    "cno",
-    "secnav"
+    "navair"
    ],
    "ta": [
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3217,29 +3670,24 @@ const KMS_DATA = {
   "navrmc": {
    "opcon": [],
    "adcon": [
-    "navsea",
-    "cno",
-    "secnav"
-   ],
-   "ta": [
     "navsea"
    ],
+   "ta": [
+    "navair"
+   ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 3, UIC 58400. ISIC: NAVSEA. Navy Regional Maintenance Center \u2014 bridge between NAVSEA TA and fleet surface maintenance. Source: SNDL."
+   "note": "Echelon 3, UIC 58400. ISIC: NAVSEA. Navy Regional Maintenance Center — bridge between NAVSEA TA and fleet surface maintenance. Source: SNDL."
   },
   "cnic": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3248,12 +3696,10 @@ const KMS_DATA = {
   "navresfor": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3261,17 +3707,13 @@ const KMS_DATA = {
   },
   "navspecwar": {
    "opcon": [
-    "potus",
-    "secdef",
     "socom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3280,8 +3722,7 @@ const KMS_DATA = {
   "chnavpers": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [],
@@ -3291,8 +3732,7 @@ const KMS_DATA = {
   "navsafecen": {
    "opcon": [],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [],
@@ -3301,20 +3741,15 @@ const KMS_DATA = {
   },
   "msc": {
    "opcon": [
-    "potus",
-    "secdef",
     "transcom"
    ],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
@@ -3323,13 +3758,10 @@ const KMS_DATA = {
   "necc": {
    "opcon": [],
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
@@ -3338,9 +3770,7 @@ const KMS_DATA = {
   "nwdc": {
    "opcon": [],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [],
    "daco": [],
@@ -3350,9 +3780,7 @@ const KMS_DATA = {
   "cnmoc": {
    "opcon": [],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [],
    "daco": [],
@@ -3361,19 +3789,13 @@ const KMS_DATA = {
   },
   "fl10": {
    "opcon": [
-    "potus",
-    "secdef",
-    "cybercom",
     "fltcybercom"
    ],
    "adcon": [
-    "fltcybercom",
-    "cno",
-    "secnav"
+    "fltcybercom"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "fltcybercom",
@@ -3381,53 +3803,41 @@ const KMS_DATA = {
   },
   "usffc": {
    "opcon": [
-    "potus",
-    "secdef",
-    "northcom"
+    "stratcom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 2, UIC 00060. ISIC: CNO. Primary force provider for Atlantic/Global operations. TYCOMs under USFFC provide ADCON support for units assigned OPCON to CSG/ESG. Source: SNDL Ref B."
+   "note": "Echelon 2, UIC 00060. ISIC: CNO. USFFC CDR is quad-hatted: NAVNORTH (Navy component to NORTHCOM), NAVSTRAT (Navy component to STRATCOM per Feb 2019 designation), COMLANTFLT, and C2F. JFMCC-STRAT mission: execute maritime aspects of strategic deterrence. Primary force provider for Atlantic/Global operations. Source: SNDL Ref B; STRATCOM article 1754078 (Feb 2019)."
   },
   "compacflt": {
    "opcon": [
-    "potus",
-    "secdef",
     "indopacom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 2, UIC 00070. ISIC: CNO. OPCON to INDOPACOM as Navy Service Component Commander. Dual-hat: 3rd Fleet. TYCOMs under COMPACFLT provide ADCON support for units assigned OPCON to CSG/ESG \u2014 TYCOMs and CSG/ESG commanders work integrated solutions. Source: SNDL Ref B."
+   "note": "Echelon 2, UIC 00070. ISIC: CNO. OPCON to INDOPACOM as Navy Service Component Commander. Dual-hat: 3rd Fleet. TYCOMs under COMPACFLT provide ADCON support for units assigned OPCON to CSG/ESG — TYCOMs and CSG/ESG commanders work integrated solutions. Source: SNDL Ref B."
   },
   "naveur": {
    "opcon": [
-    "potus",
-    "secdef",
     "eucom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3435,17 +3845,13 @@ const KMS_DATA = {
   },
   "navcent": {
    "opcon": [
-    "potus",
-    "secdef",
     "centcom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3453,17 +3859,13 @@ const KMS_DATA = {
   },
   "navso": {
    "opcon": [
-    "potus",
-    "secdef",
     "southcom"
    ],
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "ta": [],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
@@ -3472,15 +3874,12 @@ const KMS_DATA = {
   "surflant": {
    "opcon": [],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
@@ -3489,15 +3888,12 @@ const KMS_DATA = {
   "surfpac": {
    "opcon": [],
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "compacflt"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "compacflt",
@@ -3506,15 +3902,12 @@ const KMS_DATA = {
   "sublant": {
    "opcon": [],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
@@ -3523,15 +3916,12 @@ const KMS_DATA = {
   "subpac": {
    "opcon": [],
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "compacflt"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "compacflt",
@@ -3540,15 +3930,12 @@ const KMS_DATA = {
   "navifor": {
    "opcon": [],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ],
    "ta": [
-    "navwar"
+    "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": "usffc",
@@ -3556,7 +3943,7 @@ const KMS_DATA = {
   },
   "peo_a": {
    "opcon": [],
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
@@ -3564,15 +3951,14 @@ const KMS_DATA = {
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 1, UIC 68346. ISIC: ASN(RD&A). PEO Aviation \u2014 reports ADCON to ASN(RD&A), NOT through NAVAIR. NAVAIR provides TA and support only. Source: SNDL + SECNAVINST 5000.2G."
+   "note": "Echelon 1, UIC 68346. ISIC: ASN(RD&A). PEO Aviation — reports ADCON to ASN(RD&A), NOT through NAVAIR. NAVAIR provides TA and support only. Source: SNDL + SECNAVINST 5000.2G."
   },
   "peo_uw": {
    "opcon": [],
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
@@ -3580,97 +3966,81 @@ const KMS_DATA = {
     "navair"
    ],
    "daco": [
-    "cybercom",
     "fltcybercom"
    ],
    "mte": null,
-   "note": "PEO Unmanned & Strike Weapons. ADCON: ASN(RD&A) \u2192 PEO(U&W). NAVAIR host command and TA support. NOT NAVAIR ADCON subordinate per SECNAVINST 5000.2G."
+   "note": "PEO Unmanned & Strike Weapons. ADCON: ASN(RD&A) → PEO(U&W). NAVAIR host command and TA support. NOT NAVAIR ADCON subordinate per SECNAVINST 5000.2G."
   },
   "navwar": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ]
   },
   "navsup": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ]
   },
   "navfac": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ]
   },
   "bumed": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ]
   },
   "ssp": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ]
   },
   "netc": {
    "adcon": [
-    "chnavpers",
-    "cno",
-    "secnav"
+    "chnavpers"
    ],
    "note": "Echelon 2, UIC 00076. ISIC: CHNAVPERS (not directly CNO). Source: SNDL. Note: SNDL shows NETC ISIC as CHNAVPERS, but NETC is listed as echelon 2 elsewhere."
   },
   "fl2": {
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "usffc"
    ]
   },
   "fl3": {
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "compacflt"
    ]
   },
   "fl5": {
    "adcon": [
-    "navcent",
-    "cno",
-    "secnav"
+    "navcent"
    ]
   },
   "fl6": {
    "adcon": [
-    "naveur",
-    "cno",
-    "secnav"
+    "naveur"
    ]
   },
   "fl7": {
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "compacflt"
    ]
   },
   "marforcom": {
+   "opcon": [
+    "northcom"
+   ],
    "adcon": [
-    "usffc",
-    "cno",
-    "secnav"
+    "cmc"
    ]
   },
   "marforpac": {
+   "opcon": [
+    "indopacom"
+   ],
    "adcon": [
-    "compacflt",
-    "cno",
-    "secnav"
+    "cmc"
    ]
   },
   "marforres": {
@@ -3680,43 +4050,31 @@ const KMS_DATA = {
   },
   "frcse_mayport": {
    "adcon": [
-    "frcse",
-    "comfrc",
-    "navair"
+    "frcse"
    ]
   },
   "frcw_fallon": {
    "adcon": [
-    "frcw",
-    "frcsw",
-    "comfrc",
-    "navair"
+    "frcw"
    ]
   },
   "frcsw_yuma": {
    "adcon": [
-    "frcsw",
-    "comfrc",
-    "navair"
+    "frcsw"
    ]
   },
   "frcsw_hi": {
    "adcon": [
-    "frcsw",
-    "comfrc",
-    "navair"
+    "frcsw"
    ]
   },
   "frcsw_ptmugu": {
    "adcon": [
-    "frcw",
-    "frcsw",
-    "comfrc",
-    "navair"
+    "frcw"
    ]
   },
   "peo_t": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
@@ -3726,72 +4084,72 @@ const KMS_DATA = {
    "note": "Echelon 1. ISIC: ASN(RD&A). PEO(T) = Tactical Aircraft Programs (F/A-18, EA-18G, E-2, next-gen tactical aircraft). NOT Training Systems. Verified per navair.navy.mil/organization/PEO-T."
   },
   "peo_ships": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ]
   },
   "peo_cvn": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ]
   },
   "peo_iws": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ]
   },
   "peo_subs": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
    "note": "SNDL shows three separate PEOs replacing former PEO(Subs): PEO SSN (Attack Submarines, UIC 48160), PEO SSBN (Strategic Submarines, UIC 4109A), PEO UWS (Undersea Warfare Systems, UIC 6669N). KMS retains single node pending view restructuring. Source: NAVSEA org chart Jul 2024."
   },
   "peo_c4i": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navwar"
+    "navair"
    ]
   },
   "peo_dig": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navwar"
+    "navair"
    ]
   },
   "peo_lmw": {
-   "adcon": [
+   "aa": [
     "asn_rda",
     "secnav"
    ],
    "ta": [
-    "navsea"
+    "navair"
    ],
-   "note": "Echelon 1, UIC 52210. ISIC: ASN(RD&A). Formerly PEO LCS (renamed Mar 2018). PEO Littoral Mine Warfare was disestablished Jul 2011 \u2014 functions transferred here. Covers LCS, FFG-62, unmanned maritime systems, mine warfare. Source: SNDL + NAVSEA org chart Jul 2024."
+   "note": "Echelon 1, UIC 52210. ISIC: ASN(RD&A). Formerly PEO LCS (renamed Mar 2018). PEO Littoral Mine Warfare was disestablished Jul 2011 — functions transferred here. Covers LCS, FFG-62, unmanned maritime systems, mine warfare. Source: SNDL + NAVSEA org chart Jul 2024."
   },
   "pma265": {
-   "adcon": [
+   "aa": [
     "peo_t",
     "asn_rda",
     "secnav"
@@ -3801,7 +4159,7 @@ const KMS_DATA = {
    ]
   },
   "pma299": {
-   "adcon": [
+   "aa": [
     "peo_a",
     "asn_rda",
     "secnav"
@@ -3812,7 +4170,7 @@ const KMS_DATA = {
    "note": "PMA-299 H-60 Multi-Mission Helicopters (MH-60R/S Seahawk). Under PEO(A). Verified per navair.navy.mil. Note: F-35 is under PEO(F-35)/JSF Program Office, not PMA-299."
   },
   "pma261": {
-   "adcon": [
+   "aa": [
     "peo_a",
     "asn_rda",
     "secnav"
@@ -3823,7 +4181,7 @@ const KMS_DATA = {
    "note": "PMA-261 Heavy Lift Helicopters (CH-53E Super Stallion / CH-53K King Stallion). Under PEO(A). Verified per navair.navy.mil."
   },
   "pma275": {
-   "adcon": [
+   "aa": [
     "peo_t",
     "asn_rda",
     "secnav"
@@ -3831,10 +4189,31 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "note": "PMA-275. Note: Verification report indicates E-2/C-2 Hawkeye program may be PMA-231 per navair.navy.mil. This designation requires further verification."
+   "note": "PMA-275. E-2D Advanced Hawkeye / C-2A COD. Under PEO(T). NAVAIR TA."
+  },
+  "pma207": {
+   "aa": [
+    "peo_a",
+    "asn_rda",
+    "secnav"
+   ],
+   "ta": [
+    "navair"
+   ],
+   "note": "PMA-207 Tactical Airlift. KC-130J Super Hercules, C-130T, C-40A. Under PEO(A). NAVAIR TA. FRCE designated depot for C/KC-130 MRO."
+  },
+  "f35jpo": {
+   "aa": [
+    "secaf",
+    "secdef"
+   ],
+   "ta": [
+    "navair"
+   ],
+   "note": "F-35 Lightning II Joint Program Office. PEO-level joint program. Reports to alternating service acquisition executive (currently AF per JSF Charter). NAVAIR retains airworthiness TA for F-35B/C. Led by LtGen (3-star). Located Crystal City, Arlington VA."
   },
   "pma263": {
-   "adcon": [
+   "aa": [
     "peo_uw",
     "asn_rda",
     "secnav"
@@ -3845,7 +4224,7 @@ const KMS_DATA = {
    "note": "PMA-263 Small Tactical UAS (RQ-21A Blackjack, RQ-20B Puma, etc). Under PEO(U&W). Verified per navair.navy.mil. Note: MQ-25 Stingray is PMA-268, not PMA-263."
   },
   "pma262": {
-   "adcon": [
+   "aa": [
     "peo_uw",
     "asn_rda",
     "secnav"
@@ -3876,169 +4255,152 @@ const KMS_DATA = {
   },
   "indopacom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "eucom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "centcom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "africom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "southcom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "northcom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "cybercom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
+  },
+  "dcdc": {
+   "opcon": [
+    "cybercom"
+   ],
+   "adcon": [
+    "secdef"
+   ],
+   "note": "DoD Cyber Defense Command (formerly JFHQ-DODIN). Sub-unified command under CYBERCOM, designated 28 May 2025 per NDAA FY2025 § 1502 (P.L. 118-159). CDR dual-hatted as DISA Director. Executes DACO on behalf of CYBERCOM to secure, operate, and defend the DODIN."
   },
   "socom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "transcom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "stratcom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "spacecom": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ]
   },
   "potus": {
-   "note": "Commander in Chief per Article II, U.S. Constitution. National Command Authority with SECDEF. COCOM authority flows POTUS \u2192 SECDEF \u2192 CCDR per 10 USC \u00a7164."
+   "note": "Commander in Chief per Article II, U.S. Constitution. National Command Authority with SECDEF. COCOM authority flows POTUS → SECDEF → CCDR per 10 USC §164."
   },
   "secdef": {
    "adcon": [
     "potus"
    ],
-   "note": "Secretary of Defense. Exercises authority, direction, and control over DoD per 10 USC \u00a7113. COCOM chain: POTUS \u2192 SECDEF \u2192 CCDR."
+   "note": "Secretary of Defense. Exercises authority, direction, and control over DoD per 10 USC §113. COCOM chain: POTUS → SECDEF → CCDR."
   },
   "secnav": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
-   "note": "Secretary of the Navy per 10 USC \u00a78013 (formerly \u00a75013). Responsible for all affairs of DoN. SECNAV \u2192 CNO/CMC for military matters. SECNAV \u2192 ASNs for civilian oversight. UIC 31698. Source: SNDL."
+   "note": "Secretary of the Navy per 10 USC §8013 (formerly §5013). Responsible for all affairs of DoN. SECNAV → CNO/CMC for military matters. SECNAV → ASNs for civilian oversight. UIC 31698. Source: SNDL."
   },
   "cjcs": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
-   "note": "Chairman, Joint Chiefs of Staff per 10 USC \u00a7152. Principal military advisor to POTUS, NSC, and SECDEF. No command authority over CCMDs \u2014 advisory only."
+   "note": "Chairman, Joint Chiefs of Staff per 10 USC §152. Principal military advisor to POTUS, NSC, and SECDEF. No command authority over CCMDs — advisory only."
   },
   "vcjcs": {
    "adcon": [
-    "cjcs",
-    "secdef"
+    "cjcs"
    ],
-   "note": "Vice Chairman, Joint Chiefs of Staff per 10 USC \u00a7154."
+   "note": "Vice Chairman, Joint Chiefs of Staff per 10 USC §154."
   },
   "cno": {
    "adcon": [
-    "secnav",
-    "secdef",
-    "potus"
+    "secnav"
    ],
-   "note": "Chief of Naval Operations per 10 USC \u00a78033 (formerly \u00a75033). Senior military officer of the Navy. Member JCS. Exercises ADCON over all Navy commands. UIC 00011. Source: SNDL."
+   "note": "Chief of Naval Operations per 10 USC §8033 (formerly §5033). Senior military officer of the Navy. Member JCS. Exercises ADCON over all Navy commands. UIC 00011. Source: SNDL."
   },
   "vcno": {
    "adcon": [
-    "cno",
-    "secnav"
+    "cno"
    ],
    "note": "Vice Chief of Naval Operations. Principal deputy to CNO. Full authority to act for CNO in all matters not specifically reserved by law."
   },
   "cmc": {
    "adcon": [
-    "secnav",
-    "secdef",
-    "potus"
+    "secnav"
    ],
-   "note": "Commandant of the Marine Corps per 10 USC \u00a78043 (formerly \u00a75043). Senior military officer of the USMC. Member JCS."
+   "note": "Commandant of the Marine Corps per 10 USC §8043 (formerly §5043). Senior military officer of the USMC. Member JCS."
   },
   "acmc": {
    "adcon": [
-    "cmc",
-    "secnav"
+    "cmc"
    ],
-   "note": "Assistant Commandant of the Marine Corps per 10 USC \u00a78044 (formerly \u00a75044)."
+   "note": "Assistant Commandant of the Marine Corps per 10 USC §8044 (formerly §5044)."
   },
   "usd_as": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
    "note": "Under Secretary of Defense for Acquisition & Sustainment. Oversees DoD-wide acquisition policy including DoDI 5000.02 Adaptive Acquisition Framework."
   },
   "usd_re": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
    "note": "Under Secretary of Defense for Research & Engineering."
   },
   "sa": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
    "note": "Secretary of the Army."
   },
   "secaf": {
    "adcon": [
-    "secdef",
-    "potus"
+    "secdef"
    ],
    "note": "Secretary of the Air Force (also Space Force)."
   },
   "csa": {
    "adcon": [
-    "sa",
-    "secdef"
+    "sa"
    ],
    "note": "Chief of Staff, Army."
   },
   "csaf": {
    "adcon": [
-    "secaf",
-    "secdef"
+    "secaf"
    ],
    "note": "Chief of Staff, Air Force."
   },
@@ -4050,169 +4412,126 @@ const KMS_DATA = {
   },
   "marforcent": {
    "adcon": [
-    "cmc",
-    "secnav"
+    "cmc"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "centcom"
    ],
    "note": "Marine Forces Central Command. CENTCOM Marine component."
   },
   "marforeur": {
    "adcon": [
-    "cmc",
-    "secnav"
+    "cmc"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "eucom"
    ],
    "note": "Marine Forces Europe/Africa. EUCOM/AFRICOM Marine component. MajGen billet."
   },
   "marsoc": {
    "adcon": [
-    "cmc",
-    "secnav"
+    "cmc"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "socom"
    ],
    "note": "Marine Forces Special Operations Command (Marine Raider Command). SOCOM Marine component. Est. 24 Feb 2006. Camp Lejeune, NC."
   },
   "imef": {
    "adcon": [
-    "marforpac",
-    "cmc",
-    "secnav"
+    "marforpac"
    ],
    "note": "I Marine Expeditionary Force. LtGen. Camp Pendleton, CA. Contains 1st MarDiv, 3d MAW, 1st MLG."
   },
   "iimef": {
    "adcon": [
-    "marforcom",
-    "cmc",
-    "secnav"
+    "marforcom"
    ],
    "note": "II Marine Expeditionary Force. LtGen. Camp Lejeune, NC. Contains 2d MarDiv, 2d MAW, 2d MLG."
   },
   "iiimef": {
    "adcon": [
-    "marforpac",
-    "cmc",
-    "secnav"
+    "marforpac"
    ],
    "note": "III Marine Expeditionary Force. LtGen. Okinawa, Japan. Contains 3d MarDiv, 1st MAW, 3d MLG."
   },
   "dmaw": {
    "adcon": [
-    "iiimef",
-    "marforpac",
-    "cmc"
+    "iiimef"
    ],
    "note": "1st Marine Aircraft Wing. BGen. Okinawa. ACE for III MEF."
   },
   "smaw": {
    "adcon": [
-    "iimef",
-    "marforcom",
-    "cmc"
+    "iimef"
    ],
    "note": "2d Marine Aircraft Wing. MajGen. MCAS Cherry Point, NC. ACE for II MEF."
   },
   "tmaw": {
    "adcon": [
-    "imef",
-    "marforpac",
-    "cmc"
+    "imef"
    ],
    "note": "3d Marine Aircraft Wing. MajGen. MCAS Miramar, CA. ACE for I MEF."
   },
   "mag16": {
    "adcon": [
-    "tmaw",
-    "imef",
-    "marforpac"
+    "tmaw"
    ],
    "note": "Marine Aircraft Group 16. Col. MCAS Miramar, CA. Under 3d MAW."
   },
   "mag26": {
    "adcon": [
-    "smaw",
-    "iimef",
-    "marforcom"
+    "smaw"
    ],
    "note": "Marine Aircraft Group 26. Col. MCAS New River, NC. Under 2d MAW."
   },
   "mag36": {
    "adcon": [
-    "dmaw",
-    "iiimef",
-    "marforpac"
+    "dmaw"
    ],
    "note": "Marine Aircraft Group 36. Col. MCAS Futenma, Okinawa. Under 1st MAW."
   },
   "mlr": {
    "adcon": [
-    "iiimef",
-    "marforpac",
-    "cmc"
+    "iiimef"
    ],
    "note": "3d Marine Littoral Regiment. Part of Force Design 2030 restructuring under III MEF."
   },
   "af16": {
    "adcon": [
-    "csaf",
-    "secaf",
-    "secdef"
+    "csaf"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "cybercom"
    ],
    "note": "16th Air Force / Air Forces Cyber. CYBERCOM Air Force component."
   },
   "arcyber": {
    "adcon": [
-    "csa",
-    "sa",
-    "secdef"
+    "csa"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "cybercom"
    ],
    "note": "Army Cyber Command / 2nd Army. CYBERCOM Army component."
   },
   "cg_cyber": {
    "opcon": [
-    "potus",
-    "secdef",
     "cybercom"
    ],
    "note": "USCG Cyber Command. CYBERCOM Coast Guard component (DHS for ADCON)."
   },
   "spaceops": {
    "adcon": [
-    "csaf",
-    "secaf",
-    "secdef"
+    "csaf"
    ],
    "opcon": [
-    "potus",
-    "secdef",
     "spacecom"
    ],
    "note": "Space Operations Command. SPACECOM component."
   },
   "pms400": {
-   "adcon": [
+   "aa": [
     "peo_ships",
     "asn_rda",
     "secnav"
@@ -4223,7 +4542,7 @@ const KMS_DATA = {
    "note": "PMS-400 DDG-51. Under PEO Ships. NAVSEA TA."
   },
   "pms317": {
-   "adcon": [
+   "aa": [
     "peo_lmw",
     "asn_rda",
     "secnav"
@@ -4234,7 +4553,7 @@ const KMS_DATA = {
    "note": "FFG-62 program. Under PEO USC (formerly PEO LCS). NAVSEA TA."
   },
   "pms385": {
-   "adcon": [
+   "aa": [
     "peo_subs",
     "asn_rda",
     "secnav"
@@ -4245,7 +4564,7 @@ const KMS_DATA = {
    "note": "PMS-385 Virginia SSN. Under PEO SSN (Attack Submarines). NAVSEA TA."
   },
   "pms425": {
-   "adcon": [
+   "aa": [
     "peo_subs",
     "asn_rda",
     "secnav"
@@ -4256,7 +4575,7 @@ const KMS_DATA = {
    "note": "PMS-425 Columbia SSBN. Under PEO SSBN (Strategic Submarines). NAVSEA TA."
   },
   "pms394": {
-   "adcon": [
+   "aa": [
     "peo_cvn",
     "asn_rda",
     "secnav"
@@ -4267,7 +4586,7 @@ const KMS_DATA = {
    "note": "CVN-78 class. Under PEO Carriers. NAVSEA TA."
   },
   "pms500": {
-   "adcon": [
+   "aa": [
     "peo_ships",
     "asn_rda",
     "secnav"
@@ -4278,7 +4597,7 @@ const KMS_DATA = {
    "note": "PMS-500 LPD-17. Under PEO Ships. NAVSEA TA."
   },
   "pmw120": {
-   "adcon": [
+   "aa": [
     "peo_c4i",
     "asn_rda",
     "secnav"
@@ -4289,7 +4608,7 @@ const KMS_DATA = {
    "note": "PMW-120 Battlespace Awareness & Information Operations. Under PEO C4I. Note: CANES is PMW-160, not PMW-120. Corrected per peoc4i.navy.mil."
   },
   "pmw130": {
-   "adcon": [
+   "aa": [
     "peo_c4i",
     "asn_rda",
     "secnav"
@@ -4300,7 +4619,7 @@ const KMS_DATA = {
    "note": "PMW-130 Cybersecurity. Under PEO C4I. Corrected per peoc4i.navy.mil."
   },
   "pmw160": {
-   "adcon": [
+   "aa": [
     "peo_c4i",
     "asn_rda",
     "secnav"
@@ -4308,10 +4627,10 @@ const KMS_DATA = {
    "ta": [
     "navwar"
    ],
-   "note": "PMW-160 Tactical Networks \u2014 includes CANES (Consolidated Afloat Networks & Enterprise Services) and Automated Digital Networking System. Under PEO C4I. Verified per peoc4i.navy.mil."
+   "note": "PMW-160 Tactical Networks — includes CANES (Consolidated Afloat Networks & Enterprise Services) and Automated Digital Networking System. Under PEO C4I. Verified per peoc4i.navy.mil."
   },
   "pmw240": {
-   "adcon": [
+   "aa": [
     "peo_dig",
     "asn_rda",
     "secnav"
@@ -4323,16 +4642,14 @@ const KMS_DATA = {
   },
   "cso": {
    "adcon": [
-    "secaf",
-    "secdef",
-    "potus"
+    "secaf"
    ],
    "note": "Chief of Space Operations. Senior military officer of the Space Force. Member JCS. Reports through Secretary of the Air Force."
   }
  },
  "views": {
   "strategic": {
-   "label": "National Command Authority \u2014 NCA to COCOMs",
+   "label": "National Command Authority — NCA to COCOMs",
    "ids": [
     "potus",
     "secdef",
@@ -4451,52 +4768,52 @@ const KMS_DATA = {
     {
      "s": "potus",
      "t": "secdef",
-     "a": "cocom"
+     "a": "nca"
     },
     {
      "s": "secdef",
      "t": "cjcs",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "secnav",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "sa",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "secaf",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cno",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cmc",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "sa",
      "t": "csa",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secaf",
      "t": "csaf",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secaf",
      "t": "cso",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "potus",
@@ -4556,7 +4873,7 @@ const KMS_DATA = {
    ]
   },
   "cocoms": {
-   "label": "Combatant Commands \u2014 Geographic & Functional",
+   "label": "Combatant Commands — Geographic & Functional",
    "ids": [
     "potus",
     "secdef",
@@ -4584,7 +4901,9 @@ const KMS_DATA = {
     "marsoc",
     "fltcybercom",
     "marforcyber",
-    "spaceops"
+    "spaceops",
+    "msc",
+    "marforcom"
    ],
    "pos": {
     "potus": [
@@ -4694,18 +5013,26 @@ const KMS_DATA = {
     "spaceops": [
      750,
      490
+    ],
+    "msc": [
+     630,
+     600
+    ],
+    "marforcom": [
+     210,
+     600
     ]
    },
    "links": [
     {
      "s": "potus",
      "t": "secdef",
-     "a": "cocom"
+     "a": "nca"
     },
     {
      "s": "secdef",
      "t": "cjcs",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "potus",
@@ -4815,22 +5142,45 @@ const KMS_DATA = {
     {
      "s": "cybercom",
      "t": "fltcybercom",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "cybercom",
      "t": "marforcyber",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "spacecom",
      "t": "spaceops",
      "a": "opcon"
+    },
+    {
+     "s": "africom",
+     "t": "naveur",
+     "a": "opcon"
+    },
+    {
+     "s": "transcom",
+     "t": "msc",
+     "a": "opcon"
+    },
+    {
+     "s": "northcom",
+     "t": "marforcom",
+     "a": "opcon"
+    },
+    {
+     "s": "stratcom",
+     "t": "usffc",
+     "a": "opcon"
     }
    ]
   },
   "don": {
-   "label": "Department of the Navy \u2014 SECNAV to Echelon 2",
+   "label": "Department of the Navy — SECNAV to Echelon 2",
+   "dh_map": {
+    "usffc": "COMLANTFLT"
+   },
    "ids": [
     "secnav",
     "unsecnav",
@@ -4989,37 +5339,37 @@ const KMS_DATA = {
     {
      "s": "secnav",
      "t": "unsecnav",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "asn_rda",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "asn_eie",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "asn_fmc",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "asn_mra",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cno",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cmc",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "cno",
@@ -5134,22 +5484,25 @@ const KMS_DATA = {
     {
      "s": "asn_rda",
      "t": "navsea",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navwar",
-     "a": "ta"
+     "a": "aa"
     }
    ]
   },
   "navy_fleet": {
-   "label": "Navy Operational \u2014 Fleets, Numbered Fleets, TYCOMs",
+   "label": "Navy Operational — Fleets, Numbered Fleets, TYCOMs",
+   "dh_map": {
+    "usffc": "COMLANTFLT"
+   },
    "ids": [
     "cno",
     "usffc",
@@ -5373,7 +5726,7 @@ const KMS_DATA = {
    ]
   },
   "navy_syscom": {
-   "label": "Navy Institutional \u2014 SYSCOMs, Warfare Centers, FRCs",
+   "label": "Navy Institutional — SYSCOMs, Warfare Centers, FRCs",
    "ids": [
     "cno",
     "asn_rda",
@@ -5572,17 +5925,17 @@ const KMS_DATA = {
     {
      "s": "asn_rda",
      "t": "navsea",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navwar",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "navsea",
@@ -5707,7 +6060,10 @@ const KMS_DATA = {
    ]
   },
   "navair_auth": {
-   "label": "NAVAIR Authority \u2014 Acquisition | Industrial | TYCOM",
+   "label": "NAVAIR Authority — Acquisition | Industrial | TYCOM",
+   "dh_map": {
+    "usffc": "COMLANTFLT"
+   },
    "ids": [
     "cno",
     "asn_rda",
@@ -5846,7 +6202,7 @@ const KMS_DATA = {
     {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "cno",
@@ -5906,42 +6262,42 @@ const KMS_DATA = {
     {
      "s": "peo_a",
      "t": "pma265",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma299",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma261",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma272",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma276",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma281",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma275",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_uw",
      "t": "pma263",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "comfrc",
@@ -5966,12 +6322,77 @@ const KMS_DATA = {
     {
      "s": "peo_uw",
      "t": "pma262",
-     "a": "ta"
+     "a": "aa"
+    },
+    {
+     "s": "frce",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frce",
+     "t": "pma299",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma299",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma275",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma281",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma275",
+     "a": "lcsp"
     }
    ]
   },
   "usmc": {
-   "label": "Marine Corps \u2014 CMC Chain",
+   "label": "Marine Corps — CMC Chain",
    "ids": [
     "cmc",
     "acmc",
@@ -5987,108 +6408,218 @@ const KMS_DATA = {
     "dmaw",
     "smaw",
     "tmaw",
+    "fmaw",
+    "mag11",
+    "mag12",
+    "mag13",
+    "mag14",
     "mag16",
+    "mag24",
     "mag26",
+    "mag29",
+    "mag31",
     "mag36",
-    "mals16",
+    "mag39",
+    "mag41",
+    "mag42",
+    "mag49",
+    "mals11",
+    "mals12",
+    "mals13",
     "mals14",
+    "mals16",
+    "mals24",
+    "mals26",
+    "mals29",
+    "mals31",
     "mals36",
-    "mals40",
+    "mals39",
+    "mals41",
+    "mals42",
+    "mals49",
     "marsoc",
     "marforcyber"
    ],
    "pos": {
     "cmc": [
-     540,
+     640,
      25
     ],
     "acmc": [
-     280,
+     380,
+     105
+    ],
+    "marsoc": [
+     900,
+     105
+    ],
+    "marforcyber": [
+     1100,
      105
     ],
     "marforcom": [
-     75,
+     100,
      205
     ],
     "marforpac": [
-     340,
+     380,
      205
     ],
     "marforres": [
-     610,
+     660,
      205
     ],
     "marforcent": [
-     875,
+     940,
      205
     ],
     "marforeur": [
-     1050,
+     1140,
      205
     ],
     "iimef": [
-     45,
+     100,
      305
     ],
     "imef": [
-     270,
+     340,
      305
     ],
     "iiimef": [
-     465,
+     540,
      305
     ],
+    "fmaw": [
+     740,
+     305
+    ],
+    "mlr": [
+     620,
+     395
+    ],
     "smaw": [
-     45,
+     100,
      395
     ],
     "tmaw": [
-     270,
+     350,
      395
     ],
     "dmaw": [
-     465,
+     560,
      395
     ],
+    "mag14": [
+     15,
+     485
+    ],
     "mag26": [
-     45,
+     115,
+     485
+    ],
+    "mag29": [
+     215,
+     485
+    ],
+    "mag31": [
+     315,
+     485
+    ],
+    "mag11": [
+     415,
+     485
+    ],
+    "mag13": [
+     515,
      485
     ],
     "mag16": [
-     270,
+     615,
+     485
+    ],
+    "mag39": [
+     715,
+     485
+    ],
+    "mag12": [
+     815,
+     485
+    ],
+    "mag24": [
+     915,
      485
     ],
     "mag36": [
-     465,
+     1015,
+     485
+    ],
+    "mag41": [
+     1115,
+     485
+    ],
+    "mag42": [
+     1215,
+     485
+    ],
+    "mag49": [
+     1315,
      485
     ],
     "mals14": [
-     45,
+     15,
+     575
+    ],
+    "mals26": [
+     115,
+     575
+    ],
+    "mals29": [
+     215,
+     575
+    ],
+    "mals31": [
+     315,
+     575
+    ],
+    "mals11": [
+     415,
+     575
+    ],
+    "mals13": [
+     515,
      575
     ],
     "mals16": [
-     270,
+     615,
+     575
+    ],
+    "mals39": [
+     715,
+     575
+    ],
+    "mals12": [
+     815,
+     575
+    ],
+    "mals24": [
+     915,
      575
     ],
     "mals36": [
-     465,
+     1015,
      575
     ],
-    "mals40": [
-     155,
+    "mals41": [
+     1115,
      575
     ],
-    "mlr": [
-     555,
-     395
+    "mals42": [
+     1215,
+     575
     ],
-    "marsoc": [
-     875,
-     305
-    ],
-    "marforcyber": [
-     1050,
-     305
+    "mals49": [
+     1315,
+     575
     ]
    },
    "links": [
@@ -6123,6 +6654,16 @@ const KMS_DATA = {
      "a": "adcon"
     },
     {
+     "s": "cmc",
+     "t": "marsoc",
+     "a": "adcon"
+    },
+    {
+     "s": "cmc",
+     "t": "marforcyber",
+     "a": "adcon"
+    },
+    {
      "s": "marforcom",
      "t": "iimef",
      "a": "adcon"
@@ -6143,6 +6684,11 @@ const KMS_DATA = {
      "a": "adcon"
     },
     {
+     "s": "marforres",
+     "t": "fmaw",
+     "a": "adcon"
+    },
+    {
      "s": "iimef",
      "t": "smaw",
      "a": "adcon"
@@ -6159,7 +6705,32 @@ const KMS_DATA = {
     },
     {
      "s": "smaw",
+     "t": "mag14",
+     "a": "adcon"
+    },
+    {
+     "s": "smaw",
      "t": "mag26",
+     "a": "adcon"
+    },
+    {
+     "s": "smaw",
+     "t": "mag29",
+     "a": "adcon"
+    },
+    {
+     "s": "smaw",
+     "t": "mag31",
+     "a": "adcon"
+    },
+    {
+     "s": "tmaw",
+     "t": "mag11",
+     "a": "adcon"
+    },
+    {
+     "s": "tmaw",
+     "t": "mag13",
      "a": "adcon"
     },
     {
@@ -6168,8 +6739,68 @@ const KMS_DATA = {
      "a": "adcon"
     },
     {
+     "s": "tmaw",
+     "t": "mag39",
+     "a": "adcon"
+    },
+    {
+     "s": "dmaw",
+     "t": "mag12",
+     "a": "adcon"
+    },
+    {
+     "s": "dmaw",
+     "t": "mag24",
+     "a": "adcon"
+    },
+    {
      "s": "dmaw",
      "t": "mag36",
+     "a": "adcon"
+    },
+    {
+     "s": "fmaw",
+     "t": "mag41",
+     "a": "adcon"
+    },
+    {
+     "s": "fmaw",
+     "t": "mag42",
+     "a": "adcon"
+    },
+    {
+     "s": "fmaw",
+     "t": "mag49",
+     "a": "adcon"
+    },
+    {
+     "s": "mag14",
+     "t": "mals14",
+     "a": "adcon"
+    },
+    {
+     "s": "mag26",
+     "t": "mals26",
+     "a": "adcon"
+    },
+    {
+     "s": "mag29",
+     "t": "mals29",
+     "a": "adcon"
+    },
+    {
+     "s": "mag31",
+     "t": "mals31",
+     "a": "adcon"
+    },
+    {
+     "s": "mag11",
+     "t": "mals11",
+     "a": "adcon"
+    },
+    {
+     "s": "mag13",
+     "t": "mals13",
      "a": "adcon"
     },
     {
@@ -6178,13 +6809,18 @@ const KMS_DATA = {
      "a": "adcon"
     },
     {
-     "s": "mag26",
-     "t": "mals14",
+     "s": "mag39",
+     "t": "mals39",
      "a": "adcon"
     },
     {
-     "s": "mag26",
-     "t": "mals40",
+     "s": "mag12",
+     "t": "mals12",
+     "a": "adcon"
+    },
+    {
+     "s": "mag24",
+     "t": "mals24",
      "a": "adcon"
     },
     {
@@ -6193,19 +6829,24 @@ const KMS_DATA = {
      "a": "adcon"
     },
     {
-     "s": "marforcent",
-     "t": "marsoc",
+     "s": "mag41",
+     "t": "mals41",
      "a": "adcon"
     },
     {
-     "s": "marforeur",
-     "t": "marforcyber",
+     "s": "mag42",
+     "t": "mals42",
+     "a": "adcon"
+    },
+    {
+     "s": "mag49",
+     "t": "mals49",
      "a": "adcon"
     }
    ]
   },
   "acq": {
-   "label": "Acquisition \u2014 ASN(RD&A) Chain",
+   "label": "Acquisition — ASN(RD&A) Chain",
    "ids": [
     "secnav",
     "asn_rda",
@@ -6239,7 +6880,11 @@ const KMS_DATA = {
     "peo_dig",
     "pms500",
     "pmw160",
-    "pmw240"
+    "pmw240",
+    "pma207",
+    "f35jpo",
+    "peo_t",
+    "secaf"
    ],
    "pos": {
     "secnav": [
@@ -6373,73 +7018,89 @@ const KMS_DATA = {
     "pmw240": [
      810,
      360
+    ],
+    "pma207": [
+     900,
+     360
+    ],
+    "peo_t": [
+     485,
+     275
+    ],
+    "f35jpo": [
+     1060,
+     185
+    ],
+    "secaf": [
+     1060,
+     95
     ]
    },
    "links": [
     {
      "s": "secnav",
      "t": "asn_rda",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "usd_as",
      "t": "asn_rda",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "usd_re",
      "t": "asn_rda",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "asn_rda",
      "t": "navsea",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "navwar",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_a",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_uw",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_ships",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_subs",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_cvn",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_iws",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "asn_rda",
      "t": "peo_c4i",
-     "a": "adcon"
+     "a": "aa"
     },
     {
      "s": "navsea",
@@ -6479,72 +7140,72 @@ const KMS_DATA = {
     {
      "s": "peo_ships",
      "t": "pms400",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_ships",
      "t": "pms317",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_ships",
      "t": "pms394",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_subs",
      "t": "pms385",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_subs",
      "t": "pms425",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma265",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma299",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma261",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma272",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma276",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma281",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_uw",
      "t": "pma263",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_c4i",
      "t": "pmw120",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_c4i",
      "t": "pmw130",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "navsea",
@@ -6559,27 +7220,54 @@ const KMS_DATA = {
     {
      "s": "peo_lmw",
      "t": "pms500",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_c4i",
      "t": "pmw160",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_c4i",
      "t": "pmw240",
+     "a": "aa"
+    },
+    {
+     "s": "peo_a",
+     "t": "pma207",
+     "a": "aa"
+    },
+    {
+     "s": "navair",
+     "t": "peo_t",
+     "a": "align"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_t",
+     "a": "aa"
+    },
+    {
+     "s": "secaf",
+     "t": "f35jpo",
+     "a": "aa"
+    },
+    {
+     "s": "navair",
+     "t": "f35jpo",
      "a": "ta"
     }
    ]
   },
-  "ta_view": {
-   "label": "Technical Authority \u2014 TA Flow to Fleet",
+  "ta_navair": {
+   "label": "NAVAIR TA — Aviation Weapon System Authority",
    "ids": [
-    "secnav",
     "asn_rda",
     "navair",
     "peo_a",
+    "peo_uw",
+    "peo_t",
+    "f35jpo",
     "pma265",
     "pma299",
     "pma261",
@@ -6587,108 +7275,166 @@ const KMS_DATA = {
     "pma276",
     "pma281",
     "pma275",
+    "pma207",
     "pma263",
+    "pma262",
+    "mals11",
+    "mals12",
+    "mals13",
+    "mals14",
     "mals16",
     "mals24",
+    "mals26",
+    "mals29",
+    "mals31",
     "mals36",
-    "mals14",
-    "mals40",
-    "tmaw",
-    "smaw",
-    "dmaw"
+    "mals39",
+    "mals41",
+    "mals49",
+    "frce",
+    "frcse",
+    "frcsw",
+    "frcw"
    ],
    "pos": {
-    "secnav": [
-     530,
+    "asn_rda": [
+     500,
      20
     ],
-    "asn_rda": [
-     530,
-     95
-    ],
     "navair": [
-     530,
-     170
+     500,
+     100
+    ],
+    "f35jpo": [
+     780,
+     100
     ],
     "peo_a": [
-     530,
-     250
+     200,
+     190
+    ],
+    "peo_uw": [
+     450,
+     190
+    ],
+    "peo_t": [
+     650,
+     190
     ],
     "pma265": [
-     60,
-     340
+     50,
+     280
     ],
     "pma299": [
-     175,
-     340
+     150,
+     280
     ],
     "pma261": [
-     285,
-     340
+     250,
+     280
     ],
     "pma272": [
-     395,
-     340
+     350,
+     280
     ],
     "pma276": [
-     505,
-     340
+     450,
+     280
     ],
     "pma281": [
-     615,
-     340
+     550,
+     280
     ],
     "pma275": [
-     725,
-     340
+     650,
+     280
+    ],
+    "pma207": [
+     750,
+     280
     ],
     "pma263": [
-     835,
-     340
+     850,
+     280
     ],
-    "tmaw": [
+    "pma262": [
+     950,
+     280
+    ],
+    "mals11": [
+     50,
+     410
+    ],
+    "mals12": [
      150,
-     445
+     410
     ],
-    "smaw": [
-     400,
-     445
-    ],
-    "dmaw": [
-     660,
-     445
-    ],
-    "mals16": [
-     80,
-     530
-    ],
-    "mals24": [
-     215,
-     530
-    ],
-    "mals36": [
-     545,
-     530
+    "mals13": [
+     250,
+     410
     ],
     "mals14": [
-     330,
-     530
+     350,
+     410
     ],
-    "mals40": [
-     460,
-     530
+    "mals16": [
+     450,
+     410
+    ],
+    "mals24": [
+     550,
+     410
+    ],
+    "mals26": [
+     650,
+     410
+    ],
+    "mals29": [
+     750,
+     410
+    ],
+    "mals31": [
+     850,
+     410
+    ],
+    "mals36": [
+     950,
+     410
+    ],
+    "mals39": [
+     1050,
+     410
+    ],
+    "mals41": [
+     1150,
+     410
+    ],
+    "mals49": [
+     1250,
+     410
+    ],
+    "frce": [
+     200,
+     510
+    ],
+    "frcse": [
+     400,
+     510
+    ],
+    "frcsw": [
+     600,
+     510
+    ],
+    "frcw": [
+     800,
+     510
     ]
    },
    "links": [
     {
-     "s": "secnav",
-     "t": "asn_rda",
-     "a": "adcon"
-    },
-    {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "navair",
@@ -6696,92 +7442,132 @@ const KMS_DATA = {
      "a": "align"
     },
     {
-     "s": "peo_a",
-     "t": "pma265",
+     "s": "navair",
+     "t": "peo_uw",
+     "a": "align"
+    },
+    {
+     "s": "navair",
+     "t": "peo_t",
+     "a": "align"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_a",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_uw",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_t",
+     "a": "aa"
+    },
+    {
+     "s": "navair",
+     "t": "f35jpo",
      "a": "ta"
     },
     {
      "s": "peo_a",
      "t": "pma299",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma261",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma272",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma276",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
+     "t": "pma207",
+     "a": "aa"
+    },
+    {
+     "s": "peo_uw",
      "t": "pma281",
-     "a": "ta"
+     "a": "aa"
     },
     {
-     "s": "peo_a",
+     "s": "peo_uw",
+     "t": "pma263",
+     "a": "aa"
+    },
+    {
+     "s": "peo_uw",
+     "t": "pma262",
+     "a": "aa"
+    },
+    {
+     "s": "peo_t",
+     "t": "pma265",
+     "a": "aa"
+    },
+    {
+     "s": "peo_t",
      "t": "pma275",
+     "a": "aa"
+    },
+    {
+     "s": "pma265",
+     "t": "mals11",
      "a": "ta"
     },
     {
-     "s": "pma281",
-     "t": "mals16",
+     "s": "f35jpo",
+     "t": "mals11",
      "a": "ta"
     },
     {
-     "s": "pma281",
-     "t": "mals24",
+     "s": "pma207",
+     "t": "mals11",
      "a": "ta"
     },
     {
-     "s": "pma281",
-     "t": "mals36",
+     "s": "f35jpo",
+     "t": "mals12",
      "a": "ta"
     },
     {
-     "s": "pma272",
-     "t": "mals16",
+     "s": "pma207",
+     "t": "mals12",
      "a": "ta"
     },
     {
-     "s": "pma272",
-     "t": "mals24",
+     "s": "f35jpo",
+     "t": "mals13",
      "a": "ta"
     },
     {
-     "s": "pma272",
-     "t": "mals36",
+     "s": "pma263",
+     "t": "mals13",
      "a": "ta"
     },
     {
-     "s": "pma272",
-     "t": "mals40",
-     "a": "ta"
-    },
-    {
-     "s": "pma276",
-     "t": "mals16",
-     "a": "ta"
-    },
-    {
-     "s": "pma276",
+     "s": "f35jpo",
      "t": "mals14",
      "a": "ta"
     },
     {
-     "s": "pma276",
-     "t": "mals40",
+     "s": "pma263",
+     "t": "mals14",
      "a": "ta"
     },
     {
-     "s": "pma261",
+     "s": "pma207",
      "t": "mals14",
      "a": "ta"
     },
@@ -6791,29 +7577,562 @@ const KMS_DATA = {
      "a": "ta"
     },
     {
-     "s": "tmaw",
+     "s": "pma272",
      "t": "mals16",
-     "a": "adcon"
+     "a": "ta"
     },
     {
-     "s": "smaw",
-     "t": "mals14",
-     "a": "adcon"
+     "s": "pma272",
+     "t": "mals24",
+     "a": "ta"
     },
     {
-     "s": "smaw",
-     "t": "mals40",
-     "a": "adcon"
+     "s": "pma263",
+     "t": "mals24",
+     "a": "ta"
     },
     {
-     "s": "dmaw",
+     "s": "pma207",
+     "t": "mals24",
+     "a": "ta"
+    },
+    {
+     "s": "pma272",
+     "t": "mals26",
+     "a": "ta"
+    },
+    {
+     "s": "pma261",
+     "t": "mals29",
+     "a": "ta"
+    },
+    {
+     "s": "pma276",
+     "t": "mals29",
+     "a": "ta"
+    },
+    {
+     "s": "pma265",
+     "t": "mals31",
+     "a": "ta"
+    },
+    {
+     "s": "f35jpo",
+     "t": "mals31",
+     "a": "ta"
+    },
+    {
+     "s": "pma272",
      "t": "mals36",
-     "a": "adcon"
+     "a": "ta"
+    },
+    {
+     "s": "pma276",
+     "t": "mals39",
+     "a": "ta"
+    },
+    {
+     "s": "pma272",
+     "t": "mals39",
+     "a": "ta"
+    },
+    {
+     "s": "pma265",
+     "t": "mals41",
+     "a": "ta"
+    },
+    {
+     "s": "pma276",
+     "t": "mals41",
+     "a": "ta"
+    },
+    {
+     "s": "pma207",
+     "t": "mals41",
+     "a": "ta"
+    },
+    {
+     "s": "pma261",
+     "t": "mals49",
+     "a": "ta"
+    },
+    {
+     "s": "pma276",
+     "t": "mals49",
+     "a": "ta"
+    },
+    {
+     "s": "pma272",
+     "t": "mals49",
+     "a": "ta"
+    },
+    {
+     "s": "mals11",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals11",
+     "t": "f35jpo",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals11",
+     "t": "pma207",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals12",
+     "t": "f35jpo",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals12",
+     "t": "pma207",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals13",
+     "t": "f35jpo",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals13",
+     "t": "pma263",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals14",
+     "t": "f35jpo",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals14",
+     "t": "pma263",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals14",
+     "t": "pma207",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals16",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals16",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals24",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals24",
+     "t": "pma263",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals24",
+     "t": "pma207",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals26",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals29",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals29",
+     "t": "pma276",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals31",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals31",
+     "t": "f35jpo",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals36",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals39",
+     "t": "pma276",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals39",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals41",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals41",
+     "t": "pma276",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals41",
+     "t": "pma207",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals49",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals49",
+     "t": "pma276",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals49",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "frce",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frce",
+     "t": "pma299",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma299",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcse",
+     "t": "pma275",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma281",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcsw",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma265",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma261",
+     "a": "lcsp"
+    },
+    {
+     "s": "frcw",
+     "t": "pma275",
+     "a": "lcsp"
+    }
+   ]
+  },
+  "ta_navsea": {
+   "label": "NAVSEA TA — Ship/Sub Weapon System Authority",
+   "ids": [
+    "asn_rda",
+    "navsea",
+    "peo_ships",
+    "peo_subs",
+    "peo_cvn",
+    "peo_iws",
+    "peo_lmw",
+    "pms400",
+    "pms317",
+    "pms385",
+    "pms425",
+    "pms394",
+    "pms500"
+   ],
+   "pos": {
+    "asn_rda": [
+     400,
+     20
+    ],
+    "navsea": [
+     400,
+     100
+    ],
+    "peo_ships": [
+     100,
+     190
+    ],
+    "peo_subs": [
+     280,
+     190
+    ],
+    "peo_cvn": [
+     460,
+     190
+    ],
+    "peo_iws": [
+     640,
+     190
+    ],
+    "peo_lmw": [
+     820,
+     190
+    ],
+    "pms400": [
+     50,
+     280
+    ],
+    "pms317": [
+     820,
+     280
+    ],
+    "pms385": [
+     230,
+     280
+    ],
+    "pms425": [
+     330,
+     280
+    ],
+    "pms394": [
+     460,
+     280
+    ],
+    "pms500": [
+     150,
+     280
+    ]
+   },
+   "links": [
+    {
+     "s": "asn_rda",
+     "t": "navsea",
+     "a": "aa"
+    },
+    {
+     "s": "navsea",
+     "t": "peo_ships",
+     "a": "align"
+    },
+    {
+     "s": "navsea",
+     "t": "peo_subs",
+     "a": "align"
+    },
+    {
+     "s": "navsea",
+     "t": "peo_cvn",
+     "a": "align"
+    },
+    {
+     "s": "navsea",
+     "t": "peo_iws",
+     "a": "align"
+    },
+    {
+     "s": "navsea",
+     "t": "peo_lmw",
+     "a": "align"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_ships",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_subs",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_cvn",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_iws",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_lmw",
+     "a": "aa"
+    },
+    {
+     "s": "peo_ships",
+     "t": "pms400",
+     "a": "aa"
+    },
+    {
+     "s": "peo_ships",
+     "t": "pms500",
+     "a": "aa"
+    },
+    {
+     "s": "peo_subs",
+     "t": "pms385",
+     "a": "aa"
+    },
+    {
+     "s": "peo_subs",
+     "t": "pms425",
+     "a": "aa"
+    },
+    {
+     "s": "peo_cvn",
+     "t": "pms394",
+     "a": "aa"
+    },
+    {
+     "s": "peo_lmw",
+     "t": "pms317",
+     "a": "aa"
+    }
+   ]
+  },
+  "ta_navwar": {
+   "label": "NAVWAR TA — C4I/Cyber System Authority",
+   "ids": [
+    "asn_rda",
+    "navwar",
+    "peo_c4i",
+    "peo_dig",
+    "pmw120",
+    "pmw130",
+    "pmw160",
+    "pmw240"
+   ],
+   "pos": {
+    "asn_rda": [
+     350,
+     20
+    ],
+    "navwar": [
+     350,
+     100
+    ],
+    "peo_c4i": [
+     200,
+     190
+    ],
+    "peo_dig": [
+     500,
+     190
+    ],
+    "pmw120": [
+     100,
+     280
+    ],
+    "pmw130": [
+     200,
+     280
+    ],
+    "pmw160": [
+     300,
+     280
+    ],
+    "pmw240": [
+     500,
+     280
+    ]
+   },
+   "links": [
+    {
+     "s": "asn_rda",
+     "t": "navwar",
+     "a": "aa"
+    },
+    {
+     "s": "navwar",
+     "t": "peo_c4i",
+     "a": "align"
+    },
+    {
+     "s": "navwar",
+     "t": "peo_dig",
+     "a": "align"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_c4i",
+     "a": "aa"
+    },
+    {
+     "s": "asn_rda",
+     "t": "peo_dig",
+     "a": "aa"
+    },
+    {
+     "s": "peo_c4i",
+     "t": "pmw120",
+     "a": "aa"
+    },
+    {
+     "s": "peo_c4i",
+     "t": "pmw130",
+     "a": "aa"
+    },
+    {
+     "s": "peo_c4i",
+     "t": "pmw160",
+     "a": "aa"
+    },
+    {
+     "s": "peo_dig",
+     "t": "pmw240",
+     "a": "aa"
     }
    ]
   },
   "mals": {
-   "label": "MALS \u2014 Authority Convergence",
+   "label": "MALS — Authority Convergence",
    "ids": [
     "potus",
     "secdef",
@@ -6832,7 +8151,7 @@ const KMS_DATA = {
     "pma272",
     "pma276",
     "cybercom",
-    "fltcybercom",
+    "dcdc",
     "marforcyber"
    ],
    "pos": {
@@ -6884,7 +8203,7 @@ const KMS_DATA = {
      700,
      360
     ],
-    "fltcybercom": [
+    "dcdc": [
      880,
      360
     ],
@@ -6917,22 +8236,22 @@ const KMS_DATA = {
     {
      "s": "potus",
      "t": "secdef",
-     "a": "cocom"
+     "a": "nca"
     },
     {
      "s": "secdef",
      "t": "cmc",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "cno",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "asn_rda",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "indopacom",
@@ -6972,7 +8291,7 @@ const KMS_DATA = {
     {
      "s": "asn_rda",
      "t": "navair",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "navair",
@@ -6982,17 +8301,17 @@ const KMS_DATA = {
     {
      "s": "peo_a",
      "t": "pma281",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma272",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "peo_a",
      "t": "pma276",
-     "a": "ta"
+     "a": "aa"
     },
     {
      "s": "pma281",
@@ -7010,17 +8329,32 @@ const KMS_DATA = {
      "a": "ta"
     },
     {
+     "s": "mals16",
+     "t": "pma281",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals16",
+     "t": "pma272",
+     "a": "lcsp"
+    },
+    {
+     "s": "mals16",
+     "t": "pma276",
+     "a": "lcsp"
+    },
+    {
      "s": "potus",
      "t": "cybercom",
      "a": "cocom"
     },
     {
      "s": "cybercom",
-     "t": "fltcybercom",
+     "t": "dcdc",
      "a": "cyber"
     },
     {
-     "s": "fltcybercom",
+     "s": "dcdc",
      "t": "marforcyber",
      "a": "cyber"
     },
@@ -7032,7 +8366,7 @@ const KMS_DATA = {
    ]
   },
   "cyber": {
-   "label": "DACO \u2014 Cyber Command Chain",
+   "label": "DACO — Cyber Command Chain",
    "ids": [
     "potus",
     "secdef",
@@ -7042,6 +8376,7 @@ const KMS_DATA = {
     "cno",
     "cmc",
     "cybercom",
+    "dcdc",
     "fltcybercom",
     "fl10",
     "arcyber",
@@ -7086,29 +8421,33 @@ const KMS_DATA = {
      740,
      200
     ],
+    "dcdc": [
+     560,
+     295
+    ],
     "fltcybercom": [
      600,
-     340
+     390
     ],
     "fl10": [
      600,
-     440
+     490
     ],
     "arcyber": [
      740,
-     340
+     390
     ],
     "af16": [
      880,
-     340
+     390
     ],
     "marforcyber": [
      1020,
-     340
+     390
     ],
     "cg_cyber": [
      740,
-     440
+     490
     ],
     "navifor": [
      185,
@@ -7131,32 +8470,32 @@ const KMS_DATA = {
     {
      "s": "potus",
      "t": "secdef",
-     "a": "cocom"
+     "a": "nca"
     },
     {
      "s": "secdef",
      "t": "cjcs",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "pca",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secdef",
      "t": "secnav",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cno",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "secnav",
      "t": "cmc",
-     "a": "adcon"
+     "a": "dac"
     },
     {
      "s": "potus",
@@ -7166,32 +8505,62 @@ const KMS_DATA = {
     {
      "s": "cybercom",
      "t": "fltcybercom",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "cybercom",
      "t": "arcyber",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "cybercom",
      "t": "af16",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "cybercom",
      "t": "marforcyber",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "cybercom",
      "t": "cg_cyber",
-     "a": "cyber"
+     "a": "opcon"
     },
     {
      "s": "fltcybercom",
      "t": "fl10",
      "a": "opcon"
+    },
+    {
+     "s": "cybercom",
+     "t": "dcdc",
+     "a": "cyber"
+    },
+    {
+     "s": "dcdc",
+     "t": "fltcybercom",
+     "a": "cyber"
+    },
+    {
+     "s": "dcdc",
+     "t": "arcyber",
+     "a": "cyber"
+    },
+    {
+     "s": "dcdc",
+     "t": "af16",
+     "a": "cyber"
+    },
+    {
+     "s": "dcdc",
+     "t": "marforcyber",
+     "a": "cyber"
+    },
+    {
+     "s": "dcdc",
+     "t": "cg_cyber",
+     "a": "cyber"
     },
     {
      "s": "cno",
@@ -7222,7 +8591,7 @@ const KMS_DATA = {
    "type": "JOINT PUB",
    "service": "Joint",
    "number": "JP 1",
-   "title": "JP 1 \u2014 Doctrine for the Armed Forces of the US",
+   "title": "JP 1 — Doctrine for the Armed Forces of the US",
    "date": "2023-03-25",
    "classification": "UNCLASSIFIED",
    "issuer": "CJCS",
@@ -7247,7 +8616,7 @@ const KMS_DATA = {
     "COCOM CDRs"
    ],
    "refs": [
-    "10 U.S.C. \u00a7\u00a7 161-167",
+    "10 U.S.C. §§ 161-167",
     "DoDD 5100.01",
     "UCP"
    ],
@@ -7256,14 +8625,14 @@ const KMS_DATA = {
     "t-doc"
    ],
    "summary": "Capstone joint doctrine. Defines COCOM, OPCON, TACON, ADCON. Critically: ADCON flows through the Military Department (SECNAV), NOT through the operational chain. UIC/PUC hierarchy is the administrative expression of ADCON.",
-   "body": "<p>Key authority definitions:</p><ul><li><span>COCOM</span> \u2014 Non-transferable to below combatant command level; all aspects of military ops</li><li><span>OPCON</span> \u2014 Delegable; organize/employ forces; excludes logistics and discipline</li><li><span>TACON</span> \u2014 Local direction; limited scope and duration</li><li><strong>ADCON</strong> \u2014 Administration and support; retained by SECNAV even when forces are OPCON to a COCOM. The UIC/PUC chain maps this authority. A MALS's PUC chain flows through the MAG \u2192 MAW \u2192 MEF \u2192 MARFOR \u2192 CMC \u2192 SECNAV regardless of COCOM assignment.</li></ul>"
+   "body": "<p>Key authority definitions:</p><ul><li><span>COCOM</span> — Non-transferable to below combatant command level; all aspects of military ops</li><li><span>OPCON</span> — Delegable; organize/employ forces; excludes logistics and discipline</li><li><span>TACON</span> — Local direction; limited scope and duration</li><li><strong>ADCON</strong> — Administration and support; retained by SECNAV even when forces are OPCON to a COCOM. The UIC/PUC chain maps this authority. A MALS's PUC chain flows through the MAG → MAW → MEF → MARFOR → CMC → SECNAV regardless of COCOM assignment.</li></ul>"
   },
   {
    "id": "jp3_12",
    "type": "JOINT PUB",
    "service": "Joint",
    "number": "JP 3-12",
-   "title": "JP 3-12 \u2014 Cyberspace Operations",
+   "title": "JP 3-12 — Cyberspace Operations",
    "date": "2022-12-19",
    "classification": "UNCLASSIFIED",
    "issuer": "CJCS",
@@ -7285,7 +8654,7 @@ const KMS_DATA = {
     "SCCs"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 394",
+    "10 U.S.C. § 394",
     "DoDD 8000.01",
     "JP 1"
    ],
@@ -7294,15 +8663,15 @@ const KMS_DATA = {
     "t-doc",
     "t-cyber"
    ],
-   "summary": "Defines DODIN Ops, DCO, OCO. Establishes DACO framework. DACO authority for MALS networks flows CYBERCOM \u2192 FLTCYBERCOM \u2192 MARFORCYBER \u2192 MEF/MAW/MALS.",
-   "body": "<p><strong>DACO (Defensive Actions in Cyberspace Operations):</strong></p><ul><li>Authority flows: CYBERCOM \u2192 FLTCYBERCOM \u2192 MARFORCYBER</li><li>MALS networks fall under MARFORCYBER for DACO execution</li><li>ADCON chain does NOT govern DACO \u2014 it flows through the SCC chain</li><li>PMA program offices receive DACO support through NAVWAR/FLTCYBERCOM for acquisition network defense</li></ul>"
+   "summary": "Defines DODIN Ops, DCO, OCO. Establishes DACO framework. DACO authority for MALS networks flows CYBERCOM → FLTCYBERCOM → MARFORCYBER → MEF/MAW/MALS.",
+   "body": "<p><strong>DACO (Defensive Actions in Cyberspace Operations):</strong></p><ul><li>Authority flows: CYBERCOM → FLTCYBERCOM → MARFORCYBER</li><li>MALS networks fall under MARFORCYBER for DACO execution</li><li>ADCON chain does NOT govern DACO — it flows through the SCC chain</li><li>PMA program offices receive DACO support through NAVWAR/FLTCYBERCOM for acquisition network defense</li></ul>"
   },
   {
    "id": "secnavinst5000",
    "type": "SECNAVINST",
    "service": "USN",
    "number": "SECNAVINST 5000.2G",
-   "title": "SECNAVINST 5000.2G \u2014 DoN Acquisition Policy",
+   "title": "SECNAVINST 5000.2G — DoN Acquisition Policy",
    "date": "2022-03-15",
    "classification": "UNCLASSIFIED",
    "issuer": "SECNAV",
@@ -7330,7 +8699,7 @@ const KMS_DATA = {
     "Program Managers"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 2430",
+    "10 U.S.C. § 2430",
     "DODI 5000.02"
    ],
    "tags": [
@@ -7338,15 +8707,15 @@ const KMS_DATA = {
     "t-doc",
     "t-ta"
    ],
-   "summary": "ASN(RD&A) is the DoN Component Acquisition Executive and REPORTING SENIOR for all PEOs and DRPMs (SECNAVINST 5000.2E). Acquisition ADCON: ASN(RD&A) \u2192 PEO \u2192 PM. SYSCOMs (NAVAIR, NAVSEA, NAVWAR) provide TA support and host command services to PEOs but are NOT in the PEO ADCON chain. The SYSCOM\u2192PEO relationship is administrative alignment and TA support \u2014 not command authority. This distinction is the doctrinal core this application exists to visualize.",
-   "body": "<p>Technical Authority chain for MALS:</p><ul><li><span>ASN(RD&A)</span> \u2192 NAVAIR \u2192 PEO(A) \u2192 PMA-281: governs CH-53K airworthiness</li><li><span>ASN(RD&A)</span> \u2192 NAVAIR \u2192 PEO(A) \u2192 PMA-272: governs MV-22 configuration</li><li><strong>The TA holder (PM) issues Technical Directives</strong> that the MALS must comply with regardless of ADCON or OPCON assignments</li><li>PUC for a MALS traces to the MAG (ADCON); TA compliance flows independently to the applicable PM</li></ul>"
+   "summary": "ASN(RD&A) is the DoN Component Acquisition Executive and REPORTING SENIOR for all PEOs and DRPMs (SECNAVINST 5000.2E). Acquisition ADCON: ASN(RD&A) → PEO → PM. SYSCOMs (NAVAIR, NAVSEA, NAVWAR) provide TA support and host command services to PEOs but are NOT in the PEO ADCON chain. The SYSCOM→PEO relationship is administrative alignment and TA support — not command authority. This distinction is the doctrinal core this application exists to visualize.",
+   "body": "<p>Technical Authority chain for MALS:</p><ul><li><span>ASN(RD&A)</span> → NAVAIR → PEO(A) → PMA-281: governs CH-53K airworthiness</li><li><span>ASN(RD&A)</span> → NAVAIR → PEO(A) → PMA-272: governs MV-22 configuration</li><li><strong>The TA holder (PM) issues Technical Directives</strong> that the MALS must comply with regardless of ADCON or OPCON assignments</li><li>PUC for a MALS traces to the MAG (ADCON); TA compliance flows independently to the applicable PM</li></ul>"
   },
   {
    "id": "usc5013",
    "type": "STATUTE",
    "service": "USN",
-   "number": "10 U.S.C. \u00a7 5013",
-   "title": "10 U.S.C. \u00a7 5013 \u2014 Secretary of the Navy",
+   "number": "10 U.S.C. § 5013",
+   "title": "10 U.S.C. § 5013 — Secretary of the Navy",
    "date": "2022-01-01",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7367,7 +8736,7 @@ const KMS_DATA = {
     "SECNAV"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 5011",
+    "10 U.S.C. § 5011",
     "DoDD 5100.01"
    ],
    "tags": [
@@ -7376,14 +8745,14 @@ const KMS_DATA = {
     "t-usmc"
    ],
    "summary": "SECNAV is the head of the DoN. SECNAV retains ADCON of all Navy and Marine Corps forces. This is the statutory basis for UIC/PUC chains terminating at SECNAV.",
-   "body": "<p>SECNAV authorities include:</p><ul><li><span>ADCON</span> of all DoN forces \u2014 the UIC/PUC chain is the administrative expression of this authority</li><li><span>MTE Authority</span> \u2014 Man, Train, Equip is delegated through CNO (USN) and CMC (USMC)</li><li><span>Acquisition Authority</span> delegated to ASN(RD&A) as Component Acquisition Executive</li><li>Even when a MALS is OPCON to INDOPACOM, its UIC/PUC chain still flows to SECNAV through CMC</li></ul>"
+   "body": "<p>SECNAV authorities include:</p><ul><li><span>ADCON</span> of all DoN forces — the UIC/PUC chain is the administrative expression of this authority</li><li><span>MTE Authority</span> — Man, Train, Equip is delegated through CNO (USN) and CMC (USMC)</li><li><span>Acquisition Authority</span> delegated to ASN(RD&A) as Component Acquisition Executive</li><li>Even when a MALS is OPCON to INDOPACOM, its UIC/PUC chain still flows to SECNAV through CMC</li></ul>"
   },
   {
    "id": "usc5043",
    "type": "STATUTE",
    "service": "USN",
-   "number": "10 U.S.C. \u00a7 5043",
-   "title": "10 U.S.C. \u00a7 5043 \u2014 Functions of CNO",
+   "number": "10 U.S.C. § 5043",
+   "title": "10 U.S.C. § 5043 — Functions of CNO",
    "date": "2022-01-01",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7411,21 +8780,21 @@ const KMS_DATA = {
     "CNO"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 5013"
+    "10 U.S.C. § 5013"
    ],
    "tags": [
     "t-law",
     "t-navy"
    ],
    "summary": "CNO is the principal advisor on naval matters. CNO exercises ADCON (not COCOM or OPCON) over Navy forces. CNO delegates MTE authority through the TYCOM chain.",
-   "body": "<p>CNO responsibilities:</p><ul><li><span>ADCON / MTE</span> over Navy forces not under COCOM OPCON</li><li><span>SYSCOM oversight</span> through administrative chain</li><li><strong>Note:</strong> CNO is NOT in the NCA-to-COCOM operational chain \u2014 that flows POTUS \u2192 SECDEF \u2192 COCOM CDR directly</li></ul>"
+   "body": "<p>CNO responsibilities:</p><ul><li><span>ADCON / MTE</span> over Navy forces not under COCOM OPCON</li><li><span>SYSCOM oversight</span> through administrative chain</li><li><strong>Note:</strong> CNO is NOT in the NCA-to-COCOM operational chain — that flows POTUS → SECDEF → COCOM CDR directly</li></ul>"
   },
   {
    "id": "usc5044",
    "type": "STATUTE",
    "service": "USMC",
-   "number": "10 U.S.C. \u00a7 5044",
-   "title": "10 U.S.C. \u00a7 5044 \u2014 Functions of CMC",
+   "number": "10 U.S.C. § 5044",
+   "title": "10 U.S.C. § 5044 — Functions of CMC",
    "date": "2022-01-01",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7447,7 +8816,6 @@ const KMS_DATA = {
     "mag26",
     "mals16",
     "mals14",
-    "mals40",
     "mals36",
     "marforcyber"
    ],
@@ -7458,21 +8826,21 @@ const KMS_DATA = {
     "CMC"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 5013"
+    "10 U.S.C. § 5013"
    ],
    "tags": [
     "t-law",
     "t-usmc"
    ],
    "summary": "CMC retains ADCON over all USMC forces even when assigned OPCON to a COCOM. The UIC/PUC chain for every MALS terminates at CMC then SECNAV, regardless of OPCON assignment.",
-   "body": "<p>CMC MTE authority flows through:</p><ul><li>CMC \u2192 MARFORPAC/MARFORCOM \u2192 MEF \u2192 MAW \u2192 MAG \u2192 MALS</li><li>This is the <strong>ADCON and UIC/PUC chain</strong> \u2014 it is independent of OPCON</li><li>A MALS under OPCON of INDOPACOM still has PUC tracing to MAG \u2192 MAW \u2192 MEF \u2192 MARFORPAC \u2192 CMC</li></ul>"
+   "body": "<p>CMC MTE authority flows through:</p><ul><li>CMC → MARFORPAC/MARFORCOM → MEF → MAW → MAG → MALS</li><li>This is the <strong>ADCON and UIC/PUC chain</strong> — it is independent of OPCON</li><li>A MALS under OPCON of INDOPACOM still has PUC tracing to MAG → MAW → MEF → MARFORPAC → CMC</li></ul>"
   },
   {
    "id": "dodi5000_02",
    "type": "DODI",
    "service": "Joint",
    "number": "DoDI 5000.02",
-   "title": "DoDI 5000.02 \u2014 Operation of the Adaptive Acquisition Framework",
+   "title": "DoDI 5000.02 — Operation of the Adaptive Acquisition Framework",
    "date": "2020-01-23",
    "classification": "UNCLASSIFIED",
    "issuer": "USD(A&S)",
@@ -7503,7 +8871,7 @@ const KMS_DATA = {
     "PM"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 2430",
+    "10 U.S.C. § 2430",
     "DoDD 5000.01"
    ],
    "tags": [
@@ -7512,7 +8880,7 @@ const KMS_DATA = {
     "t-ta"
    ],
    "summary": "Governs DoD acquisition. Establishes that PMs hold Technical Authority (airworthiness, configuration baseline) independent of the operational chain. This is the legal basis distinguishing TA from ADCON.",
-   "body": "<p>Key TA provisions:</p><ul><li><span>PM authority</span> \u2014 Program Managers (PMA-281, PMA-272, etc.) hold technical authority over their system regardless of where it is operationally deployed</li><li><span>Airworthiness</span> \u2014 PMA-281 certifies CH-53K airworthy; a MALS cannot fly outside technical directives even under operational pressure from ADCON chain</li><li><strong>Conflict resolution:</strong> If OPCON commander directs flight that violates TA (tech directive), the PM's airworthiness authority governs \u2014 not the operational chain</li></ul>"
+   "body": "<p>Key TA provisions:</p><ul><li><span>PM authority</span> — Program Managers (PMA-281, PMA-272, etc.) hold technical authority over their system regardless of where it is operationally deployed</li><li><span>Airworthiness</span> — PMA-281 certifies CH-53K airworthy; a MALS cannot fly outside technical directives even under operational pressure from ADCON chain</li><li><strong>Conflict resolution:</strong> If OPCON commander directs flight that violates TA (tech directive), the PM's airworthiness authority governs — not the operational chain</li></ul>"
   },
   {
    "id": "ucp2022",
@@ -7549,7 +8917,7 @@ const KMS_DATA = {
     "COCOM CDRs"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 162",
+    "10 U.S.C. § 162",
     "DoDD 5100.01",
     "JP 1"
    ],
@@ -7558,14 +8926,14 @@ const KMS_DATA = {
     "t-doc"
    ],
    "summary": "Assigns missions, AORs, and force assignments. CYBERCOM is a Unified Combatant Command. INDOPACOM prioritized. MARFORPAC forces (including MALS in INDOPACOM AOR) are OPCON to INDOPACOM.",
-   "body": "<p>DoN-relevant assignments:</p><ul><li><span>COMPACFLT</span> \u2192 INDOPACOM SCC</li><li><span>MARFORPAC</span> \u2192 INDOPACOM Marine component</li><li><span>USFFC</span> \u2192 NORTHCOM SCC</li><li><span>MARFORCOM</span> \u2192 NORTHCOM Marine component</li><li><span>FLTCYBERCOM</span> \u2192 CYBERCOM SCC for DACO</li><li><strong>MALS forward-deployed to INDOPACOM AOR</strong> are OPCON to INDOPACOM through their MEF/MAW chain, while retaining ADCON through CMC</li></ul>"
+   "body": "<p>DoN-relevant assignments:</p><ul><li><span>COMPACFLT</span> → INDOPACOM SCC</li><li><span>MARFORPAC</span> → INDOPACOM Marine component</li><li><span>USFFC</span> → NORTHCOM SCC</li><li><span>MARFORCOM</span> → NORTHCOM Marine component</li><li><span>FLTCYBERCOM</span> → CYBERCOM SCC for DACO</li><li><strong>MALS forward-deployed to INDOPACOM AOR</strong> are OPCON to INDOPACOM through their MEF/MAW chain, while retaining ADCON through CMC</li></ul>"
   },
   {
    "id": "usc4324",
    "type": "STATUTE",
    "service": "USN",
-   "number": "10 U.S.C. \u00a7 4324",
-   "title": "10 U.S.C. \u00a7 4324 \u2014 Life-Cycle Management and Product Support",
+   "number": "10 U.S.C. § 4324",
+   "title": "10 U.S.C. § 4324 — Life-Cycle Management and Product Support",
    "date": "2021-12-27",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7596,7 +8964,7 @@ const KMS_DATA = {
     "PM"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 2460",
+    "10 U.S.C. § 2460",
     "DoDI 5000.02"
    ],
    "tags": [
@@ -7604,15 +8972,15 @@ const KMS_DATA = {
     "t-navy",
     "t-ta"
    ],
-   "summary": "PM accountable for lifecycle objectives from inception to disposal. LCSP required including: technical data and IP management plan (\u00a7 4324(b)(1)(G)), sustainment metrics and materiel availability tracking (\u00a7 4324(b)(1)(H-I)). Configuration currency mandatory throughout life cycle. PRIMARY statutory basis for LCSP/MDS data return line.",
-   "body": "<p><strong>\u00a7 4324(b) LCSP Requirements driving MDS Return:</strong></p><ul><li><span>\u00a7 4324(b)(1)(G)</span> \u2014 Technical data and IP management plan: PM must have the data to sustain configuration baseline</li><li><span>\u00a7 4324(b)(1)(H)</span> \u2014 Sustainment metrics: materiel availability, reliability \u2014 all require continuous data return from the operating force</li><li><span>\u00a7 4324(b)(1)(I)</span> \u2014 Configuration management: currency cannot be maintained without FRC maintenance data return to PM</li><li><strong>Lifecycle obligation:</strong> NAVAIR contractually produces aircraft, retains configuration baseline authority for system life. When FRC \u2192 PMA data does not flow, airworthiness certifications become unreliable.</li></ul>"
+   "summary": "PM accountable for lifecycle objectives from inception to disposal. LCSP required including: technical data and IP management plan (§ 4324(b)(1)(G)), sustainment metrics and materiel availability tracking (§ 4324(b)(1)(H-I)). Configuration currency mandatory throughout life cycle. PRIMARY statutory basis for LCSP/MDS data return line.",
+   "body": "<p><strong>§ 4324(b) LCSP Requirements driving MDS Return:</strong></p><ul><li><span>§ 4324(b)(1)(G)</span> — Technical data and IP management plan: PM must have the data to sustain configuration baseline</li><li><span>§ 4324(b)(1)(H)</span> — Sustainment metrics: materiel availability, reliability — all require continuous data return from the operating force</li><li><span>§ 4324(b)(1)(I)</span> — Configuration management: currency cannot be maintained without FRC maintenance data return to PM</li><li><strong>Lifecycle obligation:</strong> NAVAIR contractually produces aircraft, retains configuration baseline authority for system life. When FRC → PMA data does not flow, airworthiness certifications become unreliable.</li></ul>"
   },
   {
    "id": "usc4614",
    "type": "STATUTE",
    "service": "Joint",
-   "number": "10 U.S.C. \u00a7 4614 (\u00a7 2460)",
-   "title": "10 U.S.C. \u00a7 4614 \u2014 Depot-Level Maintenance: Definition",
+   "number": "10 U.S.C. § 4614 (§ 2460)",
+   "title": "10 U.S.C. § 4614 — Depot-Level Maintenance: Definition",
    "date": "2021-12-27",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7631,22 +8999,22 @@ const KMS_DATA = {
     "SYSCOM"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 4618",
-    "10 U.S.C. \u00a7 4622"
+    "10 U.S.C. § 4618",
+    "10 U.S.C. § 4622"
    ],
    "tags": [
     "t-law",
     "t-navy"
    ],
-   "summary": "Defines depot-level maintenance as overhaul, upgrading, rebuilding of parts/assemblies/subassemblies, testing and reclamation. Source-of-funds neutral \u2014 function defines depot work, not who funds it.",
-   "body": "<p>Depot-level maintenance includes:</p><ul><li>Overhaul and rebuilding of parts, assemblies, subassemblies</li><li>Manufacturing of parts, testing, and reclamation</li><li>Source-of-funds neutral \u2014 the function defines depot work regardless of appropriation</li><li>FRCE, FRCSE, FRCSW, FRCWP all perform depot-level work under this definition</li></ul>"
+   "summary": "Defines depot-level maintenance as overhaul, upgrading, rebuilding of parts/assemblies/subassemblies, testing and reclamation. Source-of-funds neutral — function defines depot work, not who funds it.",
+   "body": "<p>Depot-level maintenance includes:</p><ul><li>Overhaul and rebuilding of parts, assemblies, subassemblies</li><li>Manufacturing of parts, testing, and reclamation</li><li>Source-of-funds neutral — the function defines depot work regardless of appropriation</li><li>FRCE, FRCSE, FRCSW, FRCWP all perform depot-level work under this definition</li></ul>"
   },
   {
    "id": "usc4618",
    "type": "STATUTE",
    "service": "Joint",
-   "number": "10 U.S.C. \u00a7 4618 (\u00a7 2464)",
-   "title": "10 U.S.C. \u00a7 4618 \u2014 Core Logistics Capabilities",
+   "number": "10 U.S.C. § 4618 (§ 2464)",
+   "title": "10 U.S.C. § 4618 — Core Logistics Capabilities",
    "date": "2021-12-27",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7666,23 +9034,23 @@ const KMS_DATA = {
     "FRC CDR"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 4614",
-    "10 U.S.C. \u00a7 4622",
+    "10 U.S.C. § 4614",
+    "10 U.S.C. § 4622",
     "DoDI 4151.18"
    ],
    "tags": [
     "t-law",
     "t-navy"
    ],
-   "summary": "DoD must maintain core depot maintenance capability. Assessed at Milestone A (\u00a7 4251) and Milestone B (\u00a7 4252). Statutory basis for COMFRC organic capacity as national requirement, not just efficiency measure.",
-   "body": "<p>Core logistics capability requirements:</p><ul><li>Must be assessed at Milestone A and B \u2014 this means FRC capacity is a program acquisition requirement</li><li>Organic industrial base is a statutory floor, not a policy preference</li><li>If core capability assessment shows gap, PM must address it in the acquisition strategy</li><li>FRCE, FRCSE, FRCSW existence as organic depots is mandated by this section</li></ul>"
+   "summary": "DoD must maintain core depot maintenance capability. Assessed at Milestone A (§ 4251) and Milestone B (§ 4252). Statutory basis for COMFRC organic capacity as national requirement, not just efficiency measure.",
+   "body": "<p>Core logistics capability requirements:</p><ul><li>Must be assessed at Milestone A and B — this means FRC capacity is a program acquisition requirement</li><li>Organic industrial base is a statutory floor, not a policy preference</li><li>If core capability assessment shows gap, PM must address it in the acquisition strategy</li><li>FRCE, FRCSE, FRCSW existence as organic depots is mandated by this section</li></ul>"
   },
   {
    "id": "usc4622",
    "type": "STATUTE",
    "service": "Joint",
-   "number": "10 U.S.C. \u00a7 4622 (\u00a7 2466)",
-   "title": "10 U.S.C. \u00a7 4622 \u2014 Limitations on Contracting for Depot-Level Maintenance",
+   "number": "10 U.S.C. § 4622 (§ 2466)",
+   "title": "10 U.S.C. § 4622 — Limitations on Contracting for Depot-Level Maintenance",
    "date": "2021-12-27",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7701,21 +9069,21 @@ const KMS_DATA = {
     "Service Secretary"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 4618"
+    "10 U.S.C. § 4618"
    ],
    "tags": [
     "t-law",
     "t-navy"
    ],
    "summary": "No more than 50% of depot-level maintenance workload may be contracted out. SECDEF is sole waiver authority. COMFRC organic workload floor is established by statute, not policy.",
-   "body": "<p>50% ceiling implications:</p><ul><li>At least 50% of depot workload must remain organic (COMFRC FRCs)</li><li>SECDEF sole waiver authority \u2014 no lower echelon can waive this</li><li>Workload measured in labor-hours across each DoD component</li><li>NAVAIR must ensure COMFRC FRCs retain sufficient workload to maintain core capabilities under \u00a7 4618</li></ul>"
+   "body": "<p>50% ceiling implications:</p><ul><li>At least 50% of depot workload must remain organic (COMFRC FRCs)</li><li>SECDEF sole waiver authority — no lower echelon can waive this</li><li>Workload measured in labor-hours across each DoD component</li><li>NAVAIR must ensure COMFRC FRCs retain sufficient workload to maintain core capabilities under § 4618</li></ul>"
   },
   {
    "id": "usc3774",
    "type": "STATUTE",
    "service": "Joint",
-   "number": "10 U.S.C. \u00a7\u00a7 3771\u20133774",
-   "title": "10 U.S.C. \u00a7\u00a7 3771\u20133774 \u2014 Rights in Technical Data",
+   "number": "10 U.S.C. §§ 3771–3774",
+   "title": "10 U.S.C. §§ 3771–3774 — Rights in Technical Data",
    "date": "2021-12-27",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7738,22 +9106,22 @@ const KMS_DATA = {
     "PM"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 4324",
+    "10 U.S.C. § 4324",
     "DFARS Part 227"
    ],
    "tags": [
     "t-law",
     "t-ta"
    ],
-   "summary": "PM must assess technical data needs and establish acquisition strategies to sustain system over life cycle. \u00a7 3774 specifically: long-term data rights. NAVAIR configuration baseline data ownership and rights to FRC maintenance data both derive from these sections.",
-   "body": "<p>Technical data rights driving LCSP data return:</p><ul><li><span>\u00a7 3774</span> \u2014 PM must assess technical data needs at program initiation for full system life cycle</li><li>NAVAIR holds rights to maintenance data generated by FRCs \u2014 this is not contractor proprietary data</li><li>Configuration baseline data is a Government deliverable \u2014 FRC MDS data return is an exercise of Government data rights</li><li>When FRC maintenance data does not return to PMA, NAVAIR may be unable to exercise its rights under these sections to sustain the configuration baseline</li></ul>"
+   "summary": "PM must assess technical data needs and establish acquisition strategies to sustain system over life cycle. § 3774 specifically: long-term data rights. NAVAIR configuration baseline data ownership and rights to FRC maintenance data both derive from these sections.",
+   "body": "<p>Technical data rights driving LCSP data return:</p><ul><li><span>§ 3774</span> — PM must assess technical data needs at program initiation for full system life cycle</li><li>NAVAIR holds rights to maintenance data generated by FRCs — this is not contractor proprietary data</li><li>Configuration baseline data is a Government deliverable — FRC MDS data return is an exercise of Government data rights</li><li>When FRC maintenance data does not return to PMA, NAVAIR may be unable to exercise its rights under these sections to sustain the configuration baseline</li></ul>"
   },
   {
    "id": "namp4790",
    "type": "SECNAVINST",
    "service": "USN",
    "number": "COMNAVAIRFORINST 4790.2E",
-   "title": "COMNAVAIRFORINST 4790.2E \u2014 Naval Aviation Maintenance Program (NAMP)",
+   "title": "COMNAVAIRFORINST 4790.2E — Naval Aviation Maintenance Program (NAMP)",
    "date": "2024-01-15",
    "classification": "UNCLASSIFIED",
    "issuer": "COMNAVAIRFOR",
@@ -7771,7 +9139,6 @@ const KMS_DATA = {
     "mals16",
     "mals14",
     "mals36",
-    "mals40",
     "mals24",
     "navair",
     "pma265",
@@ -7787,9 +9154,9 @@ const KMS_DATA = {
     "MALS CDOs"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 4614",
-    "10 U.S.C. \u00a7 4618",
-    "10 U.S.C. \u00a7 4324"
+    "10 U.S.C. § 4614",
+    "10 U.S.C. § 4618",
+    "10 U.S.C. § 4324"
    ],
    "tags": [
     "t-navy",
@@ -7797,14 +9164,14 @@ const KMS_DATA = {
     "t-ta"
    ],
    "summary": "Defines three maintenance levels (O/I/D), maintenance data system (MDS) reporting requirements, aircraft logbook standards, and SYSCOM/COMFRC organizational roles. Regulatory implementation of Title 10 depot maintenance statutes. Note: OPNAVINST 4790.2K (25 Apr 2025) supersedes 4790.2J as OPNAV-level NAMP policy. COMNAVAIRFORINST 4790.2E is the current implementation instruction.",
-   "body": "<p>Key NAMP provisions for v5.2:</p><ul><li><strong>Chapter 2:</strong> SYSCOM/COMFRC organizational roles \u2014 NAVAIRSYSCOM exercises TA, COMFRC exercises industrial authority</li><li><strong>Chapter 4:</strong> MALS organization \u2014 O+I level dual designation; MALS as primary interface between flying unit and depot</li><li><strong>Chapter 5 (MDS):</strong> Maintenance Data System \u2014 all maintenance actions, man-hours, discrepancies at O/I/D levels captured and reported upward to PM. This is the data pathway visualized by the LCSP Return line.</li><li><strong>Chapter 8:</strong> Aircraft logbooks and configuration records held by operating activities, reported to PM/SYSCOM. Enables PM to maintain configuration currency per \u00a7 4324.</li><li><strong>Chapter 12:</strong> Depot industrial program \u2014 COMFRC scheduling, workload allocation, 50% ceiling compliance tracking per \u00a7 4622.</li></ul>"
+   "body": "<p>Key NAMP provisions for v5.2:</p><ul><li><strong>Chapter 2:</strong> SYSCOM/COMFRC organizational roles — NAVAIRSYSCOM exercises TA, COMFRC exercises industrial authority</li><li><strong>Chapter 4:</strong> MALS organization — O+I level dual designation; MALS as primary interface between flying unit and depot</li><li><strong>Chapter 5 (MDS):</strong> Maintenance Data System — all maintenance actions, man-hours, discrepancies at O/I/D levels captured and reported upward to PM. This is the data pathway visualized by the LCSP Return line.</li><li><strong>Chapter 8:</strong> Aircraft logbooks and configuration records held by operating activities, reported to PM/SYSCOM. Enables PM to maintain configuration currency per § 4324.</li><li><strong>Chapter 12:</strong> Depot industrial program — COMFRC scheduling, workload allocation, 50% ceiling compliance tracking per § 4622.</li></ul>"
   },
   {
    "id": "ndaa2019_cyber",
    "type": "STATUTE",
    "service": "Joint",
-   "number": "NDAA FY2019 \u00a7 1642",
-   "title": "NDAA FY2019 \u00a7 1642 \u2014 Cyberspace Operations Authority",
+   "number": "NDAA FY2019 § 1642",
+   "title": "NDAA FY2019 § 1642 — Cyberspace Operations Authority",
    "date": "2018-08-13",
    "classification": "UNCLASSIFIED",
    "issuer": "U.S. Congress",
@@ -7823,22 +9190,22 @@ const KMS_DATA = {
     "CYBERCOM"
    ],
    "refs": [
-    "10 U.S.C. \u00a7 394",
+    "10 U.S.C. § 394",
     "JP 3-12"
    ],
    "tags": [
     "t-law",
     "t-cyber"
    ],
-   "summary": "Elevates CYBERCOM to Unified Combatant Command. Formalizes DACO. SCCs including FLTCYBERCOM/MARFORCYBER hold DACO authority over their component networks \u2014 including MALS networks.",
-   "body": "<p>DACO for MALS networks:</p><ul><li><span>MARFORCYBER</span> executes DACO on behalf of USMC networks</li><li>MALS have organic network infrastructure; DACO authority for these networks flows: CYBERCOM \u2192 FLTCYBERCOM \u2192 MARFORCYBER</li><li>This is independent of the ADCON chain (CMC \u2192 MARFORPAC \u2192 MEF \u2192 MAW \u2192 MAG \u2192 MALS)</li><li>Three separate authority chains apply simultaneously to a single MALS</li></ul>"
+   "summary": "Elevates CYBERCOM to Unified Combatant Command. Formalizes DACO. SCCs including FLTCYBERCOM/MARFORCYBER hold DACO authority over their component networks — including MALS networks.",
+   "body": "<p>DACO for MALS networks:</p><ul><li><span>MARFORCYBER</span> executes DACO on behalf of USMC networks</li><li>MALS have organic network infrastructure; DACO authority for these networks flows: CYBERCOM → FLTCYBERCOM → MARFORCYBER</li><li>This is independent of the ADCON chain (CMC → MARFORPAC → MEF → MAW → MAG → MALS)</li><li>Three separate authority chains apply simultaneously to a single MALS</li></ul>"
   },
   {
    "id": "opnav5450_350b",
    "type": "OPNAVINST",
    "service": "USN",
    "number": "OPNAVINST 5450.350B",
-   "title": "OPNAVINST 5450.350B \u2014 Mission, Functions and Tasks of COMNAVAIRSYSCOM",
+   "title": "OPNAVINST 5450.350B — Mission, Functions and Tasks of COMNAVAIRSYSCOM",
    "date": "2022-10-06",
    "classification": "UNCLASSIFIED",
    "issuer": "CNO",
@@ -7882,14 +9249,14 @@ const KMS_DATA = {
     "t-ta"
    ],
    "summary": "Primary source authority for NAVAIR mission, TA functions, airworthiness certification, PEO support relationships, and COMFRC/NAWC subordination. NAVAIR is ISIC of NAWCAD, NAWCWD, and COMFRC. Exercises TA including airworthiness flight clearance and configuration baseline authority. Serves as Aircraft Controlling Custodian (ACC) for all DON aircraft.",
-   "body": "<p>Key provisions:</p><ul><li><strong>Para 1a-b:</strong> NAVAIR has management authority for designated naval aviation programs except authority assigned to PEO/DRPM. Reports to ASN(RD&A) for acquisition, to CNO/CMC for MTE.</li><li><strong>Para 1d(5-6):</strong> Exercises technical authority and life cycle management; provides independent engineering assessment and airworthiness flight clearance for all DON aircraft.</li><li><strong>Para 1d(6):</strong> Aircraft Controlling Custodian (ACC) for assigned DON weapons systems.</li><li><strong>Para 6a:</strong> ISIC of NAWCAD (Pax River), NAWCWD (China Lake), COMFRC.</li><li><strong>Para 6b:</strong> Supports PEO(A), PEO(U&W), PEO(T), PEO(CS).</li><li><strong>Para 1g:</strong> NAE Lead Technical Activity \u2014 sustainment, engineering, cyber warfare, configuration management.</li></ul>"
+   "body": "<p>Key provisions:</p><ul><li><strong>Para 1a-b:</strong> NAVAIR has management authority for designated naval aviation programs except authority assigned to PEO/DRPM. Reports to ASN(RD&A) for acquisition, to CNO/CMC for MTE.</li><li><strong>Para 1d(5-6):</strong> Exercises technical authority and life cycle management; provides independent engineering assessment and airworthiness flight clearance for all DON aircraft.</li><li><strong>Para 1d(6):</strong> Aircraft Controlling Custodian (ACC) for assigned DON weapons systems.</li><li><strong>Para 6a:</strong> ISIC of NAWCAD (Pax River), NAWCWD (China Lake), COMFRC.</li><li><strong>Para 6b:</strong> Supports PEO(A), PEO(U&W), PEO(T), PEO(CS).</li><li><strong>Para 1g:</strong> NAE Lead Technical Activity — sustainment, engineering, cyber warfare, configuration management.</li></ul>"
   },
   {
    "id": "opnav5450_340a",
    "type": "OPNAVINST",
    "service": "USN",
    "number": "OPNAVINST 5450.340A CH-1",
-   "title": "OPNAVINST 5450.340A CH-1 \u2014 Mission, Functions and Tasks of COMNAVSEASYSCOM",
+   "title": "OPNAVINST 5450.340A CH-1 — Mission, Functions and Tasks of COMNAVSEASYSCOM",
    "date": "2019-12-09",
    "classification": "UNCLASSIFIED",
    "issuer": "CNO",
@@ -7926,7 +9293,7 @@ const KMS_DATA = {
    "type": "OPNAVINST",
    "service": "USN",
    "number": "OPNAVINST 5440.77C",
-   "title": "OPNAVINST 5440.77C \u2014 Missions, Functions and Tasks of USFFC, NAVNORTH, NAVSTRAT",
+   "title": "OPNAVINST 5440.77C — Missions, Functions and Tasks of USFFC, NAVNORTH, NAVSTRAT",
    "date": "2021-02-26",
    "classification": "UNCLASSIFIED",
    "issuer": "CNO",
@@ -7948,7 +9315,7 @@ const KMS_DATA = {
     "COMUSFLTFORCOM"
    ],
    "refs": [
-    "10 U.S.C. \u00a75032",
+    "10 U.S.C. §5032",
     "SECNAVINST 7000.27C",
     "OPNAVINST 5450.340A CH-1",
     "OPNAVINST 5450.343"
@@ -7965,7 +9332,7 @@ const KMS_DATA = {
    "type": "OPNAVINST",
    "service": "USN",
    "number": "OPNAVINST 5450.352B",
-   "title": "OPNAVINST 5450.352B \u2014 Mission, Functions and Tasks of OPNAV",
+   "title": "OPNAVINST 5450.352B — Mission, Functions and Tasks of OPNAV",
    "date": "2022-03-09",
    "classification": "UNCLASSIFIED",
    "issuer": "CNO",
@@ -7991,7 +9358,7 @@ const KMS_DATA = {
     "CNO"
    ],
    "refs": [
-    "10 U.S.C. \u00a75032",
+    "10 U.S.C. §5032",
     "DoDD 5100.01",
     "OPNAVINST 5400.44A"
    ],
@@ -8000,14 +9367,14 @@ const KMS_DATA = {
     "t-doc"
    ],
    "summary": "OPNAV establishes policies, provides resources, ensures combat-ready naval forces. Lists all 27+ echelon 2 commands under CNO including CNIC, NAVRESFORCOM, NAVSPECWARCOM, CHNAVPERS, NAVSAFECEN. Defines resource sponsor / requirements sponsor framework for PPBES.",
-   "body": "<p>Key provisions:</p><ul><li><strong>Para 3:</strong> OPNAV mission \u2014 establish policies, provide resources, ensure combat-ready naval forces for maritime capabilities.</li><li><strong>Para 4:</strong> Lists all echelon 2 commanders under CNO (27+ commands).</li><li><strong>Para 4c-d:</strong> Resource sponsor and requirements sponsor roles \u2014 the framework for Navy PPBES programming.</li><li><strong>Para 7:</strong> Strategic functions and tasks assigned to OPNAV principal officials with lead organizations.</li><li><strong>Missing from previous KMS versions:</strong> CNIC, NAVRESFORCOM, NAVSPECWARCOM, CHNAVPERS, NAVSAFECEN, NPS, NWC, NIA.</li></ul>"
+   "body": "<p>Key provisions:</p><ul><li><strong>Para 3:</strong> OPNAV mission — establish policies, provide resources, ensure combat-ready naval forces for maritime capabilities.</li><li><strong>Para 4:</strong> Lists all echelon 2 commanders under CNO (27+ commands).</li><li><strong>Para 4c-d:</strong> Resource sponsor and requirements sponsor roles — the framework for Navy PPBES programming.</li><li><strong>Para 7:</strong> Strategic functions and tasks assigned to OPNAV principal officials with lead organizations.</li><li><strong>Missing from previous KMS versions:</strong> CNIC, NAVRESFORCOM, NAVSPECWARCOM, CHNAVPERS, NAVSAFECEN, NPS, NWC, NIA.</li></ul>"
   },
   {
    "id": "opnav5450_345",
    "type": "OPNAVINST",
    "service": "USN",
    "number": "OPNAVINST 5450.345",
-   "title": "OPNAVINST 5450.345 \u2014 Mission, Functions and Tasks of COMFLTCYBERCOM and COMTENTHFLT",
+   "title": "OPNAVINST 5450.345 — Mission, Functions and Tasks of COMFLTCYBERCOM and COMTENTHFLT",
    "date": "2012-04-04",
    "classification": "UNCLASSIFIED",
    "issuer": "CNO",
@@ -8035,7 +9402,7 @@ const KMS_DATA = {
     "t-cyber"
    ],
    "summary": "FLTCYBERCOM established as echelon 2 NCC to USCYBERCOM and USSTRATCOM. Also designated as Navy SCC to DIRNSA/CHCSS. CNO designates COMFLTCYBERCOM as \"central operational authority\" for Navy networks, cryptology, SIGINT, IO, cyber, EW and space. 10th Fleet is the numbered fleet commander exercising OPCON of assigned forces.",
-   "body": "<p>Key provisions:</p><ul><li><strong>Para 2a:</strong> FLTCYBERCOM established 29 Jan 2010 as echelon 2 NCC to USSTRATCOM/USCYBERCOM.</li><li><strong>Para 2b:</strong> Designated as Navy SCC to DIRNSA/CHCSS \u2014 primary Service authority for cryptologic activities.</li><li><strong>Para 2c:</strong> \"Central operational authority\" for Navy networks, cryptology, SIGINT, IO, cyber, EW, space. Scope includes all Navy-operated/defended networks except combat/weapon system control functions.</li><li><strong>Encl 1, 1a:</strong> COMFLTCYBERCOM missions \u2014 direct cyber ops, operate/defend Navy portion of GIG, manage MTE for NCC/SCC.</li><li><strong>Encl 1, 1b:</strong> COMTENTHFLT \u2014 numbered fleet commander, exercises OPCON of assigned forces.</li></ul>"
+   "body": "<p>Key provisions:</p><ul><li><strong>Para 2a:</strong> FLTCYBERCOM established 29 Jan 2010 as echelon 2 NCC to USSTRATCOM/USCYBERCOM.</li><li><strong>Para 2b:</strong> Designated as Navy SCC to DIRNSA/CHCSS — primary Service authority for cryptologic activities.</li><li><strong>Para 2c:</strong> \"Central operational authority\" for Navy networks, cryptology, SIGINT, IO, cyber, EW, space. Scope includes all Navy-operated/defended networks except combat/weapon system control functions.</li><li><strong>Encl 1, 1a:</strong> COMFLTCYBERCOM missions — direct cyber ops, operate/defend Navy portion of GIG, manage MTE for NCC/SCC.</li><li><strong>Encl 1, 1b:</strong> COMTENTHFLT — numbered fleet commander, exercises OPCON of assigned forces.</li></ul>"
   }
  ],
  "timeline": [
@@ -8045,7 +9412,7 @@ const KMS_DATA = {
    "type": "Legislative",
    "service": "USN",
    "title": "Continental Navy Established",
-   "body": "Second Continental Congress authorizes two armed vessels \u2014 origin of the UIC hierarchy.",
+   "body": "Second Continental Congress authorizes two armed vessels — origin of the UIC hierarchy.",
    "tags": [
     "t-navy",
     "t-law"
@@ -8060,7 +9427,7 @@ const KMS_DATA = {
    "type": "Legislative",
    "service": "USMC",
    "title": "Continental Marines Established",
-   "body": "Continental Marines founded at Tun Tavern. Separate service identity \u2014 distinct ADCON chain from USN.",
+   "body": "Continental Marines founded at Tun Tavern. Separate service identity — distinct ADCON chain from USN.",
    "tags": [
     "t-usmc",
     "t-law"
@@ -8075,7 +9442,7 @@ const KMS_DATA = {
    "type": "Legislative",
    "service": "Joint",
    "title": "Department of the Navy Created",
-   "body": "Act of Congress establishes DoN. SECNAV becomes head \u2014 origin of the administrative authority chain under which all UIC/PUC relationships ultimately terminate.",
+   "body": "Act of Congress establishes DoN. SECNAV becomes head — origin of the administrative authority chain under which all UIC/PUC relationships ultimately terminate.",
    "tags": [
     "t-navy",
     "t-usmc",
@@ -8128,7 +9495,7 @@ const KMS_DATA = {
    "type": "Legislative",
    "service": "Joint",
    "title": "DoD Reorganization Act",
-   "body": "Military departments removed from operational chain. COCOM flows POTUS \u2192 SECDEF \u2192 COCOM CDR. ADCON flows separately through Military Departments \u2014 the legal foundation for UIC/PUC independence from operational authority.",
+   "body": "Military departments removed from operational chain. COCOM flows POTUS → SECDEF → COCOM CDR. ADCON flows separately through Military Departments — the legal foundation for UIC/PUC independence from operational authority.",
    "tags": [
     "t-joint",
     "t-law"
@@ -8165,7 +9532,7 @@ const KMS_DATA = {
    "type": "Administrative",
    "service": "Cyber",
    "title": "USCYBERCOM Established",
-   "body": "Creates a fourth authority chain: DACO. Now MALS, PEOs, and SYSCOMs simultaneously answer to OPCON (operational), ADCON/MTE (CMC/CNO), TA (PMA/PEO/ASN(RD&A)), and DACO (CYBERCOM \u2192 SCC) chains.",
+   "body": "Creates a fourth authority chain: DACO. Now MALS, PEOs, and SYSCOMs simultaneously answer to OPCON (operational), ADCON/MTE (CMC/CNO), TA (PMA/PEO/ASN(RD&A)), and DACO (CYBERCOM → SCC) chains.",
    "tags": [
     "t-cyber",
     "t-joint"
@@ -8257,7 +9624,7 @@ const KMS_DATA = {
    "type": "Executive Order",
    "service": "Joint",
    "title": "Unified Command Plan 2022",
-   "body": "UCP 2022 formalizes CYBERCOM as Unified COCOM. INDOPACOM priority drives MARFORPAC MALS forward deployment \u2014 creating the UIC/PUC vs. OPCON tension this tool is designed to visualize.",
+   "body": "UCP 2022 formalizes CYBERCOM as Unified COCOM. INDOPACOM priority drives MARFORPAC MALS forward deployment — creating the UIC/PUC vs. OPCON tension this tool is designed to visualize.",
    "tags": [
     "t-joint",
     "t-doc"
@@ -8278,7 +9645,7 @@ const KMS_DATA = {
    "type": "Directive",
    "service": "Cyber",
    "title": "JP 3-12 Cyberspace Operations Reissued",
-   "body": "Formalizes DACO as a distinct authority. Clarifies that MALS networks are defended by MARFORCYBER under DACO delegation from CYBERCOM \u2014 independent of operational and administrative chains.",
+   "body": "Formalizes DACO as a distinct authority. Clarifies that MALS networks are defended by MARFORCYBER under DACO delegation from CYBERCOM — independent of operational and administrative chains.",
    "tags": [
     "t-cyber",
     "t-joint"
@@ -8297,7 +9664,7 @@ const KMS_DATA = {
    "date": "2012-04-04",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5450.345 \u2014 FLTCYBERCOM/10th Fleet MFT Published",
+   "title": "OPNAVINST 5450.345 — FLTCYBERCOM/10th Fleet MFT Published",
    "body": "Establishes FLTCYBERCOM as echelon 2 NCC to USCYBERCOM/USSTRATCOM. Designates COMFLTCYBERCOM as central operational authority for Navy networks, cryptology, SIGINT, IO, cyber, EW, and space. 10th Fleet exercises OPCON of assigned forces.",
    "tags": [
     "t-navy",
@@ -8316,7 +9683,7 @@ const KMS_DATA = {
    "date": "2016-06-29",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5450.340A \u2014 NAVSEA MFT Published",
+   "title": "OPNAVINST 5450.340A — NAVSEA MFT Published",
    "body": "Defines NAVSEA mission, functions, tasks. Material support for ships, submersibles, combat systems. Single TA for explosive safety. TA as operator of RMCs and shipyards. Nuclear propulsion (SEA 08) per EO 12344.",
    "tags": [
     "t-navy",
@@ -8336,7 +9703,7 @@ const KMS_DATA = {
    "date": "2019-12-09",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5450.340A CH-1 \u2014 NAVSEA MFT Updated",
+   "title": "OPNAVINST 5450.340A CH-1 — NAVSEA MFT Updated",
    "body": "Change transmittal adds NAVRMC oversight, cybersecurity functions, EDO responsibilities. Removes functions transferred to SSP.",
    "tags": [
     "t-navy",
@@ -8352,7 +9719,7 @@ const KMS_DATA = {
    "date": "2021-02-26",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5440.77C \u2014 USFFC/NAVNORTH/NAVSTRAT MFT Published",
+   "title": "OPNAVINST 5440.77C — USFFC/NAVNORTH/NAVSTRAT MFT Published",
    "body": "Complete revision of USFFC MFT. Lists 19+ ISIC subordinates. Establishes COMNAVNORTH and COMNAVSTRAT dual-hats. Codifies NAVSEA TA over maintenance activities and NAVWAR TA over information warfare systems.",
    "tags": [
     "t-navy",
@@ -8373,7 +9740,7 @@ const KMS_DATA = {
    "date": "2022-03-09",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5450.352B \u2014 OPNAV MFT Published",
+   "title": "OPNAVINST 5450.352B — OPNAV MFT Published",
    "body": "Lists all 27+ echelon 2 commands under CNO. Defines resource sponsor and requirements sponsor framework. Strategic tasks assigned to OPNAV principal officials.",
    "tags": [
     "t-navy",
@@ -8393,7 +9760,7 @@ const KMS_DATA = {
    "date": "2022-10-06",
    "type": "Directive",
    "service": "USN",
-   "title": "OPNAVINST 5450.350B \u2014 NAVAIR MFT Published",
+   "title": "OPNAVINST 5450.350B — NAVAIR MFT Published",
    "body": "Primary source for NAVAIR TA functions, airworthiness certification, ACC designation, PEO support relationships, and NAWCAD/NAWCWD/COMFRC subordination. Complete revision of NAVAIR MFT.",
    "tags": [
     "t-navy",
