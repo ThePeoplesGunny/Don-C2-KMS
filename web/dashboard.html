@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DoN C2 KMS — Project Dashboard</title>
+<style>
+/* ── Fonts (system stack matching KMS) ── */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#04090f;--bg2:#06101c;--bg3:#0a1828;--bg4:#102030;
+  --b1:#0c1a2e;--b2:#1a3050;--b3:#264868;
+  --t1:#c8daea;--t2:#6a8eb0;--t3:#4a6888;
+  --gold:#e8b00f;--gold2:#8a6a08;--goldbg:rgba(232,176,15,.08);
+  --navy:#022a3a;--blue:#0076a9;
+  --adcon:#0076a9;--cocom:#e8b00f;--opcon:#ff7733;--tacon:#ff3355;
+  --cyber:#00cccc;--ta:#dd44bb;
+  --green:#44cc44;--green2:#003300;--greenbg:rgba(0,120,0,.12);
+  --amber:#ffaa22;--amberbg:rgba(255,170,34,.08);
+  --red:#ff4455;--redbg:rgba(255,68,85,.08);
+  --rad:3px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--t1);font-family:"IBM Plex Sans","Roboto Slab",Helvetica,Arial,sans-serif;display:flex;flex-direction:column}
+
+/* ── Classification Banner ── */
+.clf{background:var(--green2);text-align:center;padding:4px 0;font-family:monospace;font-size:11px;color:#44ee44;letter-spacing:2px;flex-shrink:0}
+
+/* ── Header ── */
+header{background:var(--bg2);border-bottom:1px solid var(--b2);padding:0 20px;height:50px;display:flex;align-items:center;gap:14px;flex-shrink:0;position:relative}
+header::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#022a3a,#0076a9,#e8b00f,#0076a9,#00cccc,#dd44bb,#228833)}
+header h1{font-family:"Rajdhani",sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;text-transform:uppercase}
+header .sub{font-family:monospace;font-size:9px;color:var(--t2);letter-spacing:.8px;margin-top:1px}
+.hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill{font-family:monospace;font-size:10px;padding:3px 8px;border-radius:2px;letter-spacing:.6px}
+.p-blue{background:rgba(30,80,180,.2);color:#6699ff;border:1px solid rgba(30,80,180,.3)}
+.p-gold{background:var(--goldbg);color:var(--gold);border:1px solid var(--gold2)}
+
+/* ── Main Layout ── */
+main{flex:1;overflow-y:auto;padding:16px 20px 40px;display:flex;flex-direction:column;gap:16px}
+
+/* ── Section Grid ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.span2{grid-column:span 2}
+.span3{grid-column:span 3}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden}
+.card-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--b1);background:var(--bg3)}
+.card-head h2{font-family:"Rajdhani",sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;flex:1}
+.card-body{padding:12px 14px}
+
+/* ── Status Indicators ── */
+.status{font-family:monospace;font-size:10px;padding:2px 8px;border-radius:2px;letter-spacing:.6px;text-transform:uppercase;font-weight:600}
+.s-green{background:var(--greenbg);color:var(--green);border:1px solid rgba(0,140,0,.3)}
+.s-amber{background:var(--amberbg);color:var(--amber);border:1px solid rgba(255,170,34,.25)}
+.s-red{background:var(--redbg);color:var(--red);border:1px solid rgba(255,68,85,.25)}
+
+/* ── KPI Row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--rad);padding:12px 14px;text-align:center}
+.kpi .val{font-family:"Rajdhani",sans-serif;font-weight:700;font-size:28px;letter-spacing:1px;line-height:1.1}
+.kpi .lbl{font-size:10px;color:var(--t2);letter-spacing:.8px;text-transform:uppercase;margin-top:2px;font-family:monospace}
+.kpi.warn .val{color:var(--amber)}
+.kpi.good .val{color:var(--green)}
+.kpi.info .val{color:var(--blue)}
+
+/* ── Agent Table ── */
+.agent-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.agent-tbl th{font-family:"Rajdhani",sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:6px 10px;border-bottom:1px solid var(--b2);color:var(--t2)}
+.agent-tbl td{padding:8px 10px;border-bottom:1px solid var(--b1);vertical-align:top;line-height:1.5}
+.agent-tbl tr:last-child td{border-bottom:none}
+.agent-tbl .agent-name{font-weight:600;color:var(--gold);white-space:nowrap;font-family:monospace;font-size:10px}
+
+/* ── Priority Table ── */
+.pri-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.pri-tbl th{font-family:"Rajdhani",sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:6px 10px;border-bottom:1px solid var(--b2);color:var(--t2)}
+.pri-tbl td{padding:8px 10px;border-bottom:1px solid var(--b1);vertical-align:top;line-height:1.5}
+.pri-tbl tr:last-child td{border-bottom:none}
+.pri-tbl tr:hover{background:rgba(0,118,169,.06)}
+.pri-tag{display:inline-block;font-family:monospace;font-size:10px;padding:1px 6px;border-radius:2px;font-weight:700;min-width:28px;text-align:center}
+.pri-tag.p1{background:rgba(255,68,85,.15);color:var(--red);border:1px solid rgba(255,68,85,.3)}
+.pri-tag.p2{background:rgba(255,119,51,.15);color:var(--opcon);border:1px solid rgba(255,119,51,.3)}
+.pri-tag.p3{background:rgba(255,170,34,.15);color:var(--amber);border:1px solid rgba(255,170,34,.3)}
+.pri-tag.p4{background:rgba(0,118,169,.15);color:var(--blue);border:1px solid rgba(0,118,169,.3)}
+.pri-tag.p5{background:rgba(0,118,169,.15);color:var(--blue);border:1px solid rgba(0,118,169,.3)}
+.effort{font-family:monospace;font-size:10px;color:var(--t3)}
+.fid-bar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.fid-h{background:var(--green);width:40px}
+.fid-m{background:var(--amber);width:26px}
+.fid-l{background:var(--t3);width:14px}
+
+/* ── Decision Cards ── */
+.decision{border-left:3px solid var(--gold);margin-bottom:10px;padding:8px 12px;background:var(--goldbg);border-radius:0 var(--rad) var(--rad) 0}
+.decision:last-child{margin-bottom:0}
+.decision h3{font-family:"Rajdhani",sans-serif;font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.opt{padding:4px 0;font-size:11px;line-height:1.5;display:flex;gap:8px}
+.opt-tag{font-family:monospace;font-size:10px;font-weight:700;color:var(--blue);min-width:16px;flex-shrink:0;padding-top:1px}
+.opt-rec{color:var(--green);font-family:monospace;font-size:9px;margin-left:4px;letter-spacing:.5px}
+
+/* ── Conflict / Opportunity Badges ── */
+.badge-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.badge{font-size:10px;padding:3px 8px;border-radius:2px;font-family:monospace;letter-spacing:.4px;display:inline-flex;align-items:center;gap:4px}
+.b-conflict{background:rgba(255,68,85,.1);color:var(--red);border:1px solid rgba(255,68,85,.2)}
+.b-opportunity{background:rgba(0,200,200,.08);color:var(--cyber);border:1px solid rgba(0,200,200,.2)}
+.b-blocker{background:rgba(255,119,51,.1);color:var(--opcon);border:1px solid rgba(255,119,51,.2)}
+.b-ready{background:var(--greenbg);color:var(--green);border:1px solid rgba(0,140,0,.3)}
+
+/* ── Sprint Lane ── */
+.sprint-lane{display:flex;gap:2px;align-items:stretch;margin:6px 0}
+.sprint-block{padding:6px 10px;font-size:10px;font-family:monospace;border-radius:var(--rad);text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;line-height:1.3}
+.sprint-block .blk-title{font-weight:700;font-size:11px}
+.sprint-block .blk-items{font-size:9px;color:var(--t2)}
+.sp-cleanup{background:rgba(0,200,200,.08);border:1px solid rgba(0,200,200,.2);color:var(--cyber)}
+.sp-arch{background:rgba(0,118,169,.1);border:1px solid rgba(0,118,169,.25);color:var(--blue)}
+.sp-data{background:rgba(232,176,15,.08);border:1px solid rgba(232,176,15,.25);color:var(--gold)}
+.sprint-arrow{display:flex;align-items:center;color:var(--t3);font-size:16px;padding:0 2px}
+
+/* ── Section Headers ── */
+.sec-head{font-family:"Rajdhani",sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--b1);margin-bottom:2px}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--b3)}
+
+/* ── Radar Chart ── */
+.radar-wrap{display:flex;gap:14px;align-items:stretch}
+.radar-svg-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:380px}
+.radar-legend-wrap{width:220px;display:flex;flex-direction:column;justify-content:center;gap:0}
+.radar-legend-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--b1);font-size:11px;cursor:pointer;transition:opacity .2s;user-select:none}
+.radar-legend-item:last-child{border-bottom:none}
+.radar-legend-item:hover{background:rgba(255,255,255,.03)}
+.radar-legend-item.dimmed{opacity:.25}
+.radar-legend-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.radar-legend-name{font-family:monospace;font-size:10px;font-weight:600;letter-spacing:.5px}
+.radar-legend-score{font-family:monospace;font-size:10px;color:var(--t3);margin-left:auto}
+.radar-axis-label{font-family:"Rajdhani",sans-serif;font-weight:600;font-size:11px;fill:var(--t2);letter-spacing:1px;text-transform:uppercase}
+.radar-axis-label.highlight{fill:var(--amber);font-weight:700}
+.radar-value-label{font-family:monospace;font-size:9px;fill:var(--t3)}
+.radar-ring-label{font-family:monospace;font-size:9px;fill:var(--t3);opacity:.6}
+.radar-tooltip{position:absolute;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rad);padding:6px 10px;font-size:10px;font-family:monospace;pointer-events:none;z-index:100;line-height:1.5;max-width:200px;display:none}
+.radar-insight{margin-top:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--rad);font-size:10px;line-height:1.6;color:var(--t2)}
+.radar-insight b{color:var(--t1)}
+.radar-insight .weak{color:var(--amber)}
+.radar-insight .strong{color:var(--green)}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.grid2,.grid3{grid-template-columns:1fr}.span2,.span3{grid-column:span 1}.kpi-row{grid-template-columns:repeat(3,1fr)}.radar-wrap{flex-direction:column}.radar-legend-wrap{width:100%;flex-direction:row;flex-wrap:wrap}.radar-legend-item{flex:1;min-width:140px}}
+</style>
+</head>
+<body>
+
+<div class="clf">UNCLASSIFIED // NOTIONAL // PROJECT MANAGEMENT DASHBOARD</div>
+
+<header>
+  <div>
+    <h1>DoN C2 KMS &mdash; Roundtable Dashboard</h1>
+    <div class="sub">v8.5 &rarr; v9.0 Transition &bull; Agent Consolidated View &bull; 01 Apr 2026</div>
+  </div>
+  <div class="hright">
+    <span class="pill p-gold">BASELINE v8.5</span>
+    <span class="pill p-blue">TARGET v9.0</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══ KPI ROW ══ -->
+  <div class="kpi-row">
+    <div class="kpi good"><div class="val">178</div><div class="lbl">Nodes</div></div>
+    <div class="kpi good"><div class="val">154</div><div class="lbl">Auth Entries</div></div>
+    <div class="kpi good"><div class="val">13</div><div class="lbl">Views</div></div>
+    <div class="kpi warn"><div class="val">12</div><div class="lbl">Orphaned Nodes</div></div>
+    <div class="kpi good"><div class="val">0</div><div class="lbl">Errors</div></div>
+    <div class="kpi info"><div class="val">870</div><div class="lbl">KB Total Size</div></div>
+  </div>
+
+  <!-- ══ AGENT STATUS TABLE ══ -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Agent Roundtable &mdash; Status Roll-Up</h2>
+    </div>
+    <div class="card-body" style="padding:0">
+      <table class="agent-tbl">
+        <thead><tr><th>Agent</th><th>Status</th><th>Top Concern</th><th>Flags</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="agent-name">KMS-VALIDATOR</td>
+            <td><span class="status s-green">GREEN</span></td>
+            <td>12 orphaned OSD nodes inflate data without appearing in any view or auth chain. Must resolve before adding ~80 new nodes.</td>
+            <td><div class="badge-row"><span class="badge b-conflict">DEBT</span><span class="badge b-blocker">BLOCKS v9 DATA</span></div></td>
+          </tr>
+          <tr>
+            <td class="agent-name">AUTH-RESEARCHER</td>
+            <td><span class="status s-amber">AMBER</span></td>
+            <td><code>tenant</code> is a new relationship type with no precedent in the existing 11 types. Needs formal definition and legal grounding before implementation. DAO&rarr;DACO linkage risks presenting inference as doctrine.</td>
+            <td><div class="badge-row"><span class="badge b-conflict">NEW TYPE</span><span class="badge b-blocker">BLOCKS INSTALLS</span><span class="badge b-conflict">DOCTRINE RISK</span></div></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ARCHITECT</td>
+            <td><span class="status s-amber">AMBER</span></td>
+            <td>Scale jump 178&rarr;250+ nodes untested. Map demo exists but isn't integrated. TopoJSON inline adds ~200KB. Font stack doesn't match Navy Design Guide.</td>
+            <td><div class="badge-row"><span class="badge b-blocker">SCALE RISK</span><span class="badge b-opportunity">MAP DEMO READY</span><span class="badge b-conflict">FONT MISMATCH</span></div></td>
+          </tr>
+          <tr>
+            <td class="agent-name">UI-COMPLIANCE</td>
+            <td><span class="status s-amber">AMBER</span></td>
+            <td>IBM Plex Sans is primary font; should be Roboto Slab. Header says "v1.0" not v8.5. Legend system needs expansion for tenant + geo layers.</td>
+            <td><div class="badge-row"><span class="badge b-conflict">TYPOGRAPHY</span><span class="badge b-conflict">VERSION LABEL</span><span class="badge b-opportunity">WCAG PASSING</span></div></td>
+          </tr>
+          <tr>
+            <td class="agent-name">GRAPH-ANALYZER</td>
+            <td><span class="status s-green">GREEN</span></td>
+            <td>Chain integrity clean, no circular refs. Cross-service tenancy (e.g. FRCE on MCAS Cherry Point) is a rendering challenge, not a data model problem. Recommends CNIC/MCICOM regions before installations.</td>
+            <td><div class="badge-row"><span class="badge b-ready">CHAINS CLEAN</span><span class="badge b-opportunity">HIERARCHY GAP</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ AGENT RADAR / SPIDER DIAGRAM ══ -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Agent Perspective Radar &mdash; How Each Agent Views the Project</h2>
+      <span class="status s-amber">CONVERGENCE: 68%</span>
+    </div>
+    <div class="card-body">
+      <div class="radar-wrap">
+        <div class="radar-svg-wrap"><svg id="radar"></svg></div>
+        <div class="radar-legend-wrap" id="radar-legend"></div>
+      </div>
+      <div class="radar-insight" id="radar-insight"></div>
+    </div>
+  </div>
+
+  <!-- ══ TWO COLUMN: PRIORITY MATRIX + DECISIONS ══ -->
+  <div class="grid2">
+
+    <!-- Priority Backlog -->
+    <div class="card">
+      <div class="card-head"><h2>Priority Backlog &mdash; Ranked by Fidelity Impact &amp; Dependency</h2></div>
+      <div class="card-body" style="padding:0">
+        <table class="pri-tbl">
+          <thead><tr><th>#</th><th>Item</th><th>Fidelity</th><th>Effort</th><th>Blocks</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pri-tag p1">P1</span></td>
+              <td>Resolve 12 orphaned OSD nodes</td>
+              <td><span class="fid-bar fid-h"></span>HIGH</td>
+              <td class="effort">LOW</td>
+              <td style="font-size:10px;color:var(--t2)">Clean v9 baseline</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p1">P2</span></td>
+              <td>Define <code>tenant</code> relationship type</td>
+              <td><span class="fid-bar fid-h"></span>HIGH</td>
+              <td class="effort">LOW</td>
+              <td style="font-size:10px;color:var(--t2)">Install nodes, map</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p2">P3</span></td>
+              <td>Bundle Roboto Slab WOFF2 fonts</td>
+              <td><span class="fid-bar fid-m"></span>MED</td>
+              <td class="effort">LOW</td>
+              <td style="font-size:10px;color:var(--t2)">UI compliance</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p2">P4</span></td>
+              <td>Add CNIC HQ + 11 regions, MCICOM + 3 regions</td>
+              <td><span class="fid-bar fid-h"></span>HIGH</td>
+              <td class="effort">MED</td>
+              <td style="font-size:10px;color:var(--t2)">Install nodes</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p3">P5</span></td>
+              <td>Integrate D3 geo map into main app</td>
+              <td><span class="fid-bar fid-m"></span>MED</td>
+              <td class="effort">MED</td>
+              <td style="font-size:10px;color:var(--t2)">Geo visualization</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p3">P6</span></td>
+              <td>Add ~71 installation nodes</td>
+              <td><span class="fid-bar fid-h"></span>HIGH</td>
+              <td class="effort">HIGH</td>
+              <td style="font-size:10px;color:var(--t2)">Tenant, DAO overlay</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p4">P7</span></td>
+              <td>Inline TopoJSON for file:// compat</td>
+              <td><span class="fid-bar fid-l"></span>LOW</td>
+              <td class="effort">LOW</td>
+              <td style="font-size:10px;color:var(--t2)">Map rendering</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p4">P8</span></td>
+              <td>DAO informational overlay</td>
+              <td><span class="fid-bar fid-m"></span>MED</td>
+              <td class="effort">MED</td>
+              <td style="font-size:10px;color:var(--t2)">None (analytical)</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p5">P9</span></td>
+              <td>Fix version label v1.0 &rarr; current</td>
+              <td><span class="fid-bar fid-l"></span>LOW</td>
+              <td class="effort">TRIVIAL</td>
+              <td style="font-size:10px;color:var(--t2)">None</td>
+            </tr>
+            <tr>
+              <td><span class="pri-tag p5">P10</span></td>
+              <td>Validation pre-commit hook</td>
+              <td><span class="fid-bar fid-l"></span>LOW</td>
+              <td class="effort">LOW</td>
+              <td style="font-size:10px;color:var(--t2)">None (quality gate)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Decisions Needed -->
+    <div class="card">
+      <div class="card-head"><h2>Decisions Pending &mdash; Your Call</h2></div>
+      <div class="card-body">
+
+        <div class="decision">
+          <h3>1. Orphaned OSD Nodes (12)</h3>
+          <div class="opt"><span class="opt-tag">A</span> Create "OSD Staff" view, wire all 12 with authority chains<span class="opt-rec">&larr; REC</span></div>
+          <div class="opt"><span class="opt-tag">B</span> Remove from data until authority research is complete</div>
+          <div class="opt"><span class="opt-tag">C</span> Keep as-is, suppress warnings (placeholders)</div>
+        </div>
+
+        <div class="decision">
+          <h3>2. Tenant Relationship Type</h3>
+          <div class="opt"><span class="opt-tag">A</span> Full authority type &mdash; color, dash, weight, legal citation<span class="opt-rec">&larr; REC</span></div>
+          <div class="opt"><span class="opt-tag">B</span> Lightweight annotation (node details only, no rendered line)</div>
+          <div class="opt"><span class="opt-tag">C</span> Defer until installations are actively being added</div>
+        </div>
+
+        <div class="decision">
+          <h3>3. Map Integration Approach</h3>
+          <div class="opt"><span class="opt-tag">A</span> View toggle within Org Chart tab (tree / geo)<span class="opt-rec">&larr; REC</span></div>
+          <div class="opt"><span class="opt-tag">B</span> Dedicated 6th "Map" tab &mdash; cleaner but expands UI</div>
+          <div class="opt"><span class="opt-tag">C</span> Split view: tree left, map right</div>
+        </div>
+
+        <div class="decision">
+          <h3>4. Execution Sequence</h3>
+          <div class="opt"><span class="opt-tag">A</span> Cleanup &rarr; Map+Hierarchy &rarr; Mass Data (3 sprints)<span class="opt-rec">&larr; REC</span></div>
+          <div class="opt"><span class="opt-tag">B</span> Jump to data first, fix compliance later</div>
+          <div class="opt"><span class="opt-tag">C</span> Map integration first to prove architecture</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RECOMMENDED SPRINT PLAN ══ -->
+  <div class="card">
+    <div class="card-head"><h2>Recommended Execution Lane (Option 4A)</h2></div>
+    <div class="card-body">
+      <div class="sprint-lane">
+        <div class="sprint-block sp-cleanup">
+          <div class="blk-title">SPRINT 1: CLEANUP</div>
+          <div class="blk-items">P1 Orphans &bull; P2 Tenant Type &bull; P3 Fonts &bull; P9 Version</div>
+          <div class="blk-items" style="color:var(--cyber)">Low effort &bull; High fidelity gain</div>
+        </div>
+        <div class="sprint-arrow">&rarr;</div>
+        <div class="sprint-block sp-arch">
+          <div class="blk-title">SPRINT 2: MAP + HIERARCHY</div>
+          <div class="blk-items">P4 CNIC/MCICOM nodes &bull; P5 Map integration &bull; P7 TopoJSON</div>
+          <div class="blk-items" style="color:var(--blue)">Architecture proving &bull; 14-16 new nodes</div>
+        </div>
+        <div class="sprint-arrow">&rarr;</div>
+        <div class="sprint-block sp-data">
+          <div class="blk-title">SPRINT 3: MASS DATA</div>
+          <div class="blk-items">P6 71+ Installations &bull; P8 DAO Overlay &bull; P10 Pre-commit</div>
+          <div class="blk-items" style="color:var(--gold)">Full geographic model &bull; Scale validation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONFLICTS & OPPORTUNITIES ══ -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-head"><h2>Conflicts &amp; Risks</h2><span class="status s-amber">5 ACTIVE</span></div>
+      <div class="card-body" style="font-size:11px;line-height:1.7">
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-conflict" style="flex-shrink:0">CONFLICT</span><span><b>Orphan debt + mass data</b> &mdash; Adding 80+ nodes on top of 12 unresolved orphans compounds warnings and erodes validator trust.</span></div>
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-conflict" style="flex-shrink:0">CONFLICT</span><span><b>Tenant type undefined</b> &mdash; Installation nodes require a relationship type that doesn't exist yet. Building nodes before the type creates ungrounded data.</span></div>
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-conflict" style="flex-shrink:0">CONFLICT</span><span><b>DAO as doctrine vs. analysis</b> &mdash; Rendering DAO boundaries alongside DACO authority lines may imply a C2 relationship that isn't formally documented.</span></div>
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-blocker" style="flex-shrink:0">BLOCKER</span><span><b>Font stack non-compliant</b> &mdash; IBM Plex Sans is not in the Navy Design Guide. Roboto Slab should be bundled before publishing any v9 release.</span></div>
+        <div style="display:flex;gap:8px;align-items:start"><span class="badge b-blocker" style="flex-shrink:0">BLOCKER</span><span><b>Scale untested</b> &mdash; D3 tree layout at 250+ nodes with SVG rendering not validated. Risk of perf degradation on commodity hardware.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Opportunities</h2><span class="status s-green">4 READY</span></div>
+      <div class="card-body" style="font-size:11px;line-height:1.7">
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-opportunity" style="flex-shrink:0">OPPORTUNITY</span><span><b>Map demo functional</b> &mdash; D3 geo + TopoJSON prototype exists and works. Integration path is clear: embed in Org Chart tab as alternate view mode.</span></div>
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-opportunity" style="flex-shrink:0">OPPORTUNITY</span><span><b>CNIC/MCICOM grounding solid</b> &mdash; Legal authorities (OPNAVINST 11010.20, MCO 5400.52) are identified and verified. Data entry can begin immediately once hierarchy decisions are made.</span></div>
+        <div style="display:flex;gap:8px;align-items:start;margin-bottom:8px"><span class="badge b-opportunity" style="flex-shrink:0">OPPORTUNITY</span><span><b>OSD view fills a real gap</b> &mdash; Wiring orphaned OSD nodes into a view adds a legitimate Echelon I/II perspective that's currently invisible in the tool.</span></div>
+        <div style="display:flex;gap:8px;align-items:start"><span class="badge b-ready" style="flex-shrink:0">READY NOW</span><span><b>Low-cost wins available</b> &mdash; Version label fix, font swap, and orphan resolution are all low-effort, high-credibility improvements that can ship immediately.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BASELINE SNAPSHOT ══ -->
+  <div class="card">
+    <div class="card-head"><h2>v8.5 Baseline Snapshot</h2></div>
+    <div class="card-body">
+      <div class="grid3" style="font-size:11px;gap:10px">
+        <div>
+          <div class="sec-head">Data Model</div>
+          <div style="line-height:1.8;margin-top:6px">
+            178 org nodes &bull; 11 authority types<br>
+            154 auth entries &bull; resolveChain() runtime<br>
+            opcon/adcon/daco &rarr; immediate parent only<br>
+            ta/lcsp/aa &rarr; peer arrays<br>
+            13 preset views + custom builder
+          </div>
+        </div>
+        <div>
+          <div class="sec-head">Architecture</div>
+          <div style="line-height:1.8;margin-top:6px">
+            Single HTML entry point &bull; file:// native<br>
+            D3.js v7 only vendored lib<br>
+            kms-data.js: 184KB (source of truth)<br>
+            app.js: 1,436 lines (all logic)<br>
+            No server &bull; No build &bull; No framework
+          </div>
+        </div>
+        <div>
+          <div class="sec-head">Compliance</div>
+          <div style="line-height:1.8;margin-top:6px">
+            Navy Blue #022a3a &bull; Blue #0076a9 &bull; Gold #e8b00f<br>
+            WCAG 4.5:1 contrast &check;<br>
+            Min 9px font size &check;<br>
+            Classification banner &check;<br>
+            <span style="color:var(--amber)">Font: IBM Plex Sans (should be Roboto Slab)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   AGENT PERSPECTIVE RADAR CHART — Zero dependencies (pure SVG)
+   Each agent scores the project on 8 shared dimensions (0-100).
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+
+  const axes = [
+    { key:'integrity',    label:'Data Integrity',       short:'INTEGRITY' },
+    { key:'authority',    label:'Authority Grounding',   short:'AUTH GROUND' },
+    { key:'scale',        label:'Scale Readiness',       short:'SCALE' },
+    { key:'compliance',   label:'UI / Compliance',       short:'UI COMPLY' },
+    { key:'features',     label:'Feature Completeness',  short:'FEATURES' },
+    { key:'architecture', label:'Architecture Health',   short:'ARCH' },
+    { key:'debt',         label:'Tech Debt (low=good)',  short:'TECH DEBT' },
+    { key:'doctrinal',    label:'Doctrinal Accuracy',    short:'DOCTRINE' }
+  ];
+
+  const agents = [
+    {
+      id:'validator', name:'KMS-VALIDATOR', color:'#44cc44',
+      scores:{ integrity:82, authority:88, scale:70, compliance:72, features:45, architecture:80, debt:68, doctrinal:90 },
+      notes:{
+        integrity:'12 orphans drag this down from 94',
+        authority:'154 entries all grounded \u2014 solid',
+        scale:'Untested beyond 178, no perf baseline',
+        compliance:'Colors pass, fonts do not',
+        features:'v9 geo/install not started',
+        architecture:'Clean separation, single-file sound',
+        debt:'Orphans + version label = lingering debt',
+        doctrinal:'All auth types cite legal basis'
+      }
+    },
+    {
+      id:'authority', name:'AUTH-RESEARCHER', color:'#dd44bb',
+      scores:{ integrity:75, authority:78, scale:55, compliance:58, features:38, architecture:65, debt:62, doctrinal:76 },
+      notes:{
+        integrity:'OSD nodes lack auth chains \u2014 incomplete data',
+        authority:'Existing types grounded, but tenant undefined',
+        scale:'Not this agent\u2019s primary concern',
+        compliance:'Defers to UI-Compliance agent',
+        features:'Missing CNIC/MCICOM/DAO = large gap',
+        architecture:'Tenant type needs config schema entry',
+        debt:'Undefined types are doctrinal debt',
+        doctrinal:'DAO-DACO conflation risk lowers score'
+      }
+    },
+    {
+      id:'architect', name:'ARCHITECT', color:'#0076a9',
+      scores:{ integrity:84, authority:85, scale:48, compliance:60, features:35, architecture:75, debt:58, doctrinal:82 },
+      notes:{
+        integrity:'Data model is clean and normalized',
+        authority:'Grounding system well-designed',
+        scale:'178\u2192250+ untested, SVG perf unknown',
+        compliance:'Font mismatch, version label wrong',
+        features:'Map demo exists but not integrated',
+        architecture:'file:// constraint healthy; TopoJSON adds 200KB',
+        debt:'Map demo orphaned, fonts wrong, label stale',
+        doctrinal:'Separation of data and rendering preserves accuracy'
+      }
+    },
+    {
+      id:'uicompliance', name:'UI-COMPLIANCE', color:'#e8b00f',
+      scores:{ integrity:78, authority:80, scale:62, compliance:55, features:42, architecture:72, debt:60, doctrinal:80 },
+      notes:{
+        integrity:'Version label inconsistency hurts trust',
+        authority:'Legal citations display well in UI',
+        scale:'Legend system won\u2019t scale with new types',
+        compliance:'Wrong font family, version mislabel \u2014 two violations',
+        features:'Need legend expansion for tenant + geo layers',
+        architecture:'Tab system is solid, map should be view toggle',
+        debt:'Typography + label = compliance debt',
+        doctrinal:'Classification banner and citations correct'
+      }
+    },
+    {
+      id:'graph', name:'GRAPH-ANALYZER', color:'#00cccc',
+      scores:{ integrity:90, authority:92, scale:72, compliance:70, features:48, architecture:82, debt:75, doctrinal:92 },
+      notes:{
+        integrity:'Zero circular refs, all chains resolve clean',
+        authority:'1.8 avg connections per node, well-structured',
+        scale:'BFS is O(n), should handle 500+, SVG is the risk',
+        compliance:'WCAG passing, color system well-mapped',
+        features:'CNIC/MCICOM adds missing Echelon III layer',
+        architecture:'resolveChain() pattern is sound',
+        debt:'12 orphans are the only graph anomaly',
+        doctrinal:'Chain-of-command traces cleanly to legal basis'
+      }
+    }
+  ];
+
+  /* ── Helpers ── */
+  const NS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs, parent){
+    const el = document.createElementNS(NS, tag);
+    for(const [k,v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+    if(parent) parent.appendChild(el);
+    return el;
+  }
+
+  /* ── Layout ── */
+  const W = 440, H = 440;
+  const cx = W/2, cy = H/2;
+  const R = 155;
+  const levels = 5;
+  const n = axes.length;
+  const angleSlice = (Math.PI * 2) / n;
+
+  function polarX(val, i){ return (val/100 * R) * Math.cos(angleSlice * i - Math.PI/2); }
+  function polarY(val, i){ return (val/100 * R) * Math.sin(angleSlice * i - Math.PI/2); }
+
+  /* ── Build SVG ── */
+  const svg = document.getElementById('radar');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  const gRoot = svgEl('g', { transform: 'translate('+cx+','+cy+')' }, svg);
+
+  /* ── Concentric rings ── */
+  for(let l = 1; l <= levels; l++){
+    const r = R * l / levels;
+    svgEl('circle', {
+      r: r, fill:'none', stroke:'#1a3050',
+      'stroke-width': l === levels ? 1 : 0.5,
+      'stroke-dasharray': l === levels ? 'none' : '2,3'
+    }, gRoot);
+    if(l < levels){
+      const txt = svgEl('text', { x:4, y: -r + 3, class:'radar-ring-label' }, gRoot);
+      txt.textContent = l * 20;
+    }
+  }
+
+  /* ── Axis lines + labels ── */
+  for(let i = 0; i < n; i++){
+    const ax = axes[i];
+    const ex = R * Math.cos(angleSlice * i - Math.PI/2);
+    const ey = R * Math.sin(angleSlice * i - Math.PI/2);
+
+    svgEl('line', { x1:0, y1:0, x2:ex, y2:ey, stroke:'#1a3050', 'stroke-width':0.5 }, gRoot);
+
+    const avg = agents.reduce((s,a) => s + a.scores[ax.key], 0) / agents.length;
+    const lx = (R + 20) * Math.cos(angleSlice * i - Math.PI/2);
+    const ly = (R + 20) * Math.sin(angleSlice * i - Math.PI/2);
+    const cosA = Math.cos(angleSlice * i - Math.PI/2);
+    const sinA = Math.sin(angleSlice * i - Math.PI/2);
+    const anchor = Math.abs(cosA) < 0.15 ? 'middle' : cosA > 0 ? 'start' : 'end';
+    const baseline = Math.abs(sinA) < 0.15 ? 'central' : sinA > 0 ? 'hanging' : 'auto';
+
+    const lbl = svgEl('text', {
+      x: lx, y: ly,
+      'text-anchor': anchor,
+      'dominant-baseline': baseline,
+      class: 'radar-axis-label' + (avg < 60 ? ' highlight' : '')
+    }, gRoot);
+    lbl.textContent = ax.short;
+  }
+
+  /* ── Tooltip ── */
+  const tooltip = document.createElement('div');
+  tooltip.className = 'radar-tooltip';
+  document.body.appendChild(tooltip);
+
+  /* ── Agent polygons + dots ── */
+  const agentGroups = {};
+
+  agents.forEach(agent => {
+    const ag = svgEl('g', { class: 'agent-poly agent-poly-' + agent.id }, gRoot);
+    agentGroups[agent.id] = ag;
+
+    // Build polygon path
+    const pts = axes.map((ax, i) => {
+      const px = cx + polarX(agent.scores[ax.key], i);
+      const py = cy + polarY(agent.scores[ax.key], i);
+      return (i === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1);
+    }).join(' ') + ' Z';
+
+    svgEl('path', {
+      d: pts,
+      fill: agent.color, 'fill-opacity': 0.08,
+      stroke: agent.color, 'stroke-width': 1.8, 'stroke-opacity': 0.85,
+      transform: 'translate('+ -cx + ',' + -cy + ')'
+    }, ag);
+
+    // Vertex dots
+    axes.forEach((ax, i) => {
+      const dx = polarX(agent.scores[ax.key], i);
+      const dy = polarY(agent.scores[ax.key], i);
+      const dot = svgEl('circle', {
+        cx: dx, cy: dy, r: 3.5,
+        fill: agent.color, stroke:'#04090f', 'stroke-width': 1.5,
+        style: 'cursor:pointer'
+      }, ag);
+
+      dot.addEventListener('mouseenter', function(ev){
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = '<b style="color:'+agent.color+'">'+agent.name+'</b><br>' +
+          ax.label + ': <b>' + agent.scores[ax.key] + '</b>/100<br>' +
+          '<span style="color:#6a8eb0">' + agent.notes[ax.key] + '</span>';
+        dot.setAttribute('r', 5.5);
+      });
+      dot.addEventListener('mousemove', function(ev){
+        tooltip.style.left = (ev.pageX + 12) + 'px';
+        tooltip.style.top = (ev.pageY - 10) + 'px';
+      });
+      dot.addEventListener('mouseleave', function(){
+        tooltip.style.display = 'none';
+        dot.setAttribute('r', 3.5);
+      });
+    });
+  });
+
+  /* ── Legend (interactive toggle) ── */
+  const legendEl = document.getElementById('radar-legend');
+  const activeAgents = new Set(agents.map(a => a.id));
+
+  agents.forEach(a => {
+    const avg = Math.round(axes.reduce((s, ax) => s + a.scores[ax.key], 0) / axes.length);
+    const item = document.createElement('div');
+    item.className = 'radar-legend-item';
+    item.innerHTML = '<span class="radar-legend-swatch" style="background:'+a.color+'"></span>' +
+      '<span class="radar-legend-name" style="color:'+a.color+'">'+a.name+'</span>' +
+      '<span class="radar-legend-score">'+avg+'%</span>';
+    item.addEventListener('click', function(){
+      if(activeAgents.has(a.id)){
+        activeAgents.delete(a.id);
+        item.classList.add('dimmed');
+        agentGroups[a.id].setAttribute('opacity', '0.06');
+      } else {
+        activeAgents.add(a.id);
+        item.classList.remove('dimmed');
+        agentGroups[a.id].setAttribute('opacity', '1');
+      }
+      updateInsight();
+    });
+    legendEl.appendChild(item);
+  });
+
+  /* ── Insight summary ── */
+  function updateInsight(){
+    const active = agents.filter(a => activeAgents.has(a.id));
+    if(!active.length){
+      document.getElementById('radar-insight').innerHTML = '<i>Toggle agents in legend to compare.</i>';
+      return;
+    }
+
+    const axisAvg = axes.map(ax => ({
+      key: ax.key, label: ax.label,
+      avg: Math.round(active.reduce((s,a) => s + a.scores[ax.key], 0) / active.length)
+    }));
+
+    const axisDiv = axes.map(ax => {
+      const vals = active.map(a => a.scores[ax.key]);
+      const mean = vals.reduce((s,v) => s+v, 0) / vals.length;
+      const variance = vals.reduce((s,v) => s + Math.pow(v - mean, 2), 0) / vals.length;
+      const stddev = Math.sqrt(variance);
+      return { key: ax.key, label: ax.label, stddev: Math.round(stddev), mean: Math.round(mean) };
+    });
+
+    const weakest = axisAvg.reduce((a,b) => a.avg < b.avg ? a : b);
+    const strongest = axisAvg.reduce((a,b) => a.avg > b.avg ? a : b);
+    const mostDivergent = axisDiv.reduce((a,b) => a.stddev > b.stddev ? a : b);
+    const mostConsensus = axisDiv.reduce((a,b) => a.stddev < b.stddev ? a : b);
+
+    const overallAvg = Math.round(axisAvg.reduce((s,a) => s + a.avg, 0) / axisAvg.length);
+    const avgStddev = Math.round(axisDiv.reduce((s,a) => s + a.stddev, 0) / axisDiv.length);
+
+    document.getElementById('radar-insight').innerHTML =
+      '<b>Composite Score: '+overallAvg+'/100</b> &bull; Avg Agent Divergence: '+avgStddev+'pts<br>' +
+      '<span class="strong">Strongest axis:</span> <b>'+strongest.label+'</b> ('+strongest.avg+'%) &mdash; agents agree this is solid<br>' +
+      '<span class="weak">Weakest axis:</span> <b>'+weakest.label+'</b> ('+weakest.avg+'%) &mdash; unanimous concern, prioritize here<br>' +
+      '<b>Most divergent:</b> '+mostDivergent.label+' (&sigma; '+mostDivergent.stddev+') &mdash; agents disagree, needs discussion<br>' +
+      '<b>Strongest consensus:</b> '+mostConsensus.label+' (&sigma; '+mostConsensus.stddev+') &mdash; aligned assessment';
+  }
+  updateInsight();
+
+})();
+</script>
+</body>
+</html>

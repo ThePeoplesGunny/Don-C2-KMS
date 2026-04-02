@@ -44,6 +44,7 @@ if(typeof KMS_DATA==='undefined'){
   <div class="tab" data-action="show-panel" data-arg="timeline">◷ Timeline <span class="tbadge" id="tb-tl"></span></div>
   <div class="tab" data-action="show-panel" data-arg="registry">⊞ Registry <span class="tbadge" id="tb-reg"></span></div>
   <div class="tab" data-action="show-panel" data-arg="accuracy">⊘ Data Accuracy <span class="tbadge" id="tb-acc">0</span></div>
+  <div class="tab" data-action="show-panel" data-arg="dashboard">◈ Dashboard</div>
 </nav>
 <div class="content">
   <!-- ORG -->
@@ -65,6 +66,7 @@ if(typeof KMS_DATA==='undefined'){
           <option value="ta_navwar">TA — NAVWAR C4I/Cyber Systems</option>
           <option value="mals">MALS — Authority Convergence</option>
           <option value="cyber">DACO — Cyber Command Chain</option>
+          <option value="osd">OSD — Office of the Secretary of Defense</option>
           <option value="custom" style="color:#c9a84c;font-weight:bold">⊞ Custom Chart — Build Your Own</option>
         </select>
         <label>Auth Filter:</label>
@@ -170,6 +172,105 @@ if(typeof KMS_DATA==='undefined'){
     <div class="reg-wrap" id="reg-wrap"></div>
   </div>
 
+
+  <!-- DASHBOARD -->
+  <div class="panel" id="p-dashboard" style="flex-direction:column;overflow:hidden">
+    <div class="dash-scroll">
+
+      <!-- KPI ROW -->
+      <div class="dash-kpi-row" id="dash-kpis"></div>
+
+      <!-- AGENT STATUS TABLE -->
+      <div class="dash-card">
+        <div class="dash-card-head"><h2>Agent Roundtable — Status Roll-Up</h2></div>
+        <div class="dash-card-body" style="padding:0">
+          <table class="dash-agent-tbl">
+            <thead><tr><th>Agent</th><th>Status</th><th>Top Concern</th><th>Flags</th></tr></thead>
+            <tbody id="dash-agent-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RADAR CHART -->
+      <div class="dash-card">
+        <div class="dash-card-head">
+          <h2>Agent Perspective Radar — How Each Agent Views the Project</h2>
+          <span class="dash-status dash-s-amber" id="dash-convergence"></span>
+        </div>
+        <div class="dash-card-body">
+          <div class="dash-radar-wrap">
+            <div class="dash-radar-svg-wrap"><svg id="dash-radar" width="440" height="440" viewBox="0 0 440 440" style="overflow:visible"></svg></div>
+            <div class="dash-radar-legend" id="dash-radar-legend"></div>
+          </div>
+          <div class="dash-radar-insight" id="dash-radar-insight"></div>
+        </div>
+      </div>
+
+      <!-- PRIORITY + DECISIONS -->
+      <div class="dash-grid2">
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>Priority Backlog — Ranked by Fidelity Impact &amp; Dependency</h2></div>
+          <div class="dash-card-body" style="padding:0">
+            <table class="dash-pri-tbl">
+              <thead><tr><th>#</th><th>Item</th><th>Fidelity</th><th>Effort</th><th>Blocks</th></tr></thead>
+              <tbody id="dash-pri-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>Decisions Pending — Your Call</h2></div>
+          <div class="dash-card-body" id="dash-decisions"></div>
+        </div>
+      </div>
+
+      <!-- SPRINT LANE -->
+      <div class="dash-card">
+        <div class="dash-card-head"><h2>Execution Lane — Current Sprint Focus</h2></div>
+        <div class="dash-card-body">
+          <div class="dash-sprint-lane">
+            <div class="dash-sprint-block dash-sp-cleanup" style="opacity:.5">
+              <div class="dash-blk-title">SPRINT 1: FOUNDATION &#10003;</div>
+              <div class="dash-blk-items">OSD nodes · ref schema · 50 docs · sidebar fix · d3.tree</div>
+              <div class="dash-blk-items" style="color:var(--cyber)">COMPLETE</div>
+            </div>
+            <div class="dash-sprint-arrow">→</div>
+            <div class="dash-sprint-block dash-sp-arch" style="border-width:2px">
+              <div class="dash-blk-title">SPRINT 2: AUTHORITY RESEARCH &#9654;</div>
+              <div class="dash-blk-items">Ref chain coverage · SECNAVINST 5400.15D two-chain · TACON audit · cyber/daco fix</div>
+              <div class="dash-blk-items" style="color:var(--adcon)">IN PROGRESS · 58/167 ref coverage (35%)</div>
+            </div>
+            <div class="dash-sprint-arrow">→</div>
+            <div class="dash-sprint-block dash-sp-data">
+              <div class="dash-blk-title">SPRINT 3: VISUAL + COMPLIANCE</div>
+              <div class="dash-blk-items">Ghost nodes · Link routing · Fonts · Version label · CNIC/MCICOM</div>
+              <div class="dash-blk-items" style="color:var(--gold)">Waiting on authority data completion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFLICTS & OPPORTUNITIES -->
+      <div class="dash-grid2">
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>Conflicts &amp; Risks</h2><span class="dash-status dash-s-amber">5 ACTIVE</span></div>
+          <div class="dash-card-body" id="dash-conflicts"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><h2>Opportunities</h2><span class="dash-status dash-s-green">4 READY</span></div>
+          <div class="dash-card-body" id="dash-opportunities"></div>
+        </div>
+      </div>
+
+      <!-- BASELINE SNAPSHOT -->
+      <div class="dash-card">
+        <div class="dash-card-head"><h2>v8.5 Baseline Snapshot</h2></div>
+        <div class="dash-card-body">
+          <div class="dash-grid3" id="dash-baseline"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- DATA ACCURACY -->
   <div class="panel" id="p-accuracy" style="flex-direction:column;overflow:hidden">

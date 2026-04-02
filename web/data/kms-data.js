@@ -1,7 +1,3 @@
-// DoN C2 KMS — Organizational Data v8.1
-// Authority chains normalized to immediate parent (opcon/adcon/daco)
-// ta/lcsp/aa remain as peer relationship arrays
-// Generated: 2026-04-01
 const KMS_DATA = {
  "version": "8.5",
  "lastModified": "2026-03-31",
@@ -411,6 +407,21 @@ const KMS_DATA = {
     "aor": "GLOBAL"
    },
    "id": "cdao"
+  },
+  "dod_cio": {
+   "lbl": "DoD CIO",
+   "sub": "DoD Chief Information Officer",
+   "billet": "SES / Presidential Appointee",
+   "svc": "civ",
+   "uic": "OD00033",
+   "puc": "OD00001",
+   "loc": {
+    "install": "The Pentagon",
+    "city": "Arlington, VA",
+    "lat": 38.8719,
+    "lon": -77.0563,
+    "aor": "GLOBAL"
+   }
   },
   "secnav": {
    "lbl": "SECNAV",
@@ -3362,12 +3373,30 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "dcdc"
    ],
    "mte": "usffc",
-   "note": "Echelon 2, UIC 00055. ISIC: CNO. Commander is dual-hatted as also heading Naval Space Command (UIC 4840A). DACO authority delegated from CYBERCOM. Source: SNDL Ref B (02 Feb 2026)."
+   "ref": {
+    "adcon": [
+     "opnav5450_345",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Fleet Cyber Command / 10th Fleet. Echelon 2 under CNO ADCON per OPNAVINST 5450.345. OPCON to CYBERCOM. DACO from DCDC per DoDI 8530.01. CDR dual-hatted: COMTENTHFLT + Naval Space Command. Central operational authority for Navy networks, cryptology, SIGINT, IO, cyber, EW, space. UIC 00055."
   },
   "marforcyber": {
    "opcon": [
@@ -3376,32 +3405,64 @@ const KMS_DATA = {
    "adcon": [
     "cmc"
    ],
-   "ta": [],
    "daco": [
     "dcdc"
    ],
    "mte": "marforcom",
-   "note": "Marine Forces Cyberspace Command. CYBERCOM Marine component (peer to FLTCYBERCOM, not subordinate). Fort Meade, MD. Subordinates: MCCOG (DODIN/DCO), MCCYWG (CMF/OCO)."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Cyberspace Command. ADCON from CMC. OPCON to CYBERCOM. DACO from DCDC per DoDI 8530.01."
   },
   "navsea": {
-   "opcon": [],
    "adcon": [
     "cno"
    ],
    "aa": [
-    "secnav",
     "asn_rda"
    ],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "NAVSEA is a PEO Holding Command. ASN(RD&A) exercises acquisition/TA oversight; CNO exercises admin authority."
+   "ref": {
+    "adcon": [
+     "opnav5450_340a",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "aa": [
+     "secnavinst_5400_15d",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Sea Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.340A. PEO Holding Command for ship/sub programs. COMNAVSEA exercises TA for HM&E, ship design, propulsion (conventional). NAVSEA 08 exercises independent nuclear TA per 50 USC §2406 / EO 12344. UIC 00017."
   },
   "airlant": {
-   "opcon": [
-    "usffc"
-   ],
    "adcon": [
     "usffc"
    ],
@@ -3412,12 +3473,32 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Naval Air Force Atlantic. ADCON: CNO→USFFC→AIRLANT. TA: NAVAIR issues airworthiness directives and configuration authority for all USN aircraft operated by AIRLANT squadrons. Dual authority is the key lifecycle management nexus."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Air Force Atlantic. ADCON: CNO→USFFC→AIRLANT. TA from NAVAIR for airworthiness and configuration. Dual authority nexus.",
+   "opcon": [
+    "usffc"
+   ]
   },
   "airpac": {
-   "opcon": [
-    "compacflt"
-   ],
    "adcon": [
     "compacflt"
    ],
@@ -3428,7 +3509,30 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": "compacflt",
-   "note": "Echelon 3, UIC 57025. ISIC: COMPACFLT. Commander also designated as COMNAVAIRFOR (UIC 69294), dual-hat serving as Navy lead for the Naval Aviation Enterprise. Source: SNDL Ref B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Air Force Pacific. ADCON: CNO→COMPACFLT→AIRPAC. TA from NAVAIR. CDR dual-hatted as COMNAVAIRFOR. UIC 57025.",
+   "opcon": [
+    "compacflt"
+   ]
   },
   "comfrc": {
    "opcon": [],
@@ -3442,7 +3546,28 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 3 under NAVAIRSYSCOM. UIC 68520. Commander, Fleet Readiness Centers. ISIC: NAVAIRSYSCOM. Administers 7 FRCs (3 depot + 3 I-level + 1 OCONUS) + FRC RMW (separate ISIC under CNAF). Source: SNDL."
+   "note": "Echelon 3 under NAVAIRSYSCOM. UIC 68520. Commander, Fleet Readiness Centers. ISIC: NAVAIRSYSCOM. Administers 7 FRCs (3 depot + 3 I-level + 1 OCONUS) + FRC RMW (separate ISIC under CNAF). Source: SNDL.",
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "frce": {
    "opcon": [],
@@ -3612,32 +3737,64 @@ const KMS_DATA = {
    "note": "Echelon 4, UIC 4828A. ISIC: NAVAIRFORES (CNAF) — NOT COMFRC. Reserve FRC at NAS Fort Worth. Different ADCON chain from all other FRCs. Source: SNDL."
   },
   "navair": {
-   "opcon": [],
    "adcon": [
     "cno"
    ],
    "aa": [
-    "secnav",
     "asn_rda"
    ],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Echelon 2 under CNO. UIC 00019. ISIC: CNO. TA for naval aviation airworthiness and configuration management. ACC per OPNAVINST 5450.350B. Source: SNDL OPNAVINST 5400.45A Ref C (02 Feb 2026)."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "aa": [
+     "secnavinst_5400_15d",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Air Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.350B. PEO Holding Command — provides workforce and TA for aviation programs. COMNAVAIR exercises Technical Authority for airworthiness, configuration management, engineering standards (NAVAIRINST 13034 series). Acquisition authority flows through ASN(RD&A)→PEOs, NOT through NAVAIR. UIC 00019."
   },
   "asn_rda": {
-   "opcon": [],
-   "adcon": [
+   "dac": [
     "secnav"
    ],
    "aa": [
     "usd_as",
     "usd_re"
    ],
-   "daco": [],
-   "mte": null,
-   "note": "ASN(RD&A) is the DoN Component Acquisition Executive (CAE). Approves ACAT I/II milestones. Exercises Acquisition Authority (distinct from TA) over SYSCOMs and PEOs."
+   "ref": {
+    "dac": [
+     "secnavinst_5400_15d",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "aa": [
+     "dodd_5135_02",
+     "dodd_5137_02",
+     "usc_10_133b",
+     "usc_10_133a",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "ASN(RD&A) per 10 USC §8016. DoN Service Acquisition Executive (SAE) per SECNAVINST 5400.15D and DoDD 5000.01. Exercises SECNAV-delegated acquisition authority over PEOs and PMs. MDA for ACAT II/III. USD(A&S) exercises oversight as DAE for ACAT I. SYSCOMs provide workforce and TA but NOT acquisition authority."
   },
   "nawcad": {
    "opcon": [],
@@ -3651,7 +3808,28 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Naval Air Warfare Center Aircraft Division. Echelon 3 under NAVAIR (ISIC per OPNAVINST 5450.350B para 6a(1)). Executes aircraft engineering, test, and evaluation for all naval aviation programs."
+   "note": "Naval Air Warfare Center Aircraft Division. Echelon 3 under NAVAIR (ISIC per OPNAVINST 5450.350B para 6a(1)). Executes aircraft engineering, test, and evaluation for all naval aviation programs.",
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "nawcwd": {
    "opcon": [],
@@ -3665,7 +3843,28 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Naval Air Warfare Center Weapons Division at China Lake. Echelon 3 under NAVAIR (ISIC per OPNAVINST 5450.350B para 6a(2)). Weapons development, test, and integration."
+   "note": "Naval Air Warfare Center Weapons Division at China Lake. Echelon 3 under NAVAIR (ISIC per OPNAVINST 5450.350B para 6a(2)). Weapons development, test, and integration.",
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "navrmc": {
    "opcon": [],
@@ -3682,28 +3881,48 @@ const KMS_DATA = {
    "note": "Echelon 3, UIC 58400. ISIC: NAVSEA. Navy Regional Maintenance Center — bridge between NAVSEA TA and fleet surface maintenance. Source: SNDL."
   },
   "cnic": {
-   "opcon": [],
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Echelon 2, UIC 00052. ISIC: CNO. CNIC is the supporting commander to USFFC, COMPACFLT, NAVEUR/NAVAF, NAVCENT, NAVSOUTH for installation support to fleet operations. Not an operational commander. Source: SNDL Ref B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Commander, Navy Installations Command. Echelon 2 under CNO ADCON. Supporting commander for installation services to fleet. UIC 00052."
   },
   "navresfor": {
-   "opcon": [],
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Navy Reserve Forces Command. Echelon 2 under CNO. Manages all Navy Reserve units and personnel."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Navy Reserve Forces Command. Echelon 2 under CNO ADCON. Manages all Navy Reserve units and personnel."
   },
   "navspecwar": {
    "opcon": [
@@ -3712,22 +3931,50 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Naval Special Warfare Command. OPCON to SOCOM per UCP. ADCON: CNO. Echelon 2 under CNO per OPNAVINST 5450.352B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Special Warfare Command. Echelon 2 under CNO ADCON. OPCON to SOCOM per UCP."
   },
   "chnavpers": {
-   "opcon": [],
    "adcon": [
     "cno"
    ],
-   "ta": [],
-   "daco": [],
-   "mte": null,
-   "note": "Chief of Naval Personnel / BUPERS. Echelon 2 under CNO. Manages Navy personnel policy, assignment, and career management."
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief of Naval Personnel / BUPERS. Echelon 2 under CNO ADCON. Manages Navy personnel policy, assignment, career management."
   },
   "navsafecen": {
    "opcon": [],
@@ -3765,7 +4012,21 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Navy Expeditionary Combat Command. Echelon 3 under USFFC (ISIC per OPNAVINST 5440.77C para 6a(2)(d)). EOD, NCB, RIVRON, NSW support."
+   "note": "Navy Expeditionary Combat Command. Echelon 3 under USFFC (ISIC per OPNAVINST 5440.77C para 6a(2)(d)). EOD, NCB, RIVRON, NSW support.",
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "nwdc": {
    "opcon": [],
@@ -3808,12 +4069,29 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Echelon 2, UIC 00060. ISIC: CNO. USFFC CDR is quad-hatted: NAVNORTH (Navy component to NORTHCOM), NAVSTRAT (Navy component to STRATCOM per Feb 2019 designation), COMLANTFLT, and C2F. JFMCC-STRAT mission: execute maritime aspects of strategic deterrence. Primary force provider for Atlantic/Global operations. Source: SNDL Ref B; STRATCOM article 1754078 (Feb 2019)."
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Fleet Forces Command. Echelon 2 under CNO ADCON per OPNAVINST 5440.77C. OPCON to STRATCOM as NAVSTRAT. CDR quad-hatted: NAVNORTH, NAVSTRAT, COMLANTFLT, C2F. UIC 00060."
   },
   "compacflt": {
    "opcon": [
@@ -3822,12 +4100,28 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Echelon 2, UIC 00070. ISIC: CNO. OPCON to INDOPACOM as Navy Service Component Commander. Dual-hat: 3rd Fleet. TYCOMs under COMPACFLT provide ADCON support for units assigned OPCON to CSG/ESG — TYCOMs and CSG/ESG commanders work integrated solutions. Source: SNDL Ref B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Pacific Fleet. Echelon 2 under CNO ADCON. OPCON to INDOPACOM as Navy component. Dual-hat: 3rd Fleet. UIC 00070."
   },
   "naveur": {
    "opcon": [
@@ -3836,12 +4130,28 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Naval Forces Europe/Africa. Echelon 2 under CNO ADCON. OPCON to EUCOM as SCC. Dual-hat: 6th Fleet."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Forces Europe/Africa. Echelon 2 under CNO ADCON. OPCON to EUCOM. Dual-hat: 6th Fleet."
   },
   "navcent": {
    "opcon": [
@@ -3850,12 +4160,28 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Naval Forces Central Command. Echelon 2 under CNO ADCON. OPCON to CENTCOM as SCC. Dual-hat: 5th Fleet."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Forces Central. Echelon 2 under CNO ADCON. OPCON to CENTCOM. Dual-hat: 5th Fleet."
   },
   "navso": {
    "opcon": [
@@ -3864,12 +4190,28 @@ const KMS_DATA = {
    "adcon": [
     "cno"
    ],
-   "ta": [],
    "daco": [
     "fltcybercom"
    ],
-   "mte": null,
-   "note": "Naval Forces Southern Command. Echelon 2 under CNO ADCON. OPCON to SOUTHCOM as SCC. Dual-hat: 4th Fleet."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Forces Southern. Echelon 2 under CNO ADCON. OPCON to SOUTHCOM. Dual-hat: 4th Fleet."
   },
   "surflant": {
    "opcon": [],
@@ -3886,32 +4228,70 @@ const KMS_DATA = {
    "note": "Surface Force Atlantic. TYCOM under USFFC. NAVSEA exercises TA as operator of RMCs and maintenance per OPNAVINST 5440.77C para 7b."
   },
   "surfpac": {
-   "opcon": [],
    "adcon": [
     "compacflt"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
    "daco": [
     "fltcybercom"
    ],
    "mte": "compacflt",
-   "note": "Echelon 3, UIC 53824. ISIC: COMPACFLT. Commander also designated as COMNAVSURFOR (UIC 69293), dual-hat serving as Navy lead for the Surface Warfare Enterprise. Source: SNDL Ref B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Surface Force Pacific. ADCON: CNO→COMPACFLT→SURFPAC. TA from NAVSEA for HM&E. CDR dual-hatted as COMNAVSURFOR. UIC 53824."
   },
   "sublant": {
-   "opcon": [],
    "adcon": [
     "usffc"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
    "daco": [
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Echelon 3, UIC 57016. ISIC: USFFC. Commander also designated as COMSUBFOR, dual-hat as Navy lead for the Undersea Warfare Enterprise. Source: SNDL Ref B."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Submarine Force Atlantic. ADCON: CNO→USFFC→SUBLANT. TA from NAVSEA for HM&E. CDR dual-hatted as COMSUBFOR. UIC 57016."
   },
   "subpac": {
    "opcon": [],
@@ -3939,7 +4319,21 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Echelon 3, UIC 36001. ISIC: USFFC. NAVIFOR remains a shore command while subordinates are operating forces. NAVIFOR remains as the administrative commander, TYCOM, and ISIC for SNDL and TFMMS purposes. FLTCYBERCOM is the operational commander for IW forces. Source: SNDL Ref B."
+   "note": "Echelon 3, UIC 36001. ISIC: USFFC. NAVIFOR remains a shore command while subordinates are operating forces. NAVIFOR remains as the administrative commander, TYCOM, and ISIC for SNDL and TFMMS purposes. FLTCYBERCOM is the operational commander for IW forces. Source: SNDL Ref B.",
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_a": {
    "opcon": [],
@@ -3954,7 +4348,24 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
-   "note": "Echelon 1, UIC 68346. ISIC: ASN(RD&A). PEO Aviation — reports ADCON to ASN(RD&A), NOT through NAVAIR. NAVAIR provides TA and support only. Source: SNDL + SECNAVINST 5000.2G."
+   "note": "Echelon 1, UIC 68346. ISIC: ASN(RD&A). PEO Aviation — reports ADCON to ASN(RD&A), NOT through NAVAIR. NAVAIR provides TA and support only. Source: SNDL + SECNAVINST 5000.2G.",
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_uw": {
    "opcon": [],
@@ -3969,12 +4380,57 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
-   "note": "PEO Unmanned & Strike Weapons. ADCON: ASN(RD&A) → PEO(U&W). NAVAIR host command and TA support. NOT NAVAIR ADCON subordinate per SECNAVINST 5000.2G."
+   "note": "PEO Unmanned & Strike Weapons. ADCON: ASN(RD&A) → PEO(U&W). NAVAIR host command and TA support. NOT NAVAIR ADCON subordinate per SECNAVINST 5000.2G.",
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "navwar": {
    "adcon": [
     "cno"
-   ]
+   ],
+   "aa": [
+    "asn_rda"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_345",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "aa": [
+     "secnavinst_5400_15d",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Naval Information Warfare Systems Command (formerly SPAWAR, renamed 2019). Echelon 2 under CNO for ADCON. PEO Holding Command for C4ISR programs. COMNAVWAR exercises TA for C4I networks, communications, enterprise IT, CANES, SATCOM, data links."
   },
   "navsup": {
    "adcon": [
@@ -3989,7 +4445,16 @@ const KMS_DATA = {
   "bumed": {
    "adcon": [
     "cno"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Bureau of Medicine and Surgery. Echelon 2 under CNO ADCON. Navy medical policy and healthcare delivery."
   },
   "ssp": {
    "adcon": [
@@ -4028,19 +4493,47 @@ const KMS_DATA = {
    ]
   },
   "marforcom": {
-   "opcon": [
-    "northcom"
-   ],
    "adcon": [
     "cmc"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Command. ADCON from CMC per 10 USC §8043. OPCON to NORTHCOM. Dual-hat: MARFORLANT.",
+   "opcon": [
+    "northcom"
    ]
   },
   "marforpac": {
-   "opcon": [
-    "indopacom"
-   ],
    "adcon": [
     "cmc"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Pacific. ADCON from CMC per 10 USC §8043. OPCON to INDOPACOM.",
+   "opcon": [
+    "indopacom"
    ]
   },
   "marforres": {
@@ -4081,7 +4574,24 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "note": "Echelon 1. ISIC: ASN(RD&A). PEO(T) = Tactical Aircraft Programs (F/A-18, EA-18G, E-2, next-gen tactical aircraft). NOT Training Systems. Verified per navair.navy.mil/organization/PEO-T."
+   "note": "Echelon 1. ISIC: ASN(RD&A). PEO(T) = Tactical Aircraft Programs (F/A-18, EA-18G, E-2, next-gen tactical aircraft). NOT Training Systems. Verified per navair.navy.mil/organization/PEO-T.",
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_ships": {
    "aa": [
@@ -4089,8 +4599,25 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
-   ]
+    "navsea"
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_cvn": {
    "aa": [
@@ -4098,8 +4625,25 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
-   ]
+    "navsea"
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_iws": {
    "aa": [
@@ -4107,8 +4651,25 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
-   ]
+    "navsea"
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_subs": {
    "aa": [
@@ -4116,9 +4677,26 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
-   "note": "SNDL shows three separate PEOs replacing former PEO(Subs): PEO SSN (Attack Submarines, UIC 48160), PEO SSBN (Strategic Submarines, UIC 4109A), PEO UWS (Undersea Warfare Systems, UIC 6669N). KMS retains single node pending view restructuring. Source: NAVSEA org chart Jul 2024."
+   "note": "SNDL shows three separate PEOs replacing former PEO(Subs): PEO SSN (Attack Submarines, UIC 48160), PEO SSBN (Strategic Submarines, UIC 4109A), PEO UWS (Undersea Warfare Systems, UIC 6669N). KMS retains single node pending view restructuring. Source: NAVSEA org chart Jul 2024.",
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_c4i": {
    "aa": [
@@ -4126,8 +4704,24 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
-   ]
+    "navwar"
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_dig": {
    "aa": [
@@ -4135,8 +4729,24 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
-   ]
+    "navwar"
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_lmw": {
    "aa": [
@@ -4144,9 +4754,26 @@ const KMS_DATA = {
     "secnav"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
-   "note": "Echelon 1, UIC 52210. ISIC: ASN(RD&A). Formerly PEO LCS (renamed Mar 2018). PEO Littoral Mine Warfare was disestablished Jul 2011 — functions transferred here. Covers LCS, FFG-62, unmanned maritime systems, mine warfare. Source: SNDL + NAVSEA org chart Jul 2024."
+   "note": "Echelon 1, UIC 52210. ISIC: ASN(RD&A). Formerly PEO LCS (renamed Mar 2018). PEO Littoral Mine Warfare was disestablished Jul 2011 — functions transferred here. Covers LCS, FFG-62, unmanned maritime systems, mine warfare. Source: SNDL + NAVSEA org chart Jul 2024.",
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "pma265": {
    "aa": [
@@ -4324,13 +4951,207 @@ const KMS_DATA = {
    "adcon": [
     "potus"
    ],
-   "note": "Secretary of Defense. Exercises authority, direction, and control over DoD per 10 USC §113. COCOM chain: POTUS → SECDEF → CCDR."
+   "ref": {
+    "adcon": [
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Secretary of Defense. EX-I (5 USC §5312). Exercises authority, direction, and control over DoD per 10 USC §113. Principal assistant to the President in all defense matters. COCOM chain: POTUS → SECDEF → CCDR (10 USC §162). Administrative chain: POTUS → SECDEF → Service Secretaries."
   },
-  "secnav": {
-   "adcon": [
+  "depsecdef": {
+   "dac": [
     "secdef"
    ],
-   "note": "Secretary of the Navy per 10 USC §8013 (formerly §5013). Responsible for all affairs of DoN. SECNAV → CNO/CMC for military matters. SECNAV → ASNs for civilian oversight. UIC 31698. Source: SNDL."
+   "ref": {
+    "dac": [
+     "usc_10_132",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Deputy Secretary of Defense per 10 USC §132. SECDEF's alter ego — first in sequence to act for SECDEF when absent or disabled. Not a separate chain link; exercises SECDEF's authority when acting. EX-II (5 USC §5313)."
+  },
+  "usd_p": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "dodd_5111_01",
+     "usc_10_134",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense for Policy per 10 USC §134. Principal Staff Assistant per DoDD 5111.01. Exercises SECDEF's §113 authority for defense policy, strategy, National Defense Strategy implementation, global force posture, and counterterrorism policy."
+  },
+  "usd_is": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "dodd_5143_01",
+     "usc_10_137",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense for Intelligence and Security per 10 USC §137. Principal Staff Assistant per DoDD 5143.01. Exercises SECDEF's §113 authority for Military Intelligence Program, personnel/physical/industrial security, and classified information protection. Redesignated from USD(I) in 2019."
+  },
+  "usd_comp": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "dodd_5111_18",
+     "usc_10_135",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense (Comptroller)/Chief Financial Officer per 10 USC §135. Principal Staff Assistant per DoDD 5111.18. Exercises SECDEF's §113 authority for budget formulation, fiscal policy, and financial management. DoD CFO per 31 USC Chapter 9."
+  },
+  "usd_pr": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "dodd_5124_02",
+     "usc_10_136",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense for Personnel and Readiness per 10 USC §136. Principal Staff Assistant per DoDD 5124.02. Exercises SECDEF's §113 authority for personnel policy, military readiness, total force management, health affairs, and National Guard/Reserve management."
+  },
+  "dod_cio": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "dodd_5144_02",
+     "usc_10_142",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "DoD Chief Information Officer per 10 USC §142. Direct report to SECDEF/DEPSECDEF per DoDD 5144.02. IT compliance standards for military departments. Controls DISA. Electromagnetic spectrum and cybersecurity architecture policy. Reviews service IT budgets. Critical link in DACO governance chain."
+  },
+  "dote": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_139",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Director of Operational Test and Evaluation per 10 USC §139. Direct report to SECDEF without intervening authority. Presidential appointment with Senate confirmation. Principal advisor on OT&E. Prescribes OT&E policies and monitors all operational testing across DoD."
+  },
+  "cape": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_139a",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Director of Cost Assessment and Program Evaluation per 10 USC §139a. Direct report to SECDEF without intervening authority. Presidential appointment with Senate confirmation. Independent cost estimation for MDAPs. Analysis of alternatives guidance. FY2024 NDAA added analytical standardization duties."
+  },
+  "cdao": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief Digital and Artificial Intelligence Officer. Established by SECDEF memorandum (2022). Consolidates JAIC, Defense Digital Service, CDO, and Advana under single authority. Reports directly to SECDEF/DEPSECDEF."
+  },
+  "asd_ncbdp": {
+   "dac": [
+    "usd_as"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_138",
+     "dodd_5135_02",
+     "usc_10_133b",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Assistant Secretary of Defense for Nuclear, Chemical, and Biological Defense per 10 USC §138. Reports to USD(A&S) per DoDD 5134.08. Exercises SECDEF's authority for nuclear/chemical/biological defense acquisition and sustainment programs."
+  },
+  "asd_ha": {
+   "dac": [
+    "usd_pr"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_138",
+     "dodd_5124_02",
+     "usc_10_136",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Assistant Secretary of Defense for Health Affairs per 10 USC §138. Reports to USD(P&R) per DoDD 5136.01. Exercises SECDEF's authority for military health system policy, Defense Health Agency oversight, and medical readiness."
+  },
+  "asd_solic": {
+   "dac": [
+    "usd_p"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_138",
+     "dodd_5111_01",
+     "usc_10_134",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Assistant Secretary of Defense for Special Operations and Low-Intensity Conflict per 10 USC §138(b)(2). Reports to USD(P) per DoDD 5111.10. Exercises SECDEF's authority for SO/LIC policy, planning, and oversight."
+  },
+  "asd_spa": {
+   "dac": [
+    "usd_p"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_138",
+     "dodd_5111_01",
+     "usc_10_134",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Assistant Secretary of Defense for Space Policy per 10 USC §138. Reports to USD(P). Exercises SECDEF's authority for space policy, strategy, and international space cooperation."
+  },
+  "secnav": {
+   "dac": [
+    "secdef"
+   ],
+   "ref": {
+    "dac": [
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Secretary of the Navy per 10 USC §8013. EX-II (5 USC §5313). Subject to authority, direction, and control of SECDEF per §8013(b). Responsible for all affairs of DoN. Constrained by 10 USC §162 — cannot operationally command COCOM-assigned forces. Delegates through two chains: ADCON (CNO/CMC) and Acquisition (ASN(RD&A)) per SECNAVINST 5400.15D."
   },
   "cjcs": {
    "adcon": [
@@ -4348,19 +5169,43 @@ const KMS_DATA = {
    "adcon": [
     "secnav"
    ],
-   "note": "Chief of Naval Operations per 10 USC §8033 (formerly §5033). Senior military officer of the Navy. Member JCS. Exercises ADCON over all Navy commands. UIC 00011. Source: SNDL."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief of Naval Operations per 10 USC §8033. Under authority, direction, and control of SECNAV. §8033(b)(4): Exercises supervision over Navy organizations as SECNAV determines — statutory basis for ADCON over all Navy Echelon 2 commands. Principal naval adviser to President, NSC, SECNAV. Member JCS. Does NOT have acquisition authority. UIC 00011."
   },
   "vcno": {
    "adcon": [
     "cno"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Vice Chief of Naval Operations. Principal deputy to CNO. Full authority to act for CNO in all matters not specifically reserved by law."
   },
   "cmc": {
    "adcon": [
     "secnav"
    ],
-   "note": "Commandant of the Marine Corps per 10 USC §8043 (formerly §5043). Senior military officer of the USMC. Member JCS."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Commandant of the Marine Corps per 10 USC §8043. Subject to authority, direction, and control of SECNAV. Directly responsible to SECNAV for administration, discipline, training, readiness, recruiting, support, and budgetary matters of USMC. Member JCS."
   },
   "acmc": {
    "adcon": [
@@ -4369,16 +5214,32 @@ const KMS_DATA = {
    "note": "Assistant Commandant of the Marine Corps per 10 USC §8044 (formerly §5044)."
   },
   "usd_as": {
-   "adcon": [
+   "dac": [
     "secdef"
    ],
-   "note": "Under Secretary of Defense for Acquisition & Sustainment. Oversees DoD-wide acquisition policy including DoDI 5000.02 Adaptive Acquisition Framework."
+   "ref": {
+    "dac": [
+     "dodd_5135_02",
+     "usc_10_133b",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense for Acquisition & Sustainment. Principal Staff Assistant and Defense Acquisition Executive per DoDD 5135.02. Exercises SECDEF's §113 authority for acquisition functions. MDA for ACAT I programs. Directive authority over Service Secretaries on acquisition matters. Created by FY2017 NDAA splitting USD(AT&L)."
   },
   "usd_re": {
-   "adcon": [
+   "dac": [
     "secdef"
    ],
-   "note": "Under Secretary of Defense for Research & Engineering."
+   "ref": {
+    "dac": [
+     "dodd_5137_02",
+     "usc_10_133a",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Under Secretary of Defense for Research & Engineering. Principal Staff Assistant and Chief Technology Officer per DoDD 5137.02. Exercises SECDEF's §113 authority for R&E policy, technology development, prototyping, and developmental testing. Created by FY2017 NDAA splitting USD(AT&L)."
   },
   "sa": {
    "adcon": [
@@ -4432,10 +5293,23 @@ const KMS_DATA = {
    "adcon": [
     "cmc"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Special Operations Command (Marine Raider Command). ADCON from CMC. OPCON to SOCOM per UCP.",
    "opcon": [
     "socom"
-   ],
-   "note": "Marine Forces Special Operations Command (Marine Raider Command). SOCOM Marine component. Est. 24 Feb 2006. Camp Lejeune, NC."
+   ]
   },
   "imef": {
    "adcon": [
@@ -4905,124 +5779,6 @@ const KMS_DATA = {
     "msc",
     "marforcom"
    ],
-   "pos": {
-    "potus": [
-     550,
-     20
-    ],
-    "secdef": [
-     550,
-     110
-    ],
-    "cjcs": [
-     800,
-     110
-    ],
-    "indopacom": [
-     30,
-     230
-    ],
-    "northcom": [
-     210,
-     230
-    ],
-    "eucom": [
-     390,
-     230
-    ],
-    "centcom": [
-     570,
-     230
-    ],
-    "southcom": [
-     750,
-     230
-    ],
-    "africom": [
-     930,
-     230
-    ],
-    "socom": [
-     30,
-     360
-    ],
-    "cybercom": [
-     210,
-     360
-    ],
-    "stratcom": [
-     390,
-     360
-    ],
-    "transcom": [
-     570,
-     360
-    ],
-    "spacecom": [
-     750,
-     360
-    ],
-    "compacflt": [
-     30,
-     490
-    ],
-    "marforpac": [
-     180,
-     490
-    ],
-    "usffc": [
-     330,
-     490
-    ],
-    "naveur": [
-     480,
-     490
-    ],
-    "marforeur": [
-     630,
-     490
-    ],
-    "navcent": [
-     780,
-     490
-    ],
-    "marforcent": [
-     930,
-     490
-    ],
-    "navso": [
-     1080,
-     490
-    ],
-    "navspecwar": [
-     30,
-     600
-    ],
-    "marsoc": [
-     180,
-     600
-    ],
-    "fltcybercom": [
-     330,
-     600
-    ],
-    "marforcyber": [
-     480,
-     600
-    ],
-    "spaceops": [
-     750,
-     490
-    ],
-    "msc": [
-     630,
-     600
-    ],
-    "marforcom": [
-     210,
-     600
-    ]
-   },
    "links": [
     {
      "s": "potus",
@@ -5213,128 +5969,6 @@ const KMS_DATA = {
     "marforpac",
     "marforres"
    ],
-   "pos": {
-    "secnav": [
-     530,
-     20
-    ],
-    "unsecnav": [
-     290,
-     20
-    ],
-    "asn_rda": [
-     80,
-     120
-    ],
-    "asn_eie": [
-     240,
-     120
-    ],
-    "asn_fmc": [
-     400,
-     120
-    ],
-    "asn_mra": [
-     560,
-     120
-    ],
-    "cno": [
-     730,
-     120
-    ],
-    "cmc": [
-     930,
-     120
-    ],
-    "vcno": [
-     730,
-     230
-    ],
-    "acmc": [
-     930,
-     230
-    ],
-    "usffc": [
-     30,
-     340
-    ],
-    "compacflt": [
-     200,
-     340
-    ],
-    "naveur": [
-     370,
-     340
-    ],
-    "navcent": [
-     540,
-     340
-    ],
-    "navso": [
-     710,
-     340
-    ],
-    "fltcybercom": [
-     880,
-     340
-    ],
-    "navsea": [
-     30,
-     450
-    ],
-    "navair": [
-     200,
-     450
-    ],
-    "navwar": [
-     370,
-     450
-    ],
-    "navsup": [
-     540,
-     450
-    ],
-    "navfac": [
-     710,
-     450
-    ],
-    "ssp": [
-     880,
-     450
-    ],
-    "netc": [
-     1050,
-     450
-    ],
-    "bumed": [
-     1220,
-     450
-    ],
-    "cnic": [
-     1050,
-     340
-    ],
-    "chnavpers": [
-     1220,
-     340
-    ],
-    "navresfor": [
-     1390,
-     340
-    ],
-    "marforcom": [
-     1050,
-     230
-    ],
-    "marforpac": [
-     1220,
-     230
-    ],
-    "marforres": [
-     1390,
-     230
-    ]
-   },
    "links": [
     {
      "s": "secnav",
@@ -6092,112 +6726,6 @@ const KMS_DATA = {
     "frcw",
     "pma262"
    ],
-   "pos": {
-    "cno": [
-     530,
-     20
-    ],
-    "asn_rda": [
-     780,
-     20
-    ],
-    "navair": [
-     530,
-     115
-    ],
-    "usffc": [
-     110,
-     115
-    ],
-    "compacflt": [
-     275,
-     115
-    ],
-    "airlant": [
-     110,
-     225
-    ],
-    "airpac": [
-     275,
-     225
-    ],
-    "peo_a": [
-     480,
-     225
-    ],
-    "peo_uw": [
-     628,
-     225
-    ],
-    "peo_t": [
-     776,
-     225
-    ],
-    "comfrc": [
-     924,
-     225
-    ],
-    "nawcad": [
-     1072,
-     225
-    ],
-    "nawcwd": [
-     1220,
-     225
-    ],
-    "pma265": [
-     340,
-     340
-    ],
-    "pma299": [
-     480,
-     340
-    ],
-    "pma261": [
-     620,
-     340
-    ],
-    "pma272": [
-     340,
-     430
-    ],
-    "pma276": [
-     480,
-     430
-    ],
-    "pma281": [
-     620,
-     430
-    ],
-    "pma275": [
-     760,
-     430
-    ],
-    "pma263": [
-     628,
-     340
-    ],
-    "frce": [
-     840,
-     340
-    ],
-    "frcse": [
-     980,
-     340
-    ],
-    "frcsw": [
-     1120,
-     340
-    ],
-    "frcw": [
-     1260,
-     340
-    ],
-    "pma262": [
-     776,
-     340
-    ]
-   },
    "links": [
     {
      "s": "asn_rda",
@@ -6440,188 +6968,6 @@ const KMS_DATA = {
     "marsoc",
     "marforcyber"
    ],
-   "pos": {
-    "cmc": [
-     640,
-     25
-    ],
-    "acmc": [
-     380,
-     105
-    ],
-    "marsoc": [
-     900,
-     105
-    ],
-    "marforcyber": [
-     1100,
-     105
-    ],
-    "marforcom": [
-     100,
-     205
-    ],
-    "marforpac": [
-     380,
-     205
-    ],
-    "marforres": [
-     660,
-     205
-    ],
-    "marforcent": [
-     940,
-     205
-    ],
-    "marforeur": [
-     1140,
-     205
-    ],
-    "iimef": [
-     100,
-     305
-    ],
-    "imef": [
-     340,
-     305
-    ],
-    "iiimef": [
-     540,
-     305
-    ],
-    "fmaw": [
-     740,
-     305
-    ],
-    "mlr": [
-     620,
-     395
-    ],
-    "smaw": [
-     100,
-     395
-    ],
-    "tmaw": [
-     350,
-     395
-    ],
-    "dmaw": [
-     560,
-     395
-    ],
-    "mag14": [
-     15,
-     485
-    ],
-    "mag26": [
-     115,
-     485
-    ],
-    "mag29": [
-     215,
-     485
-    ],
-    "mag31": [
-     315,
-     485
-    ],
-    "mag11": [
-     415,
-     485
-    ],
-    "mag13": [
-     515,
-     485
-    ],
-    "mag16": [
-     615,
-     485
-    ],
-    "mag39": [
-     715,
-     485
-    ],
-    "mag12": [
-     815,
-     485
-    ],
-    "mag24": [
-     915,
-     485
-    ],
-    "mag36": [
-     1015,
-     485
-    ],
-    "mag41": [
-     1115,
-     485
-    ],
-    "mag42": [
-     1215,
-     485
-    ],
-    "mag49": [
-     1315,
-     485
-    ],
-    "mals14": [
-     15,
-     575
-    ],
-    "mals26": [
-     115,
-     575
-    ],
-    "mals29": [
-     215,
-     575
-    ],
-    "mals31": [
-     315,
-     575
-    ],
-    "mals11": [
-     415,
-     575
-    ],
-    "mals13": [
-     515,
-     575
-    ],
-    "mals16": [
-     615,
-     575
-    ],
-    "mals39": [
-     715,
-     575
-    ],
-    "mals12": [
-     815,
-     575
-    ],
-    "mals24": [
-     915,
-     575
-    ],
-    "mals36": [
-     1015,
-     575
-    ],
-    "mals41": [
-     1115,
-     575
-    ],
-    "mals42": [
-     1215,
-     575
-    ],
-    "mals49": [
-     1315,
-     575
-    ]
-   },
    "links": [
     {
      "s": "cmc",
@@ -6886,156 +7232,6 @@ const KMS_DATA = {
     "peo_t",
     "secaf"
    ],
-   "pos": {
-    "secnav": [
-     640,
-     20
-    ],
-    "asn_rda": [
-     640,
-     95
-    ],
-    "usd_as": [
-     900,
-     20
-    ],
-    "usd_re": [
-     1060,
-     20
-    ],
-    "navsea": [
-     90,
-     185
-    ],
-    "navair": [
-     330,
-     185
-    ],
-    "navwar": [
-     570,
-     185
-    ],
-    "peo_ships": [
-     30,
-     275
-    ],
-    "peo_subs": [
-     130,
-     275
-    ],
-    "peo_cvn": [
-     220,
-     275
-    ],
-    "peo_iws": [
-     310,
-     275
-    ],
-    "peo_a": [
-     285,
-     275
-    ],
-    "peo_uw": [
-     400,
-     275
-    ],
-    "peo_c4i": [
-     540,
-     275
-    ],
-    "pms400": [
-     20,
-     360
-    ],
-    "pms317": [
-     105,
-     360
-    ],
-    "pms385": [
-     185,
-     360
-    ],
-    "pms425": [
-     265,
-     360
-    ],
-    "pms394": [
-     345,
-     360
-    ],
-    "pma265": [
-     270,
-     360
-    ],
-    "pma299": [
-     365,
-     360
-    ],
-    "pma261": [
-     455,
-     360
-    ],
-    "pma272": [
-     545,
-     360
-    ],
-    "pma276": [
-     635,
-     360
-    ],
-    "pma281": [
-     725,
-     360
-    ],
-    "pma263": [
-     810,
-     360
-    ],
-    "pmw120": [
-     530,
-     360
-    ],
-    "pmw130": [
-     630,
-     360
-    ],
-    "peo_lmw": [
-     400,
-     275
-    ],
-    "peo_dig": [
-     680,
-     275
-    ],
-    "pms500": [
-     425,
-     360
-    ],
-    "pmw160": [
-     720,
-     360
-    ],
-    "pmw240": [
-     810,
-     360
-    ],
-    "pma207": [
-     900,
-     360
-    ],
-    "peo_t": [
-     485,
-     275
-    ],
-    "f35jpo": [
-     1060,
-     185
-    ],
-    "secaf": [
-     1060,
-     95
-    ]
-   },
    "links": [
     {
      "s": "secnav",
@@ -7895,60 +8091,6 @@ const KMS_DATA = {
     "pms394",
     "pms500"
    ],
-   "pos": {
-    "asn_rda": [
-     400,
-     20
-    ],
-    "navsea": [
-     400,
-     100
-    ],
-    "peo_ships": [
-     100,
-     190
-    ],
-    "peo_subs": [
-     280,
-     190
-    ],
-    "peo_cvn": [
-     460,
-     190
-    ],
-    "peo_iws": [
-     640,
-     190
-    ],
-    "peo_lmw": [
-     820,
-     190
-    ],
-    "pms400": [
-     50,
-     280
-    ],
-    "pms317": [
-     820,
-     280
-    ],
-    "pms385": [
-     230,
-     280
-    ],
-    "pms425": [
-     330,
-     280
-    ],
-    "pms394": [
-     460,
-     280
-    ],
-    "pms500": [
-     150,
-     280
-    ]
-   },
    "links": [
     {
      "s": "asn_rda",
@@ -8581,6 +8723,210 @@ const KMS_DATA = {
      "s": "navwar",
      "t": "pmw130",
      "a": "ta"
+    }
+   ]
+  },
+  "osd": {
+   "label": "Office of the Secretary of Defense — OSD Principal Staff",
+   "ids": [
+    "potus",
+    "secdef",
+    "depsecdef",
+    "usd_as",
+    "usd_re",
+    "usd_p",
+    "usd_comp",
+    "usd_pr",
+    "usd_is",
+    "dod_cio",
+    "dote",
+    "cape",
+    "cdao",
+    "asd_ncbdp",
+    "asd_ha",
+    "asd_solic",
+    "asd_spa",
+    "secnav",
+    "sa",
+    "secaf"
+   ],
+   "pos": {
+    "potus": [
+     580,
+     20
+    ],
+    "secdef": [
+     580,
+     140
+    ],
+    "depsecdef": [
+     200,
+     270
+    ],
+    "cdao": [
+     400,
+     270
+    ],
+    "cape": [
+     600,
+     270
+    ],
+    "dote": [
+     800,
+     270
+    ],
+    "dod_cio": [
+     1000,
+     270
+    ],
+    "usd_as": [
+     10,
+     410
+    ],
+    "usd_re": [
+     200,
+     410
+    ],
+    "usd_p": [
+     400,
+     410
+    ],
+    "usd_comp": [
+     600,
+     410
+    ],
+    "usd_pr": [
+     800,
+     410
+    ],
+    "usd_is": [
+     1000,
+     410
+    ],
+    "asd_ncbdp": [
+     10,
+     540
+    ],
+    "asd_solic": [
+     330,
+     540
+    ],
+    "asd_spa": [
+     520,
+     540
+    ],
+    "asd_ha": [
+     800,
+     540
+    ],
+    "secnav": [
+     330,
+     680
+    ],
+    "sa": [
+     580,
+     680
+    ],
+    "secaf": [
+     830,
+     680
+    ]
+   },
+   "links": [
+    {
+     "s": "potus",
+     "t": "secdef",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "depsecdef",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_as",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_re",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_p",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_comp",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_pr",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "usd_is",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "dod_cio",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "dote",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "cape",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "cdao",
+     "a": "dac"
+    },
+    {
+     "s": "usd_as",
+     "t": "asd_ncbdp",
+     "a": "dac"
+    },
+    {
+     "s": "usd_pr",
+     "t": "asd_ha",
+     "a": "dac"
+    },
+    {
+     "s": "usd_p",
+     "t": "asd_solic",
+     "a": "dac"
+    },
+    {
+     "s": "usd_p",
+     "t": "asd_spa",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "secnav",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "sa",
+     "a": "dac"
+    },
+    {
+     "s": "secdef",
+     "t": "secaf",
+     "a": "dac"
     }
    ]
   }
@@ -9403,6 +9749,903 @@ const KMS_DATA = {
    ],
    "summary": "FLTCYBERCOM established as echelon 2 NCC to USCYBERCOM and USSTRATCOM. Also designated as Navy SCC to DIRNSA/CHCSS. CNO designates COMFLTCYBERCOM as \"central operational authority\" for Navy networks, cryptology, SIGINT, IO, cyber, EW and space. 10th Fleet is the numbered fleet commander exercising OPCON of assigned forces.",
    "body": "<p>Key provisions:</p><ul><li><strong>Para 2a:</strong> FLTCYBERCOM established 29 Jan 2010 as echelon 2 NCC to USSTRATCOM/USCYBERCOM.</li><li><strong>Para 2b:</strong> Designated as Navy SCC to DIRNSA/CHCSS — primary Service authority for cryptologic activities.</li><li><strong>Para 2c:</strong> \"Central operational authority\" for Navy networks, cryptology, SIGINT, IO, cyber, EW, space. Scope includes all Navy-operated/defended networks except combat/weapon system control functions.</li><li><strong>Encl 1, 1a:</strong> COMFLTCYBERCOM missions — direct cyber ops, operate/defend Navy portion of GIG, manage MTE for NCC/SCC.</li><li><strong>Encl 1, 1b:</strong> COMTENTHFLT — numbered fleet commander, exercises OPCON of assigned forces.</li></ul>"
+  },
+  {
+   "id": "constitution_art2",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "Art. II, §2",
+   "title": "U.S. Constitution — Article II, Section 2: Commander in Chief Clause",
+   "date": "1788-06-21",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Constitutional Convention",
+   "affects": [
+    "potus",
+    "secdef"
+   ],
+   "chain": [
+    "We the People",
+    "POTUS"
+   ],
+   "refs": [],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "The President shall be Commander in Chief of the Army and Navy of the United States. This is the constitutional foundation for ALL military authority. Every chain of command traces to this clause.",
+   "body": "<p><strong>Article II, Section 2, Clause 1:</strong> \"The President shall be Commander in Chief of the Army and Navy of the United States, and of the Militia of the several States, when called into the actual Service of the United States.\"</p><p><strong>Article II, Section 2, Clause 2 (Appointments):</strong> Principal officers (EX-I, including SECDEF) require Senate confirmation. This ensures civilian control through democratic accountability.</p>"
+  },
+  {
+   "id": "usc_10_113",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §113",
+   "title": "10 USC §113 — Secretary of Defense",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "potus",
+    "secdef",
+    "depsecdef",
+    "secnav"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF"
+   ],
+   "refs": [
+    "Art. II, §2",
+    "National Security Act of 1947"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes SECDEF as head of DoD. §113(b): Principal assistant to the President in all defense matters. §113(c): Exercises authority, direction, and control over DoD. This statute is the single delegation point through which ALL military authority flows from the President to the department.",
+   "body": "<p><strong>§113(a):</strong> Secretary of Defense appointed from civilian life by the President with Senate consent. EX-I position (5 USC §5312).</p><p><strong>§113(b):</strong> Principal assistant to the President in all matters relating to DoD.</p><p><strong>§113(c):</strong> \"The Secretary shall have authority, direction, and control over the Department of Defense.\" This triad — authority, direction, and control — is the maximum statutory grant.</p><p><strong>§113(d):</strong> Cannot be appointed within 7 years of relief from active duty (waiver requires separate legislation).</p>"
+  },
+  {
+   "id": "usc_10_132",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §132",
+   "title": "10 USC §132 — Deputy Secretary of Defense",
+   "date": "1949-08-10",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "depsecdef",
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "DEPSECDEF"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes DepSecDef as SECDEF's alter ego. §132(b): First in sequence to act for SECDEF. Not a separate chain link — exercises SECDEF's authority when SECDEF is absent or disabled.",
+   "body": "<p><strong>§132(a):</strong> Appointed from civilian life by President with Senate consent.</p><p><strong>§132(b):</strong> Acts for and exercises powers of SECDEF when SECDEF dies, resigns, or is unable to perform duties.</p><p><strong>§132(c):</strong> Performs duties prescribed by SECDEF.</p>"
+  },
+  {
+   "id": "usc_10_133a",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §133a",
+   "title": "10 USC §133a — Under Secretary of Defense for Research and Engineering",
+   "date": "2018-02-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(R&E)"
+   ],
+   "refs": [
+    "10 USC §113",
+    "P.L. 114-328 §901"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes USD(R&E) as Chief Technology Officer of DoD. Created by FY2017 NDAA splitting USD(AT&L). Principal advisor to SECDEF on R&E. Establishes policies on defense R&E, technology development, prototyping, and developmental testing.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_133b",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §133b",
+   "title": "10 USC §133b — Under Secretary of Defense for Acquisition and Sustainment",
+   "date": "2018-02-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef",
+    "asn_rda"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(A&S)",
+    "Service CAEs"
+   ],
+   "refs": [
+    "10 USC §113",
+    "P.L. 114-328 §901"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint",
+    "t-ta"
+   ],
+   "summary": "Establishes USD(A&S) as Defense Acquisition Executive and chief acquisition officer. Created by FY2017 NDAA splitting USD(AT&L). Exercises SECDEF's authority over acquisition per DoDD 5135.02. Milestone Decision Authority for ACAT I programs. Service acquisition executives (e.g., ASN(RD&A)) operate under USD(A&S) policy framework.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_134",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §134",
+   "title": "10 USC §134 — Under Secretary of Defense for Policy",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(P)"
+   ],
+   "refs": [
+    "10 USC §113",
+    "P.L. 99-433"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes USD(P) for overall direction and supervision of defense policy, strategy, plans, and international affairs. National Defense Strategy implementation. Global force posture policy. Counterterrorism policy oversight.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_135",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §135",
+   "title": "10 USC §135 — Under Secretary of Defense (Comptroller)",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(C)"
+   ],
+   "refs": [
+    "10 USC §113",
+    "31 USC Chapter 9"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes USD(C) as Chief Financial Officer of DoD. Advises SECDEF on budgetary and fiscal matters. Supervises budget preparation. All service budgets flow through the DoD comptroller process.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_136",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §136",
+   "title": "10 USC §136 — Under Secretary of Defense for Personnel and Readiness",
+   "date": "1993-11-30",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(P&R)"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes USD(P&R) for personnel policy, military readiness, total force management, health affairs, and National Guard/Reserve component management. Sets DoD-wide deployment standards binding on all services.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_137",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §137",
+   "title": "10 USC §137 — Under Secretary of Defense for Intelligence and Security",
+   "date": "2002-12-02",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(I&S)"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes USD(I&S) for intelligence and security oversight. Military Intelligence Program policy, planning, execution. Personnel security, physical security, industrial security, classified information protection. Redesignated from USD(I) to include 'and Security' in 2019.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_138",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §138",
+   "title": "10 USC §138 — Assistant Secretaries of Defense",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USDs",
+    "ASDs"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Authorizes 20 Assistant Secretaries of Defense appointed by President with Senate consent. Named positions include ASD(SO/LIC), ASD(Legislative Affairs), ASD(Cyber Policy). ASDs serve under their respective USDs within the OSD principal staff structure.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_139",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §139",
+   "title": "10 USC §139 — Director of Operational Test and Evaluation",
+   "date": "1983-09-24",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "DOT&E"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint",
+    "t-ta"
+   ],
+   "summary": "Establishes DOT&E as direct report to SECDEF without intervening authority. Principal advisor on operational test and evaluation. Prescribes OT&E policies. Monitors and reviews all OT&E across DoD. Presidential appointment with Senate confirmation.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_139a",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §139a",
+   "title": "10 USC §139a — Director of Cost Assessment and Program Evaluation",
+   "date": "2009-10-28",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CAPE"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Establishes CAPE as direct report to SECDEF without intervening authority. Independent cost estimation for MDAPs. Analysis of alternatives guidance. PPBE system analysis. FY2024 NDAA added analytical standardization duties.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_142",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §142",
+   "title": "10 USC §142 — Chief Information Officer of the Department of Defense",
+   "date": "1996-02-10",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "DoD CIO"
+   ],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint",
+    "t-cyber"
+   ],
+   "summary": "Establishes DoD CIO as direct report to SECDEF/DEPSECDEF. IT compliance standards for military departments. Controls DISA. Electromagnetic spectrum policy. Cybersecurity architecture. Reviews service IT budgets annually. Critical link in DACO governance chain.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_162",
+   "type": "STATUTE",
+   "service": "Joint",
+   "number": "10 USC §162",
+   "title": "10 USC §162 — Combatant Commands: Assigned Forces; Chain of Command",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "potus",
+    "secdef",
+    "secnav",
+    "indopacom",
+    "centcom",
+    "eucom",
+    "northcom",
+    "cybercom"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CCDRs / Service Secretaries"
+   ],
+   "refs": [
+    "10 USC §113",
+    "10 USC §164",
+    "Art. II, §2",
+    "P.L. 99-433"
+   ],
+   "tags": [
+    "t-law",
+    "t-joint"
+   ],
+   "summary": "Defines the dual chains of command. §162(b): Operational chain runs POTUS → SECDEF → CCDRs. Administrative chain runs POTUS → SECDEF → Service Secretaries. CJCS transmits communications (§163) but is NOT in either chain. This is the Goldwater-Nichols keystone statute.",
+   "body": "<p><strong>§162(b):</strong> \"Unless otherwise directed by the President, the chain of command to a unified or specified combatant command runs — (1) from the President to the Secretary of Defense; and (2) from the Secretary of Defense to the commander of the combatant command.\"</p><p>The administrative chain (POTUS → SECDEF → Service Secretaries) is established by the combined effect of §113 and §8013/§7013/§9013.</p>"
+  },
+  {
+   "id": "usc_10_8013",
+   "type": "STATUTE",
+   "service": "USN",
+   "number": "10 USC §8013",
+   "title": "10 USC §8013 — Secretary of the Navy",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secnav",
+    "secdef",
+    "cno",
+    "cmc"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV"
+   ],
+   "refs": [
+    "10 USC §113",
+    "10 USC §162"
+   ],
+   "tags": [
+    "t-law",
+    "t-navy"
+   ],
+   "summary": "Establishes SECNAV. §8013(b): Subject to authority, direction, and control of SECDEF, responsible for all affairs of the DoN. EX-II position (5 USC §5313). Authority over both Navy and Marine Corps. §8013(c): Subject to Chapter 6 (combatant commands) — SECNAV's authority does NOT extend to operational command of forces assigned to CCDRs.",
+   "body": "<p><strong>§8013(a):</strong> Appointed from civilian life by President with Senate consent.</p><p><strong>§8013(b):</strong> \"Subject to the authority, direction, and control of the Secretary of Defense and subject to the provisions of chapter 6 of this title, the Secretary of the Navy is responsible for, and has the authority necessary to conduct, all affairs of the Department of the Navy.\"</p><p><strong>§8013(j):</strong> Authority regarding the United States Marine Corps — CMC reports to SECNAV.</p>"
+  },
+  {
+   "id": "dodd_5100_01",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5100.01",
+   "title": "DoDD 5100.01 — Functions of the Department of Defense and Its Major Components",
+   "date": "2010-12-21",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef",
+    "depsecdef",
+    "secnav",
+    "cno",
+    "cmc"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF"
+   ],
+   "refs": [
+    "10 USC §113",
+    "10 USC §162",
+    "Art. II, §2"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Master directive defining functions of DoD, OSD, Military Departments, CJCS, CCDRs, and Defense Agencies. Establishes that OSD exercises authority, direction, and control on behalf of SECDEF. Distinguishes OSD oversight from Service command authority. The organizational constitution of the Department of Defense.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5135_02",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5135.02",
+   "title": "DoDD 5135.02 — Under Secretary of Defense for Acquisition and Sustainment",
+   "date": "2020-07-15",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef",
+    "asn_rda"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(A&S)"
+   ],
+   "refs": [
+    "10 USC §133b",
+    "10 USC §113",
+    "DoDD 5000.01"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-ta"
+   ],
+   "summary": "Chartering directive for USD(A&S). Designates as Principal Staff Assistant (PSA) and Defense Acquisition Executive. Exercises SECDEF's authority for acquisition functions. Directive authority over Service Secretaries on acquisition matters. Chairs Defense Acquisition Board. MDA for ACAT I programs. This directive IS the delegation instrument — it pours the concrete on the §133b foundation.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5137_02",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5137.02",
+   "title": "DoDD 5137.02 — Under Secretary of Defense for Research and Engineering",
+   "date": "2020-07-15",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(R&E)"
+   ],
+   "refs": [
+    "10 USC §133a",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-ta"
+   ],
+   "summary": "Chartering directive for USD(R&E). Designates as PSA and Chief Technology Officer. Exercises SECDEF's authority for R&E policy, technology development, prototyping, experimentation, and developmental testing. Sets priorities that Service R&E organizations must follow.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5111_01",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5111.01",
+   "title": "DoDD 5111.01 — Under Secretary of Defense for Policy",
+   "date": "2019-07-23",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(P)"
+   ],
+   "refs": [
+    "10 USC §134",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Chartering directive for USD(P). Designates as PSA for defense policy. Exercises SECDEF's authority for National Defense Strategy implementation, campaign/contingency plan guidance, global force posture, and counterterrorism policy.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5111_18",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5111.18",
+   "title": "DoDD 5111.18 — Under Secretary of Defense (Comptroller)/CFO",
+   "date": "2020-04-06",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(C)"
+   ],
+   "refs": [
+    "10 USC §135",
+    "10 USC §113",
+    "31 USC Chapter 9"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Chartering directive for USD(C)/CFO. Designates as PSA and DoD Chief Financial Officer. Exercises SECDEF's authority for budget formulation, fiscal policy, financial management, and audit. All service budgets flow through the comptroller framework this directive establishes.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5124_02",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5124.02",
+   "title": "DoDD 5124.02 — Under Secretary of Defense for Personnel and Readiness",
+   "date": "2008-06-23",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(P&R)"
+   ],
+   "refs": [
+    "10 USC §136",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Chartering directive for USD(P&R). Designates as PSA for personnel, readiness, health affairs, and total force management. Exercises SECDEF's authority for military/civilian personnel policy binding on all services.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5143_01",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5143.01",
+   "title": "DoDD 5143.01 — Under Secretary of Defense for Intelligence and Security",
+   "date": "2020-10-29",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "USD(I&S)"
+   ],
+   "refs": [
+    "10 USC §137",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Chartering directive for USD(I&S). Designates as PSA for intelligence and security. Exercises SECDEF's authority for Military Intelligence Program, personnel/physical/industrial security, classified information protection, and intelligence oversight.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5144_02",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5144.02",
+   "title": "DoDD 5144.02 — DoD Chief Information Officer",
+   "date": "2017-11-21",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECDEF",
+   "affects": [
+    "secdef"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "DoD CIO"
+   ],
+   "refs": [
+    "10 USC §142",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-cyber"
+   ],
+   "summary": "Chartering directive for DoD CIO. Reports directly to SECDEF/DEPSECDEF. Exercises SECDEF's authority for IT standards, cybersecurity architecture, electromagnetic spectrum policy, DISA oversight. Reviews service IT budgets. Critical node in DACO governance chain linking cyber policy to operational cyber authority.",
+   "body": ""
+  },
+  {
+   "id": "secnavinst_5400_15d",
+   "type": "SECNAVINST",
+   "service": "USN",
+   "number": "SECNAVINST 5400.15D",
+   "title": "SECNAVINST 5400.15D — DoN Research, Development and Acquisition",
+   "date": "2021-01-19",
+   "classification": "UNCLASSIFIED",
+   "issuer": "SECNAV",
+   "affects": [
+    "secnav",
+    "asn_rda",
+    "navair",
+    "navsea",
+    "navwar",
+    "peo_a",
+    "peo_uw",
+    "peo_t",
+    "peo_ships",
+    "peo_subs",
+    "peo_iws",
+    "peo_cvn",
+    "peo_lmw",
+    "peo_c4i",
+    "peo_dig"
+   ],
+   "chain": [
+    "SECNAV",
+    "ASN(RD&A)",
+    "PEOs",
+    "PMs"
+   ],
+   "refs": [
+    "10 USC §8016",
+    "DoDD 5000.01",
+    "DoDI 5000.02"
+   ],
+   "tags": [
+    "t-navy",
+    "t-doc",
+    "t-ta"
+   ],
+   "summary": "Establishes the DoN two-chain structure. Chain 1: SECNAV→CNO→commands (ADCON). Chain 2: SECNAV→ASN(RD&A)→PEOs→PMs (Acquisition Authority). Defines Technical Authority (TA), Acquisition Authority (AA), and their separation at SYSCOMs. ASN(RD&A) designated as Service Acquisition Executive. SYSCOMs are PEO Holding Commands providing workforce and TA, NOT acquisition authority.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_8033",
+   "type": "STATUTE",
+   "service": "USN",
+   "number": "10 USC §8033",
+   "title": "10 USC §8033 — Chief of Naval Operations",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "cno",
+    "secnav"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV",
+    "CNO"
+   ],
+   "refs": [
+    "10 USC §8013",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-navy"
+   ],
+   "summary": "Establishes CNO duties. §8033(b): Under authority, direction, and control of SECNAV. §8033(b)(4): Exercises supervision over Navy and Marine Corps organizations as SECNAV determines — statutory basis for ADCON. CNO is principal naval adviser to President, NSC, and SECNAV.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_8043",
+   "type": "STATUTE",
+   "service": "USMC",
+   "number": "10 USC §8043",
+   "title": "10 USC §8043 — Commandant of the Marine Corps",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "cmc",
+    "secnav"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV",
+    "CMC"
+   ],
+   "refs": [
+    "10 USC §8013",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-law",
+    "t-usmc"
+   ],
+   "summary": "Establishes CMC duties. Subject to authority, direction, and control of SECNAV. §8043(a): Directly responsible to SECNAV for administration, discipline, training, readiness, recruiting, support, and budgetary matters of the Marine Corps.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_8016",
+   "type": "STATUTE",
+   "service": "USN",
+   "number": "10 USC §8016",
+   "title": "10 USC §8016 — Assistant Secretaries of the Navy",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secnav",
+    "asn_rda"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV",
+    "ASNs"
+   ],
+   "refs": [
+    "10 USC §8013"
+   ],
+   "tags": [
+    "t-law",
+    "t-navy"
+   ],
+   "summary": "Authorizes up to 4 ASNs appointed by President with Senate consent. Functional assignments set by SECNAV (not statute): ASN(RD&A), ASN(M&RA), ASN(FM&C), ASN(EI&E). ASN(RD&A) designated as DoN Service Acquisition Executive per SECNAVINST 5400.15D.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_8015",
+   "type": "STATUTE",
+   "service": "USN",
+   "number": "10 USC §8015",
+   "title": "10 USC §8015 — Under Secretary of the Navy",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "U.S. Congress",
+   "affects": [
+    "secnav"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV",
+    "UNSECNAV"
+   ],
+   "refs": [
+    "10 USC §8013"
+   ],
+   "tags": [
+    "t-law",
+    "t-navy"
+   ],
+   "summary": "Establishes UNSECNAV. Acts as SECNAV when vacancy or absence/disability. First in SECNAV succession chain. All authority delegated from SECNAV — no independent statutory authority.",
+   "body": ""
+  },
+  {
+   "id": "dodd_5000_01",
+   "type": "DODD",
+   "service": "Joint",
+   "number": "DoDD 5000.01",
+   "title": "DoDD 5000.01 — The Defense Acquisition System",
+   "date": "2020-09-09",
+   "classification": "UNCLASSIFIED",
+   "issuer": "USD(A&S)",
+   "affects": [
+    "secdef",
+    "asn_rda",
+    "navair",
+    "navsea",
+    "navwar"
+   ],
+   "chain": [
+    "SECDEF",
+    "USD(A&S)",
+    "Service SAEs",
+    "PEOs",
+    "PMs"
+   ],
+   "refs": [
+    "10 USC §133b",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-ta"
+   ],
+   "summary": "Governs the Defense Acquisition System. Requires each military department to designate a Service Acquisition Executive (SAE). For DoN: ASN(RD&A). Establishes MDA hierarchy: USD(A&S) for ACAT I, SAE for ACAT II/III. Foundation for PEO/PM authority structure.",
+   "body": ""
+  },
+  {
+   "id": "dodi_8530_01",
+   "type": "DODI",
+   "service": "Joint",
+   "number": "DoDI 8530.01",
+   "title": "DoDI 8530.01 — Cybersecurity Activities Support to DoD Information Network Operations",
+   "date": "2016-03-07",
+   "classification": "UNCLASSIFIED",
+   "issuer": "DoD CIO",
+   "affects": [
+    "cybercom",
+    "dcdc",
+    "fltcybercom",
+    "marforcyber"
+   ],
+   "chain": [
+    "SECDEF",
+    "DoD CIO",
+    "CYBERCOM",
+    "DCDC",
+    "Service Cyber Components"
+   ],
+   "refs": [
+    "10 USC §113",
+    "10 USC §142",
+    "10 USC §164"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-cyber"
+   ],
+   "summary": "Establishes Directive Authority for Cyberspace Operations (DACO). Defines defensive cyberspace operations framework. DACO flows from CYBERCOM through DCDC to service cyber components (FLTCYBERCOM, MARFORCYBER, ARCYBER, AF16). Foundation for all cyber authority relationships in the KMS.",
+   "body": ""
   }
  ],
  "timeline": [

@@ -18,6 +18,8 @@ const DOCS  = KMS_DATA.documents;
 const TL    = KMS_DATA.timeline;
 
 const nodeIds = new Set(Object.keys(NODES));
+const docIds  = new Set();
+for (const doc of DOCS) { if (doc.id) docIds.add(doc.id); }
 
 let errors   = 0;
 let warnings = 0;
@@ -53,7 +55,7 @@ info('Node field and coordinate checks complete');
 
 // ─── 3. Authority validation ─────────────────────────────────────
 console.log('\n=== Authority Validation ===');
-const authArrayKeys = ['opcon', 'adcon', 'aa', 'ta', 'daco', 'lcsp'];
+const authArrayKeys = ['opcon', 'adcon', 'aa', 'ta', 'daco', 'lcsp', 'dac'];
 
 for (const [id, entry] of Object.entries(AUTH)) {
   if (!nodeIds.has(id)) error(`Auth entry "${id}" does not match any node`);
@@ -71,6 +73,26 @@ for (const [id, entry] of Object.entries(AUTH)) {
 
   if (entry.mte && typeof entry.mte === 'string') {
     if (!nodeIds.has(entry.mte)) error(`Auth "${id}".mte references unknown node "${entry.mte}"`);
+  }
+
+  // Validate ref field (document reference chains)
+  if (entry.ref) {
+    if (typeof entry.ref !== 'object' || Array.isArray(entry.ref)) {
+      error(`Auth "${id}".ref should be an object keyed by authority type`);
+    } else {
+      for (const [refKey, refArr] of Object.entries(entry.ref)) {
+        if (!Array.isArray(refArr)) {
+          error(`Auth "${id}".ref.${refKey} should be an array of document IDs`);
+          continue;
+        }
+        if (refArr.length === 0) {
+          warn(`Auth "${id}".ref.${refKey} is an empty array`);
+        }
+        for (const did of refArr) {
+          if (!docIds.has(did)) error(`Auth "${id}".ref.${refKey} references unknown document "${did}"`);
+        }
+      }
+    }
   }
 }
 info('Authority reference checks complete');
@@ -101,14 +123,14 @@ info('View reference checks complete');
 // ─── 5. Document validation ──────────────────────────────────────
 console.log('\n=== Document Validation ===');
 
-const docIds = new Set();
+const seenDocIds = new Set();
 for (let i = 0; i < DOCS.length; i++) {
   const doc = DOCS[i];
   const label = doc.id || doc.number || `index ${i}`;
 
   if (doc.id) {
-    if (docIds.has(doc.id)) error(`Duplicate document id: "${doc.id}"`);
-    docIds.add(doc.id);
+    if (seenDocIds.has(doc.id)) error(`Duplicate document id: "${doc.id}"`);
+    seenDocIds.add(doc.id);
   }
 
   if (!doc.title) warn(`Document "${label}" has no title`);

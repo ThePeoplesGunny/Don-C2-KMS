@@ -78,8 +78,16 @@ KMS_DATA = {
       ta:     [nodeId, ...],    // Technical authority sources (peer list, NOT a chain)
       lcsp:   [nodeId, ...],    // LCSP data return targets (peer list, NOT a chain)
       aa:     [nodeId, ...],    // Administrative authority sources (peer list, NOT a chain)
-      mte:    nodeId|null       // Manning/training entity
+      mte:    nodeId|null,      // Manning/training entity
+      ref: {                    // Document reference chains (optional — for incremental backfill)
+        [authType]: [docId, ...]  // Ordered: immediate instrument → Constitution
+      },
+      note:   string            // Free-text legal/organizational context
     }
+    // ref example — USD(A&S) DAC authority grounded to Constitution:
+    //   ref: { dac: ["dodd_5135_02", "usc_10_133b", "usc_10_113", "constitution_art2"] }
+    // Each docId MUST exist in the documents array (validator enforces).
+    // Convention: document IDs use format "type_number" (e.g., "usc_10_113", "dodd_5135_02").
   },
   views: {
     [viewId]: {
@@ -116,11 +124,13 @@ KMS_DATA = {
 
 ## Rules for data changes
 
-1. **Run `npm test` after every data edit.** The validator catches orphaned references, missing fields, invalid coordinates, and duplicate IDs.
+1. **Run `npm test` after every data edit.** The validator catches orphaned references, missing fields, invalid coordinates, duplicate IDs, and broken ref→document links.
 2. **Every authority relationship must trace to a specific legal authority** — Constitution, Title 10, DoD Directive, DoN instruction, or joint publication. No "it's just how it works" entries.
-3. **Node IDs are lowercase, no spaces** — use short recognizable abbreviations (e.g. `navair`, `pma261`, `mals16`).
-4. **Views must have positions for all their nodes.** The validator will warn on missing positions.
-5. **Do not modify app.js rendering logic when asked to change data.** Data changes go in `kms-data.js` only.
+3. **Every auth entry should have a `ref` object** with document chains tracing each authority type back to the Constitution. Documents referenced must exist in the `documents` array.
+4. **Data before design.** Do not design layouts or visual treatments for authority chains that haven't been fully researched and codified with ref chains. Fix the data first; the right visualization follows.
+5. **Node IDs are lowercase, no spaces** — use short recognizable abbreviations (e.g. `navair`, `pma261`, `mals16`).
+6. **Views may use auto-layout (d3.tree) or manual positions.** Views without a complete `pos` object use `treeLayoutView()` automatically.
+7. **Do not modify app.js rendering logic when asked to change data.** Data changes go in `kms-data.js` only.
 
 ## Rules for code changes
 

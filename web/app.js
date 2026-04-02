@@ -33,6 +33,7 @@ const SBGCOL={USN:'c-navy',USMC:'c-usmc',Army:'c-army',Joint:'c-joint',Cyber:'c-
 
 
 function allDocs(){return[...BUILTIN,...S.docs];}
+var DOC_MAP={};BUILTIN.forEach(function(d){DOC_MAP[d.id]=d;});
 function allNodeIds(){const s=new Set();Object.values(VIEWS).forEach(v=>v.ids.forEach(id=>s.add(id)));return[...s].sort();}
 function nlbl(id){return NODES[id]?NODES[id].lbl:id;}
 function tclr(t){return TCOL[t]||'#888899';}
@@ -69,13 +70,14 @@ function showPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('p-'+id).classList.add('on');
-  var map={org:0,orders:1,timeline:2,registry:3,accuracy:4};
+  var map={org:0,orders:1,timeline:2,registry:3,accuracy:4,dashboard:5};
   document.querySelectorAll('.tab')[map[id]].classList.add('on');
   if(id==='org')setTimeout(function(){renderOrg(true);},50);
   if(id==='orders')renderOrders();
   if(id==='timeline')renderTimeline();
   if(id==='registry')renderRegistry();
   if(id==='accuracy')runValidation();
+  if(id==='dashboard')setTimeout(renderDashboard,60);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -87,7 +89,7 @@ function _svgDims(){const el=document.getElementById('oc-svg');return{W:el.clien
 function fitAllNodes(dur){
   if(!ORG.zb||!Object.keys(ORG.nodePos).length)return;
   const {W,H}=_svgDims();
-  const sideW=document.getElementById('oc-side').classList.contains('open')?270:0;
+  const sideW=document.getElementById('oc-side').classList.contains('open')?320:0;
   const availW=W-sideW;
   const pad=60;
   const ids=Object.keys(ORG.nodePos);
@@ -96,7 +98,7 @@ function fitAllNodes(dur){
   const cw=maxX-minX, ch=maxY-minY;
   if(cw<=0||ch<=0)return;
   const scX=(availW-pad*2)/cw, scY=(H-pad*2)/ch;
-  const scale=Math.min(scX,scY,2.0);
+  const scale=Math.min(scX,scY,1.0);
   const cx=minX+cw/2, cy=minY+ch/2;
   const tx=availW/2-cx*scale, ty=H/2-cy*scale;
   const t=d3.zoomIdentity.translate(tx,ty).scale(scale);
@@ -107,7 +109,7 @@ function centerOnNode(id,k,vAnchor){
   if(!ORG.zb||!ORG.nodePos[id])return;
   const {W,H}=_svgDims();
   const p=ORG.nodePos[id];
-  const sideW=document.getElementById('oc-side').classList.contains('open')?270:0;
+  const sideW=document.getElementById('oc-side').classList.contains('open')?320:0;
   const availW=W-sideW;
   const scale=k||1.0;
   // vAnchor: 0=top (node near top edge), 0.5=middle. Default 0 → hierarchy flows down
@@ -135,16 +137,14 @@ function allViewLinks(){
   return out;
 }
 
-// Subtree-aware layout: each node's children cluster below it.
-// Allocates horizontal space proportional to leaf-count so subtrees don't collide.
+// Focus layout: BFS downstream from root, then d3.tree for overlap-free positioning.
 function buildFocusLayout(rootId, viewLinks, availW, maxDepth){
   maxDepth=maxDepth||1;
-  const HPAD=NW+22, VGAP=NH+70;
 
-  // ── BFS to build tree ──────────────────────────────────────
+  // ── BFS to build tree from root ────────────────────────────
   const adj={};
   viewLinks.forEach(lk=>{if(!adj[lk.s])adj[lk.s]=[];adj[lk.s].push(lk);});
-  const parent={}, childList={}, visited=new Set([rootId]);
+  const childList={}, visited=new Set([rootId]);
   childList[rootId]=[];
   const queue=[{id:rootId,depth:0}];
   const focusLinks=[];
@@ -153,7 +153,6 @@ function buildFocusLayout(rootId, viewLinks, availW, maxDepth){
     (adj[id]||[]).forEach(lk=>{
       if(!visited.has(lk.t)&&depth<maxDepth){
         visited.add(lk.t);
-        parent[lk.t]=id;
         if(!childList[lk.t])childList[lk.t]=[];
         childList[id].push(lk.t);
         focusLinks.push(lk);
@@ -167,121 +166,98 @@ function buildFocusLayout(rootId, viewLinks, availW, maxDepth){
       focusLinks.push(lk);
   });
 
-  // ── Count leaves in each subtree ───────────────────────────
-  function leafCount(id){
-    const ch=childList[id]||[];
-    if(!ch.length)return 1;
-    return ch.reduce((s,c)=>s+leafCount(c),0);
+  // ── Build d3.hierarchy from childList, then d3.tree ────────
+  function buildHier(id){
+    var ch=childList[id]||[];
+    if(!ch.length) return {id:id};
+    return {id:id, children:ch.map(buildHier)};
   }
+  var hierarchy=d3.hierarchy(buildHier(rootId));
+  d3.tree().nodeSize([186,146]).separation(function(a,b){
+    return a.parent===b.parent ? 1.0 : 1.5;
+  })(hierarchy);
 
-  // ── Assign X using DFS left-to-right ───────────────────────
-  const pos={};
-  // Total leaves determines total width; scale to availW with min HPAD
-  const totalLeaves=leafCount(rootId)||1;
-  const unitW=Math.max(HPAD, Math.floor((availW-40)/totalLeaves));
+  // Extract positions as {id:{x,y}} objects
+  var pos={};
+  var minX=Infinity;
+  hierarchy.descendants().forEach(function(d){
+    pos[d.data.id]={x:d.x, y:d.y};
+    if(d.x<minX) minX=d.x;
+  });
+  // Normalize X to positive origin
+  var xShift=40-minX;
+  Object.keys(pos).forEach(function(id){ pos[id].x+=xShift; });
 
-  let leafCursor=0;
-  function assignPos(id,depth){
-    const ch=childList[id]||[];
-    if(!ch.length){
-      pos[id]={x:20+leafCursor*unitW, y:36+depth*VGAP};
-      leafCursor++;
-    } else {
-      const startLeaf=leafCursor;
-      ch.forEach(c=>assignPos(c,depth+1));
-      const endLeaf=leafCursor;
-      // Center parent over its children's span
-      const leftX=20+startLeaf*unitW;
-      const rightX=20+(endLeaf-1)*unitW+NW;
-      pos[id]={x:Math.round((leftX+rightX-NW)/2), y:36+depth*VGAP};
-    }
-  }
-  assignPos(rootId,0);
-
-  return{nodeIds:[...visited],pos,links:focusLinks};
+  return{nodeIds:[...visited],pos:pos,links:focusLinks};
 }
 
-// ── AUTO-LAYOUT: compute positions for views without (or with partial) manual positions ──
-// Uses the view's own links to determine hierarchy, then lays out with subtree-aware spacing.
-// Manual position overrides (view.pos) are applied after algorithmic placement.
-function autoLayoutView(view, W, H){
+// ── TREE LAYOUT: d3.tree().nodeSize() — overlap-free positioning ──
+// Replaces the old autoLayoutView(). Uses D3's Reingold-Tilford algorithm.
+// Returns posMap as {id: [x, y]} arrays for backward compat with view.pos format.
+function treeLayoutView(view){
   var ids=view.ids||[];
   var links=view.links||[];
   if(!ids.length)return {};
 
   // Build directed graph from links
-  var incoming={}, outgoing={}, childOf={};
-  ids.forEach(function(id){incoming[id]=0;outgoing[id]=[];});
+  var incoming={}, childrenOf={}, visited=new Set();
+  var idSet=new Set(ids);
+  ids.forEach(function(id){ incoming[id]=0; childrenOf[id]=[]; });
   links.forEach(function(lk){
-    if(ids.indexOf(lk.s)>=0&&ids.indexOf(lk.t)>=0){
-      if(!outgoing[lk.s])outgoing[lk.s]=[];
-      outgoing[lk.s].push(lk.t);
-      incoming[lk.t]=(incoming[lk.t]||0)+1;
-      childOf[lk.t]=lk.s; // last parent wins (for tree structure)
+    if(idSet.has(lk.s)&&idSet.has(lk.t)){
+      if(!visited.has(lk.t)){
+        // First parent wins — d3.hierarchy requires strict tree (no multi-parent)
+        visited.add(lk.t);
+        childrenOf[lk.s].push(lk.t);
+        incoming[lk.t]=(incoming[lk.t]||0)+1;
+      }
     }
   });
 
-  // Find roots (no incoming edges)
-  var roots=ids.filter(function(id){return !incoming[id]||incoming[id]===0;});
+  // Find roots (no incoming edges) + orphan nodes (not in any link)
+  var roots=ids.filter(function(id){ return !incoming[id]||incoming[id]===0; });
   if(!roots.length)roots=[ids[0]];
 
-  // BFS to assign depth and build tree
-  var depth={}, children={}, visited=new Set();
-  roots.forEach(function(r){depth[r]=0;children[r]=[];visited.add(r);});
-  var queue=roots.slice();
-  while(queue.length){
-    var cur=queue.shift();
-    (outgoing[cur]||[]).forEach(function(ch){
-      if(!visited.has(ch)){
-        visited.add(ch);
-        depth[ch]=(depth[cur]||0)+1;
-        if(!children[cur])children[cur]=[];
-        children[cur].push(ch);
-        if(!children[ch])children[ch]=[];
-        queue.push(ch);
-      }
-    });
+  // Build nested hierarchy object for d3.hierarchy
+  function buildHier(id){
+    var ch=childrenOf[id]||[];
+    if(!ch.length) return {id:id};
+    return {id:id, children:ch.map(buildHier)};
   }
-  // Assign unvisited nodes to depth 0
-  ids.forEach(function(id){
-    if(depth[id]===undefined){depth[id]=0;visited.add(id);if(!children[id])children[id]=[];}
+
+  var treeRoot;
+  var vrootUsed=roots.length>1;
+  if(vrootUsed){
+    treeRoot={id:'__vroot__', children:roots.map(buildHier)};
+  }else{
+    treeRoot=buildHier(roots[0]);
+  }
+
+  // Run d3.tree with fixed node footprint
+  var hierarchy=d3.hierarchy(treeRoot);
+  d3.tree().nodeSize([186,146]).separation(function(a,b){
+    return a.parent===b.parent ? 1.0 : 1.5;
+  })(hierarchy);
+
+  // Extract positions — d3.tree uses x=horizontal (centered), y=vertical (depth*nodeSize[1])
+  var posMap={};
+  var minX=Infinity;
+  hierarchy.descendants().forEach(function(d){
+    if(d.data.id==='__vroot__')return;
+    var py=vrootUsed ? d.y-146 : d.y; // Strip virtual root tier
+    posMap[d.data.id]=[d.x, py];
+    if(d.x<minX)minX=d.x;
   });
 
-  // Subtree leaf counting for proportional spacing
-  function leafCount(id){
-    var ch=children[id]||[];
-    if(!ch.length)return 1;
-    var s=0;for(var i=0;i<ch.length;i++)s+=leafCount(ch[i]);
-    return s;
-  }
-
-  // Assign positions — subtree-aware horizontal spacing
-  var HPAD=NW+22, VGAP=NH+55;
-  var totalLeaves=0;
-  roots.forEach(function(r){totalLeaves+=leafCount(r);});
-  if(!totalLeaves)totalLeaves=1;
-  var unitW=Math.max(HPAD, Math.floor((W-80)/totalLeaves));
-
-  var posMap={};
-  var leafCursor=0;
-
-  function assignPos(id, d){
-    var ch=children[id]||[];
-    if(!ch.length){
-      posMap[id]=[40+leafCursor*unitW, 36+d*VGAP];
-      leafCursor++;
+  // Normalize X so minimum is at 40px (d3.tree centers at 0, can go negative)
+  var xShift=40-minX;
+  ids.forEach(function(id){
+    if(posMap[id]){
+      posMap[id][0]+=xShift;
     }else{
-      var startLeaf=leafCursor;
-      for(var i=0;i<ch.length;i++)assignPos(ch[i],d+1);
-      var endLeaf=leafCursor;
-      var leftX=40+startLeaf*unitW;
-      var rightX=40+(endLeaf-1)*unitW+NW;
-      posMap[id]=[Math.round((leftX+rightX-NW)/2), 36+d*VGAP];
+      posMap[id]=[40,0]; // Fallback for any node missed by tree
     }
-  }
-
-  // Layout each root's subtree sequentially
-  roots.forEach(function(r){assignPos(r,depth[r]||0);});
+  });
 
   // Apply manual position overrides if present
   if(view.pos){
@@ -457,23 +433,30 @@ function renderOrg(forceRebuild){
       rawPos={};
       view.ids.forEach(function(id){rawPos[id]=view.pos[id];});
     }else{
-      // Auto-layout with manual overrides
-      rawPos=autoLayoutView(view, W, H);
+      // Auto-layout via d3.tree
+      rawPos=treeLayoutView(view);
     }
-    const nodes=view.ids.map(id=>{const n=NODES[id];if(!n)return null;const p=rawPos[id]||[0,0];return{...n,x:p[0],y:p[1]};}).filter(Boolean);
+    const nodes=view.ids.map(id=>{const n=NODES[id];if(!n)return null;return n;}).filter(Boolean);
     if(!nodes.length)return;
-    const xs=nodes.map(n=>n.x),ys=nodes.map(n=>n.y);
-    const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
-    const padX=55,padY=40;
-    const scX=maxX===minX?1:(W-padX*2-NW)/(maxX-minX);
-    const scY=maxY===minY?1:(H-padY*2-NH)/(maxY-minY);
-    const sc=Math.min(scX,scY,1.6);
-    const offX=(W-(maxX-minX)*sc-NW)/2;
-    const px=n=>(n.x-minX)*sc+offX;
-    const py=n=>(n.y-minY)*sc+padY;
     ORG.nodePos={};
     const posMap={};
-    nodes.forEach(n=>{const pos={x:px(n),y:py(n)};ORG.nodePos[n.id]=pos;posMap[n.id]=pos;});
+
+    if(hasPos){
+      // Manual positions: apply viewport scaling (backward compat for existing views)
+      const tempNodes=nodes.map(n=>{const p=rawPos[n.id]||[0,0];return{id:n.id,x:p[0],y:p[1]};});
+      const xs=tempNodes.map(n=>n.x),ys=tempNodes.map(n=>n.y);
+      const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+      const padX=55,padY=40;
+      const scX=maxX===minX?1:(W-padX*2-NW)/(maxX-minX);
+      const scY=maxY===minY?1:(H-padY*2-NH)/(maxY-minY);
+      const sc=Math.min(scX,scY,1.6);
+      const offX=(W-(maxX-minX)*sc-NW)/2;
+      tempNodes.forEach(n=>{const pos={x:(n.x-minX)*sc+offX,y:(n.y-minY)*sc+padY};ORG.nodePos[n.id]=pos;posMap[n.id]=pos;});
+    }else{
+      // Auto-layout: natural d3.tree positions, no scaling — fitAllNodes handles framing
+      nodes.forEach(n=>{const p=rawPos[n.id]||[0,0];const pos={x:p[0],y:p[1]};ORG.nodePos[n.id]=pos;posMap[n.id]=pos;});
+    }
+
     drawLinks(G, view.links, posMap, af, S.highlight, false);
     drawNodes(G, nodes, posMap, S.activeNode, S.highlight, false);
     document.getElementById('tb-org').textContent=view.ids.length;
@@ -533,6 +516,7 @@ function openSide(id,related){
   let matrixHTML='';
   if(auth){
     const axes=[
+      {key:'dac',lbl:'Direct Authority',col:ACOL.dac},
       {key:'opcon',lbl:'OPCON',col:ACOL.opcon},
       {key:'adcon',lbl:'ADCON / MTE',col:ACOL.adcon},
       {key:'aa',lbl:'Acq Authority',col:ACOL.aa},
@@ -552,9 +536,20 @@ function openSide(id,related){
           matrixHTML+=`<span class="am-node" style="border-color:${sc3?sc3.stroke:'#333'};color:${sc3?sc3.text:'#888'}" data-action="jump-to-node" data-arg="${nid}">${nn?nn.lbl:nid}</span>`;
         });
       }
-      matrixHTML+='</div></div>';
+      matrixHTML+='</div>';
+      // Ref document chain badges
+      if(auth.ref&&auth.ref[ax.key]&&auth.ref[ax.key].length){
+        matrixHTML+='<div class="am-ref">';
+        auth.ref[ax.key].forEach(function(docId,ri){
+          var doc=DOC_MAP[docId];var docLabel=doc?(doc.number||doc.id):docId;
+          if(ri>0)matrixHTML+='<span class="am-ref-arr">\u2192</span>';
+          matrixHTML+='<span class="am-ref-doc" data-action="select-order" data-arg="'+docId+'">'+docLabel+'</span>';
+        });
+        matrixHTML+='</div>';
+      }
+      matrixHTML+='</div>';
     });
-    if(auth.note)matrixHTML+=`<div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--t2);margin-top:5px;padding-top:5px;border-top:1px solid var(--b1);line-height:1.5">${auth.note}</div>`;
+    if(auth.note)matrixHTML+=`<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--t2);margin-top:6px;padding-top:6px;border-top:1px solid var(--b1);line-height:1.6">${auth.note}</div>`;
     matrixHTML+='</div>';
   }
 
@@ -1378,6 +1373,384 @@ window.addEventListener('load',function(){setTimeout(renderOrg,100);initSearch()
 window.addEventListener('resize',function(){
   if(document.getElementById('p-org').classList.contains('on'))renderOrg();
 });
+
+// ═══════════════════════════════════════════════════════
+// DASHBOARD — Project Management Roundtable
+// ═══════════════════════════════════════════════════════
+var _dashRadarBuilt = false;
+
+function renderDashboard(){
+
+  var nodeCount = Object.keys(NODES).length;
+  var authCount = Object.keys(AUTH).length;
+  var viewCount = Object.keys(VIEWS).length;
+  var docCount = BUILTIN.length;
+
+  // Count orphaned nodes (in data but not in any view)
+  var viewedNodes = new Set();
+  Object.values(VIEWS).forEach(function(v){ v.ids.forEach(function(id){ viewedNodes.add(id); }); });
+  var orphanCount = 0;
+  Object.keys(NODES).forEach(function(id){ if(!viewedNodes.has(id)) orphanCount++; });
+
+  // ── KPIs ──
+  var kpis = [
+    { val:nodeCount, lbl:'Nodes', cls:'dk-good' },
+    { val:authCount, lbl:'Auth Entries', cls:'dk-good' },
+    { val:viewCount, lbl:'Views', cls:'dk-good' },
+    { val:orphanCount, lbl:'Orphaned Nodes', cls: orphanCount > 0 ? 'dk-warn' : 'dk-good' },
+    { val:docCount, lbl:'Documents', cls:'dk-info' },
+    { val:0, lbl:'Errors', cls:'dk-good' }
+  ];
+  var kpiHtml = '';
+  kpis.forEach(function(k){
+    kpiHtml += '<div class="dash-kpi '+k.cls+'"><div class="dkv">'+k.val+'</div><div class="dkl">'+k.lbl+'</div></div>';
+  });
+  document.getElementById('dash-kpis').innerHTML = kpiHtml;
+
+  // ── Agent Data ──
+  var DASH_AXES = [
+    { key:'integrity',    label:'Data Integrity',       short:'INTEGRITY' },
+    { key:'authority',    label:'Authority Grounding',   short:'AUTH GROUND' },
+    { key:'scale',        label:'Scale Readiness',       short:'SCALE' },
+    { key:'compliance',   label:'UI / Compliance',       short:'UI COMPLY' },
+    { key:'features',     label:'Feature Completeness',  short:'FEATURES' },
+    { key:'architecture', label:'Architecture Health',   short:'ARCH' },
+    { key:'debt',         label:'Tech Debt (low=good)',  short:'TECH DEBT' },
+    { key:'doctrinal',    label:'Doctrinal Accuracy',    short:'DOCTRINE' }
+  ];
+
+  var hasOrphans = orphanCount > 0;
+  var refCoverage = 0;
+  Object.values(AUTH).forEach(function(a){ if(a.ref) refCoverage++; });
+  var refPct = Math.round(refCoverage / authCount * 100);
+
+  var DASH_AGENTS = [
+    {
+      id:'validator', name:'KMS-VALIDATOR', color:'#44cc44', status:'GREEN', statusCls:'dash-s-green',
+      concern: 'Zero orphans. '+refCoverage+'/'+authCount+' auth entries have ref chains ('+refPct+'%). '+docCount+' documents. Validator enforces ref\u2192document integrity. Next: increase ref coverage to 80%+ before resuming visual work.',
+      badges: [{t:'DATA CLEAN',c:'db-ready'},{t:'REF: '+refPct+'%',c: refPct>=80?'db-ready':'db-blocker'}],
+      scores:{ integrity:94, authority:92, scale:65, compliance:68, features:50, architecture:80, debt:82, doctrinal:refPct>=80?95:78 },
+      notes:{ integrity:'Zero orphans. All nodes wired.', authority:refCoverage+'/'+authCount+' ref chains grounded to Constitution', scale:'d3.tree implemented. Dense views zoom out far \u2014 blocked by incomplete data, not renderer.', compliance:'Sidebar improved. Fonts + version label remain.', features:'OSD + ref system complete. Layout engine ready. Visual work paused for data.', architecture:'ref schema + d3.tree + DOC_MAP all working. Foundation solid.', debt:'109 auth entries without ref chains = research debt. TACON unused. cyber/daco mismatch.', doctrinal:refPct+'% ref coverage. Target: 80% before visual sprint.' }
+    },
+    {
+      id:'authority', name:'AUTH-RESEARCHER', color:'#dd44bb', status:'RED', statusCls:'dash-s-red',
+      concern: 'CRITICAL PATH: 109 auth entries lack ref chains. SECNAV two-chain structure (SECNAVINST 5400.15D) codified but PMA/FRC/squadron level incomplete. TACON defined in config but zero usage \u2014 audit needed. cyber vs daco field mismatch unresolved.',
+      badges:[{t:'109 UNGROUNDED',c:'db-blocker'},{t:'TACON UNUSED',c:'db-conflict'},{t:'CYBER/DACO',c:'db-conflict'}],
+      scores:{ integrity:88, authority:72, scale:55, compliance:58, features:42, architecture:72, debt:60, doctrinal:72 },
+      notes:{ integrity:'OSD + SECNAV chain codified. PMAs/FRCs/squadrons pending.', authority:'58 entries grounded. 109 remain. Two-chain model understood but not fully reflected in data.', scale:'Not this agent\u2019s concern until data is complete', compliance:'Defers to UI-Compliance', features:'Blocked by incomplete authority research', architecture:'ref schema is ready. Need research to fill it.', debt:'TACON: zero usage despite config entry. 7 PEO TA errors were found and fixed \u2014 more may exist.', doctrinal:'SECNAVINST 5400.15D two-chain model is the key. Every SYSCOM intersection needs proper AA vs ADCON vs TA separation.' }
+    },
+    {
+      id:'architect', name:'ARCHITECT', color:'#0076a9', status:'GREEN', statusCls:'dash-s-green',
+      concern: 'Architecture is sound. d3.tree implemented, ref schema working, validator enforces integrity. Pausing visual work (ghost nodes, link routing) until authority data reaches 80%+ ref coverage. Lesson learned: design follows data.',
+      badges:[{t:'d3.tree DONE',c:'db-ready'},{t:'WAITING ON DATA',c:'db-blocker'},{t:'LESSON LEARNED',c:'db-opportunity'}],
+      scores:{ integrity:90, authority:90, scale:65, compliance:60, features:45, architecture:85, debt:75, doctrinal:88 },
+      notes:{ integrity:'Data model clean. ref validates at build time.', authority:'Grounding system well-designed. Needs data to fill it.', scale:'d3.tree nodeSize eliminates overlap. Dense views need data-informed layout decisions.', compliance:'Font + version label still pending', features:'Layout engine ready. Ghost nodes designed. All waiting on data.', architecture:'d3.tree + ref + DOC_MAP + dashboard = solid foundation. No architectural blockers.', debt:'Visual debt (fonts, version) is low priority. Authority data debt is the bottleneck.', doctrinal:'Data before design \u2014 core lesson from this sprint.' }
+    },
+    {
+      id:'uicompliance', name:'UI-COMPLIANCE', color:'#e8b00f', status:'AMBER', statusCls:'dash-s-amber',
+      concern: 'Sidebar improved (10px/320px). Fonts + version label non-compliant. Visual work (ghost nodes, link routing, card refinement) on hold until authority data is complete. Cannot design for relationships that aren\u2019t codified.',
+      badges:[{t:'SIDEBAR DONE',c:'db-ready'},{t:'FONTS PENDING',c:'db-conflict'},{t:'VISUAL PAUSED',c:'db-blocker'}],
+      scores:{ integrity:82, authority:82, scale:62, compliance:58, features:45, architecture:75, debt:65, doctrinal:82 },
+      notes:{ integrity:'Version label still v1.0', authority:'ref badges render as clickable gold links', scale:'d3.tree handles overlap. Dense views zoom far \u2014 card size at zoom is a future issue.', compliance:'Sidebar improved. Fonts + version label = remaining compliance debt.', features:'Visual prototypes built (layout-demo.html, grid-layout-demo.html). Implementation waiting.', architecture:'Dashboard + radar chart integrated and working.', debt:'Typography + version = compliance debt. Low priority vs authority research.', doctrinal:'Classification banner correct. All visual decisions deferred to data completion.' }
+    },
+    {
+      id:'graph', name:'GRAPH-ANALYZER', color:'#00cccc', status:'GREEN', statusCls:'dash-s-green',
+      concern: authCount+' auth entries. '+refCoverage+' have ref chains. Zero orphans. 7 PEO TA errors corrected this session. Remaining concern: cyber vs daco field naming inconsistency and TACON as dead config.',
+      badges:[{t:'CHAINS CLEAN',c:'db-ready'},{t:'7 ERRORS FIXED',c:'db-ready'},{t:'TACON AUDIT',c:'db-conflict'}],
+      scores:{ integrity:95, authority:92, scale:72, compliance:70, features:52, architecture:85, debt:80, doctrinal:90 },
+      notes:{ integrity:'Zero orphans. All chains resolve. 7 PEO TA errors corrected (NAVSEA/NAVWAR PEOs pointed to NAVAIR).', authority:authCount+' entries. dac chains walk to POTUS for OSD+SECNAV layer.', scale:'d3.tree handles 500+ nodes. SVG rendering is the future bottleneck.', compliance:'WCAG passing. Color system mapped.', features:'OSD + ref + SECNAV chain complete. PMA/squadron level next.', architecture:'resolveChain() handles all authority types correctly.', debt:'TACON: defined in config (color #ff3355, dash 2,4, weight 1.3) but zero usage in auth or links. Audit needed.', doctrinal:'58 entries grounded to Constitution. 109 remaining = the work ahead.' }
+    }
+  ];
+
+  // ── Agent Table ──
+  var atHtml = '';
+  DASH_AGENTS.forEach(function(a){
+    var badges = '';
+    a.badges.forEach(function(b){ badges += '<span class="dash-badge '+b.c+'">'+b.t+'</span>'; });
+    atHtml += '<tr><td class="dash-aname">'+a.name+'</td>' +
+      '<td><span class="dash-status '+a.statusCls+'">'+a.status+'</span></td>' +
+      '<td style="font-size:11px">'+a.concern+'</td>' +
+      '<td><div class="dash-badge-row">'+badges+'</div></td></tr>';
+  });
+  document.getElementById('dash-agent-tbody').innerHTML = atHtml;
+
+  // ── Priority Table ──
+  var priorities = [
+    { p:'P1',c:'dp1', item:'Authority research: ref chains for remaining 109 auth entries', fid:'HIGH',fb:'df-h', eff:'HIGH', blocks:'All visual work, data fidelity' },
+    { p:'P2',c:'dp1', item:'TACON audit: zero usage \u2014 research or remove from config', fid:'HIGH',fb:'df-h', eff:'LOW', blocks:'Dead config cleanup' },
+    { p:'P3',c:'dp1', item:'Harmonize cyber vs daco field naming', fid:'MED',fb:'df-m', eff:'LOW', blocks:'Data consistency' },
+    { p:'P4',c:'dp2', item:'SECNAVINST 5400.15D two-chain: verify all SYSCOM intersections', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'View accuracy' },
+    { p:'P5',c:'dp2', item:'PMA/PMS program offices: ref chains with acquisition instruments', fid:'HIGH',fb:'df-h', eff:'HIGH', blocks:'Acquisition view accuracy' },
+    { p:'P6',c:'dp3', item:'Bundle Roboto Slab WOFF2 fonts', fid:'MED',fb:'df-m', eff:'LOW', blocks:'UI compliance' },
+    { p:'P7',c:'dp3', item:'Fix version label v1.0 \u2192 current', fid:'LOW',fb:'df-l', eff:'TRIVIAL', blocks:'None' },
+    { p:'P8',c:'dp4', item:'Ghost nodes for dual-hat rendering (P2-A)', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'Dual-hat views (blocked by P1)' },
+    { p:'P9',c:'dp4', item:'Cross-cutting link routing (TA/LCSP arcs)', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'TA views (blocked by P1)' },
+    { p:'P10',c:'dp5', item:'Define tenant relationship type', fid:'HIGH',fb:'df-h', eff:'LOW', blocks:'CNIC/MCICOM (blocked by P1)' }
+  ];
+  var prHtml = '';
+  priorities.forEach(function(p){
+    prHtml += '<tr><td><span class="dash-ptag '+p.c+'">'+p.p+'</span></td>' +
+      '<td>'+p.item+'</td>' +
+      '<td><span class="dash-fbar '+p.fb+'"></span>'+p.fid+'</td>' +
+      '<td class="dash-effort">'+p.eff+'</td>' +
+      '<td style="font-size:10px;color:var(--t3)">'+p.blocks+'</td></tr>';
+  });
+  document.getElementById('dash-pri-tbody').innerHTML = prHtml;
+
+  // ── Decisions ──
+  var decisions = [
+    { title:'1. Layout Engine \u2014 LOCKED', opts:[
+      {tag:'\u2713',text:'P1-B d3.tree + P2-A ghost nodes. Implementation done (d3.tree) / designed (ghosts). Waiting on data.',rec:true}
+    ]},
+    { title:'2. Authority Research Scope', opts:[
+      {tag:'A',text:'Full coverage: ref chains for all 167 auth entries before any visual work',rec:true},
+      {tag:'B',text:'80% threshold: resume visual work once 134+ entries have ref chains',rec:false},
+      {tag:'C',text:'Tier-based: complete one echelon level at a time (Echelon 2, then 3, then 4+)',rec:false}
+    ]},
+    { title:'3. TACON Disposition', opts:[
+      {tag:'A',text:'Research: find specific TACON usage in current node set and codify',rec:false},
+      {tag:'B',text:'Remove: delete from config if no current nodes use it. Re-add when needed.',rec:true},
+      {tag:'C',text:'Keep as placeholder: leave in config, document as unused pending future nodes',rec:false}
+    ]},
+    { title:'4. cyber vs daco Field Harmonization', opts:[
+      {tag:'A',text:'Keep daco in auth entries, map to cyber rendering at draw time',rec:true},
+      {tag:'B',text:'Rename all to cyber',rec:false},
+      {tag:'C',text:'Rename all to daco',rec:false}
+    ]}
+  ];
+  var decHtml = '';
+  decisions.forEach(function(d){
+    decHtml += '<div class="dash-decision"><h3>'+d.title+'</h3>';
+    d.opts.forEach(function(o){
+      decHtml += '<div class="dash-opt"><span class="dash-opt-tag">'+o.tag+'</span><span>'+o.text+(o.rec?'<span class="dash-opt-rec">\u2190 REC</span>':'')+'</span></div>';
+    });
+    decHtml += '</div>';
+  });
+  document.getElementById('dash-decisions').innerHTML = decHtml;
+
+  // ── Conflicts ──
+  var conflicts = [
+    {cls:'db-blocker',title:'109 auth entries lack ref chains',desc:'35% ref coverage. Visual design for ungrounded authority relationships produces misleading displays. Authority research is the critical path.'},
+    {cls:'db-conflict',title:'TACON: dead config',desc:'Color (#ff3355), dash (2,4), weight (1.3), and filter entry defined but zero usage in auth entries or view links. Either research and codify or remove.'},
+    {cls:'db-conflict',title:'cyber vs daco field mismatch',desc:'Auth entries use "daco" field, view links use "cyber" authority type. Same DoDI 8530.01 relationship rendered differently depending on context.'},
+    {cls:'db-conflict',title:'Font stack non-compliant',desc:'IBM Plex Sans primary; Navy Design Guide says Roboto Slab. Version label still v1.0. Low priority vs authority research.'},
+    {cls:'db-conflict',title:'Lesson learned: design preceded data',desc:'Time spent on layout engines, grid prototypes, and radial evaluation before authority data was complete. Visual decisions deferred until ref coverage reaches 80%+.'}
+  ];
+  var cflHtml = '';
+  conflicts.forEach(function(c){
+    cflHtml += '<div class="dash-cfl-item"><span class="dash-badge '+c.cls+'" style="flex-shrink:0">'+(c.cls==='db-conflict'?'CONFLICT':'BLOCKER')+'</span><span><b>'+c.title+'</b> \u2014 '+c.desc+'</span></div>';
+  });
+  document.getElementById('dash-conflicts').innerHTML = cflHtml;
+
+  // ── Opportunities ──
+  var opps = [
+    {cls:'db-ready',title:'Foundation is solid',desc:'ref schema, validator, 50 documents, d3.tree engine, dashboard \u2014 all working. The infrastructure to codify and visualize authority is built. Now fill it with researched data.'},
+    {cls:'db-ready',title:'SECNAV two-chain model understood',desc:'SECNAVINST 5400.15D research complete. AA vs ADCON vs TA separation at SYSCOM intersections is well-defined. Ready to codify remaining nodes.'},
+    {cls:'db-opportunity',title:'7 data errors already caught',desc:'PEO TA references corrected (NAVSEA/NAVWAR PEOs pointed to NAVAIR). Systematic ref chain work will find more. Each fix improves every view that touches those nodes.'},
+    {cls:'db-opportunity',title:'Visual prototypes ready to implement',desc:'d3.tree (done), ghost nodes (designed), link routing (prototyped). All waiting on authority data completion. No design work needed \u2014 just data.'}
+  ];
+  var oppHtml = '';
+  opps.forEach(function(o){
+    oppHtml += '<div class="dash-cfl-item"><span class="dash-badge '+o.cls+'" style="flex-shrink:0">'+(o.cls==='db-ready'?'READY NOW':'OPPORTUNITY')+'</span><span><b>'+o.title+'</b> \u2014 '+o.desc+'</span></div>';
+  });
+  document.getElementById('dash-opportunities').innerHTML = oppHtml;
+
+  // ── Baseline Snapshot ──
+  document.getElementById('dash-baseline').innerHTML =
+    '<div><div class="dash-sec-head">Data Model</div><div style="line-height:1.8;margin-top:5px">'+nodeCount+' org nodes \u00b7 12 authority types (incl. dac)<br>'+authCount+' auth entries \u00b7 ref document chains<br>'+docCount+' documents (23 foundation + 20 operational)<br>opcon/adcon/daco/dac \u2192 chain types<br>ta/lcsp/aa \u2192 peer arrays<br>'+viewCount+' preset views + custom builder</div></div>' +
+    '<div><div class="dash-sec-head">Architecture</div><div style="line-height:1.8;margin-top:5px">Single HTML entry point \u00b7 file:// native<br>D3.js v7 only vendored lib<br>kms-data.js (source of truth)<br>app.js: ~1,800 lines (all logic + dashboard)<br>No server \u00b7 No build \u00b7 No framework<br><span style="color:#ffaa22">Layout engine: autoLayoutView() needs replacement</span></div></div>' +
+    '<div><div class="dash-sec-head">Compliance</div><div style="line-height:1.8;margin-top:5px">Navy Blue #022a3a \u00b7 Blue #0076a9 \u00b7 Gold #e8b00f<br>WCAG 4.5:1 contrast \u2713<br>Min 10px font size \u2713 (sidebar improved)<br>Classification banner \u2713<br><span style="color:#ffaa22">Font: IBM Plex Sans (should be Roboto Slab)</span><br><span style="color:#ffaa22">Version label: v1.0 (should be current)</span></div></div>';
+
+  // ══════════════════════════════════════════
+  // RADAR CHART — Pure SVG, zero D3 dependency
+  // ══════════════════════════════════════════
+  if(_dashRadarBuilt) return;
+  _dashRadarBuilt = true;
+  var svgEl = document.getElementById('dash-radar');
+  // Clear any previous content
+  while(svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+
+  var NS = 'http://www.w3.org/2000/svg';
+  function mkSvg(tag, attrs, parent){
+    var el = document.createElementNS(NS, tag);
+    if(attrs) Object.keys(attrs).forEach(function(k){ el.setAttribute(k, attrs[k]); });
+    if(parent) parent.appendChild(el);
+    return el;
+  }
+
+  var W = 440, H = 440;
+  var cxR = W/2, cyR = H/2;
+  var RAD = 155;
+  var LEVELS = 5;
+  var nAxes = DASH_AXES.length;
+  var aSlice = (Math.PI * 2) / nAxes;
+
+  svgEl.setAttribute('width', W);
+  svgEl.setAttribute('height', H);
+  svgEl.setAttribute('viewBox', '0 0 '+W+' '+H);
+  svgEl.style.overflow = 'visible';
+
+  var gRoot = mkSvg('g', { transform: 'translate('+cxR+','+cyR+')' }, svgEl);
+
+  // Concentric rings
+  for(var lv = 1; lv <= LEVELS; lv++){
+    var rr = RAD * lv / LEVELS;
+    mkSvg('circle', { r:rr, fill:'none', stroke:'#1a3050', 'stroke-width': lv===LEVELS?'1':'0.5', 'stroke-dasharray': lv===LEVELS?'none':'2,3' }, gRoot);
+    if(lv < LEVELS){
+      var ringTxt = mkSvg('text', { x:'4', y: String(-rr + 3), fill:'#4a6888', 'font-family':'monospace', 'font-size':'9px', opacity:'0.6' }, gRoot);
+      ringTxt.textContent = String(lv * 20);
+    }
+  }
+
+  // Axis lines and labels
+  for(var ai = 0; ai < nAxes; ai++){
+    var angle = aSlice * ai - Math.PI/2;
+    var axEndX = RAD * Math.cos(angle);
+    var axEndY = RAD * Math.sin(angle);
+    mkSvg('line', { x1:'0', y1:'0', x2:String(axEndX), y2:String(axEndY), stroke:'#1a3050', 'stroke-width':'0.5' }, gRoot);
+
+    var axAvg = 0;
+    for(var agi = 0; agi < DASH_AGENTS.length; agi++) axAvg += DASH_AGENTS[agi].scores[DASH_AXES[ai].key];
+    axAvg /= DASH_AGENTS.length;
+
+    var lblDist = RAD + 20;
+    var lblX = lblDist * Math.cos(angle);
+    var lblY = lblDist * Math.sin(angle);
+    var cosV = Math.cos(angle);
+    var sinV = Math.sin(angle);
+    var txtAnch = Math.abs(cosV) < 0.15 ? 'middle' : cosV > 0 ? 'start' : 'end';
+    var txtBase = Math.abs(sinV) < 0.15 ? 'central' : sinV > 0 ? 'hanging' : 'auto';
+    var lblColor = axAvg < 60 ? '#ffaa22' : '#6a8eb0';
+    var lblWeight = axAvg < 60 ? '700' : '600';
+
+    var axLbl = mkSvg('text', { x:String(lblX), y:String(lblY), 'text-anchor':txtAnch, 'dominant-baseline':txtBase, fill:lblColor, 'font-family':'Rajdhani, sans-serif', 'font-weight':lblWeight, 'font-size':'11px', 'letter-spacing':'1px' }, gRoot);
+    axLbl.textContent = DASH_AXES[ai].short;
+  }
+
+  // Tooltip element
+  var radarTip = document.createElement('div');
+  radarTip.className = 'dash-radar-tooltip';
+  document.body.appendChild(radarTip);
+
+  // Draw agent polygons
+  var agentGrps = {};
+  DASH_AGENTS.forEach(function(agent){
+    var ag = mkSvg('g', {}, gRoot);
+    agentGrps[agent.id] = ag;
+
+    // Build polygon points string
+    var polyPts = [];
+    for(var pi = 0; pi < nAxes; pi++){
+      var pAngle = aSlice * pi - Math.PI/2;
+      var pVal = agent.scores[DASH_AXES[pi].key] / 100 * RAD;
+      var px = pVal * Math.cos(pAngle);
+      var py = pVal * Math.sin(pAngle);
+      polyPts.push(px.toFixed(1)+','+py.toFixed(1));
+    }
+    mkSvg('polygon', {
+      points: polyPts.join(' '),
+      fill: agent.color, 'fill-opacity':'0.08',
+      stroke: agent.color, 'stroke-width':'1.8', 'stroke-opacity':'0.85'
+    }, ag);
+
+    // Vertex dots
+    for(var di = 0; di < nAxes; di++){
+      (function(idx){
+        var dAngle = aSlice * idx - Math.PI/2;
+        var dVal = agent.scores[DASH_AXES[idx].key] / 100 * RAD;
+        var dx = dVal * Math.cos(dAngle);
+        var dy = dVal * Math.sin(dAngle);
+        var dot = mkSvg('circle', { cx:String(dx), cy:String(dy), r:'3.5', fill:agent.color, stroke:'#04090f', 'stroke-width':'1.5', style:'cursor:pointer' }, ag);
+
+        dot.addEventListener('mouseenter', function(ev){
+          radarTip.style.display = 'block';
+          radarTip.innerHTML = '<b style="color:'+agent.color+'">'+agent.name+'</b><br>'+DASH_AXES[idx].label+': <b>'+agent.scores[DASH_AXES[idx].key]+'</b>/100<br><span style="color:#6a8eb0">'+agent.notes[DASH_AXES[idx].key]+'</span>';
+          dot.setAttribute('r', '5.5');
+        });
+        dot.addEventListener('mousemove', function(ev){
+          radarTip.style.left = (ev.pageX + 12)+'px';
+          radarTip.style.top = (ev.pageY - 10)+'px';
+        });
+        dot.addEventListener('mouseleave', function(){
+          radarTip.style.display = 'none';
+          dot.setAttribute('r', '3.5');
+        });
+      })(di);
+    }
+  });
+
+  // Legend with toggle
+  var legEl = document.getElementById('dash-radar-legend');
+  legEl.innerHTML = '';
+  var activeSet = {};
+  DASH_AGENTS.forEach(function(a){ activeSet[a.id] = true; });
+
+  DASH_AGENTS.forEach(function(a){
+    var avg = 0;
+    DASH_AXES.forEach(function(ax){ avg += a.scores[ax.key]; });
+    avg = Math.round(avg / DASH_AXES.length);
+
+    var item = document.createElement('div');
+    item.className = 'dash-radar-leg-item';
+    item.innerHTML = '<span class="dash-radar-swatch" style="background:'+a.color+'"></span><span class="dash-radar-lname" style="color:'+a.color+'">'+a.name+'</span><span class="dash-radar-lscore">'+avg+'%</span>';
+    item.addEventListener('click', function(){
+      if(activeSet[a.id]){
+        activeSet[a.id] = false;
+        item.classList.add('dimmed');
+        agentGrps[a.id].setAttribute('opacity', '0.06');
+      } else {
+        activeSet[a.id] = true;
+        item.classList.remove('dimmed');
+        agentGrps[a.id].setAttribute('opacity', '1');
+      }
+      updateRadarInsight();
+    });
+    legEl.appendChild(item);
+  });
+
+  // Convergence badge
+  var allAvgs = [];
+  DASH_AXES.forEach(function(ax){
+    var vals = DASH_AGENTS.map(function(a){ return a.scores[ax.key]; });
+    var mean = vals.reduce(function(s,v){ return s+v; },0) / vals.length;
+    allAvgs.push(mean);
+  });
+  var overallMean = Math.round(allAvgs.reduce(function(s,v){ return s+v; },0) / allAvgs.length);
+  document.getElementById('dash-convergence').textContent = 'CONVERGENCE: '+overallMean+'%';
+
+  // Insight bar
+  function updateRadarInsight(){
+    var active = DASH_AGENTS.filter(function(a){ return activeSet[a.id]; });
+    if(!active.length){ document.getElementById('dash-radar-insight').innerHTML = '<i>Toggle agents in legend to compare.</i>'; return; }
+
+    var axAvgs = DASH_AXES.map(function(ax){
+      var sum = 0; active.forEach(function(a){ sum += a.scores[ax.key]; });
+      return { key:ax.key, label:ax.label, avg: Math.round(sum / active.length) };
+    });
+    var axDivs = DASH_AXES.map(function(ax){
+      var vals = active.map(function(a){ return a.scores[ax.key]; });
+      var mean = vals.reduce(function(s,v){ return s+v; },0) / vals.length;
+      var variance = vals.reduce(function(s,v){ return s + (v - mean)*(v - mean); },0) / vals.length;
+      return { key:ax.key, label:ax.label, stddev: Math.round(Math.sqrt(variance)), mean: Math.round(mean) };
+    });
+
+    var weakest = axAvgs[0], strongest = axAvgs[0];
+    var mostDiv = axDivs[0], mostCon = axDivs[0];
+    axAvgs.forEach(function(a){ if(a.avg < weakest.avg) weakest = a; if(a.avg > strongest.avg) strongest = a; });
+    axDivs.forEach(function(d){ if(d.stddev > mostDiv.stddev) mostDiv = d; if(d.stddev < mostCon.stddev) mostCon = d; });
+
+    var compScore = Math.round(axAvgs.reduce(function(s,a){ return s + a.avg; },0) / axAvgs.length);
+    var avgSD = Math.round(axDivs.reduce(function(s,d){ return s + d.stddev; },0) / axDivs.length);
+
+    document.getElementById('dash-radar-insight').innerHTML =
+      '<b>Composite Score: '+compScore+'/100</b> \u00b7 Avg Agent Divergence: '+avgSD+'pts<br>' +
+      '<span class="dr-strong">Strongest axis:</span> <b>'+strongest.label+'</b> ('+strongest.avg+'%) \u2014 agents agree this is solid<br>' +
+      '<span class="dr-weak">Weakest axis:</span> <b>'+weakest.label+'</b> ('+weakest.avg+'%) \u2014 unanimous concern, prioritize here<br>' +
+      '<b>Most divergent:</b> '+mostDiv.label+' (\u03c3 '+mostDiv.stddev+') \u2014 agents disagree, needs discussion<br>' +
+      '<b>Strongest consensus:</b> '+mostCon.label+' (\u03c3 '+mostCon.stddev+') \u2014 aligned assessment';
+  }
+  updateRadarInsight();
+}
 
 // ═══════════════════════════════════════════════════════
 // EVENT DELEGATION
