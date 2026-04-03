@@ -43,6 +43,7 @@ if(typeof KMS_DATA==='undefined'){
   <div class="tab" data-action="show-panel" data-arg="orders">⊟ Directives <span class="tbadge" id="tb-orders"></span></div>
   <div class="tab" data-action="show-panel" data-arg="timeline">◷ Timeline <span class="tbadge" id="tb-tl"></span></div>
   <div class="tab" data-action="show-panel" data-arg="registry">⊞ Registry <span class="tbadge" id="tb-reg"></span></div>
+  <div class="tab" data-action="show-panel" data-arg="deconfliction">◆ Deconfliction</div>
   <div class="tab" data-action="show-panel" data-arg="accuracy">⊘ Data Accuracy <span class="tbadge" id="tb-acc">0</span></div>
   <div class="tab" data-action="show-panel" data-arg="dashboard">◈ Dashboard</div>
 </nav>
@@ -174,6 +175,26 @@ if(typeof KMS_DATA==='undefined'){
 
 
   <!-- DASHBOARD -->
+  <!-- DECONFLICTION -->
+  <div class="panel" id="p-deconfliction" style="flex-direction:column;overflow:hidden">
+    <div class="dc-bar" style="display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid var(--b2);flex-shrink:0">
+      <h2 style="margin:0;font-family:'Rajdhani',sans-serif;font-size:16px;color:var(--gold)">Authority Intersections</h2>
+      <label style="font-size:11px;color:var(--t2)">Focus:</label>
+      <select id="dc-node-select" style="font-size:11px;background:var(--bg2);color:var(--t1);border:1px solid var(--b2);padding:2px 6px;border-radius:3px"></select>
+      <label style="font-size:11px;color:var(--t2)">Pattern:</label>
+      <select id="dc-pattern-select" style="font-size:11px;background:var(--bg2);color:var(--t1);border:1px solid var(--b2);padding:2px 6px;border-radius:3px">
+        <option value="all">All Patterns</option>
+      </select>
+      <div style="flex:1"></div>
+      <div id="dc-stats" style="font-size:11px;color:var(--t3)"></div>
+    </div>
+    <div style="display:flex;flex:1;overflow:hidden">
+      <svg id="dc-svg" style="flex:1;min-width:0"></svg>
+      <div id="dc-detail" style="width:340px;overflow-y:auto;border-left:1px solid var(--b2);padding:12px;font-size:11px;color:var(--t2);display:none">
+      </div>
+    </div>
+  </div>
+
   <div class="panel" id="p-dashboard" style="flex-direction:column;overflow:hidden">
     <div class="dash-scroll">
 

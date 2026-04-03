@@ -82,7 +82,27 @@ KMS_DATA = {
       ref: {                    // Document reference chains (optional — for incremental backfill)
         [authType]: [docId, ...]  // Ordered: immediate instrument → Constitution
       },
-      note:   string            // Free-text legal/organizational context
+      note:   string,           // Free-text legal/organizational context
+      friction: [              // Authority boundary friction annotations (optional)
+        {
+          types: [authType, authType],  // At least 2 authority types in conflict
+          desc:  string,                // Human-readable description of the friction
+          refs:  [docId, ...],          // Document IDs (must exist in documents array)
+          severity: "high"|"medium"|"low",  // high=unresolved, medium=partial, low=convention
+          dimensions: {              // Multi-dimensional assessment (optional)
+            resolution: "high"|"partial"|"resolved",
+            impact: "flight-safety"|"mission-degradation"|"coordination-burden"|"administrative",
+            visibility: "low"|"medium"|"high",    // operator awareness at this echelon
+            clarity: "clear"|"ambiguous"|"opaque", // is boundary actionable?
+            temporal: "static"|"cyclical"|"dynamic" // does friction change with ops tempo?
+          },
+          failure_modes: {           // Echelon-dependent human failure modes (optional)
+            tactical: "ignorance"|"misinterpretation"|"non-compliance",
+            operational: "ignorance"|"misinterpretation"|"non-compliance",
+            strategic: "ignorance"|"misinterpretation"|"non-compliance"
+          }
+        }
+      ]
     }
     // ref example — USD(A&S) DAC authority grounded to Constitution:
     //   ref: { dac: ["dodd_5135_02", "usc_10_133b", "usc_10_113", "constitution_art2"] }
@@ -142,6 +162,7 @@ KMS_DATA = {
 6. **Minimum font size is 9px.** No sub-9px text anywhere in the application. WCAG 4.5:1 contrast minimum.
 7. **Data maintenance via SNDL review** — no runtime add/edit/delete of nodes. Changes go through kms-data.js directly.
 8. **Authority chains are normalized** — opcon/adcon/daco store immediate parent only. Use `resolveChain(nodeId, key)` to compute full chains. ta/lcsp/aa are peer arrays, not chains.
+9. **Friction annotations document authority boundary conflicts.** When two authority types overlap on the same node (e.g., DACO vs TA), add a `friction` entry with refs to the governing documents and a severity level. The legal-deconfliction agent handles research; findings go into `friction` arrays. DACO does not apply to PMAs as an organizational authority — it applies at the operational unit level where weapon systems connect to the DODIN.
 
 ## GitHub
 

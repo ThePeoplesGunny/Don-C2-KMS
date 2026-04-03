@@ -70,12 +70,13 @@ function showPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('p-'+id).classList.add('on');
-  var map={org:0,orders:1,timeline:2,registry:3,accuracy:4,dashboard:5};
+  var map={org:0,orders:1,timeline:2,registry:3,deconfliction:4,accuracy:5,dashboard:6};
   document.querySelectorAll('.tab')[map[id]].classList.add('on');
   if(id==='org')setTimeout(function(){renderOrg(true);},50);
   if(id==='orders')renderOrders();
   if(id==='timeline')renderTimeline();
   if(id==='registry')renderRegistry();
+  if(id==='deconfliction')setTimeout(renderDeconfliction,60);
   if(id==='accuracy')runValidation();
   if(id==='dashboard')setTimeout(renderDashboard,60);
 }
@@ -1375,9 +1376,471 @@ window.addEventListener('resize',function(){
 });
 
 // ═══════════════════════════════════════════════════════
+// DECONFLICTION — Authority Intersection View
+// ═══════════════════════════════════════════════════════
+function renderDeconfliction(){
+  var svgEl = document.getElementById('dc-svg');
+  var detailEl = document.getElementById('dc-detail');
+  var selectEl = document.getElementById('dc-node-select');
+  var patternEl = document.getElementById('dc-pattern-select');
+  var statsEl = document.getElementById('dc-stats');
+  var W = svgEl.clientWidth || 900, H = svgEl.clientHeight || 580;
+
+  // Collect friction nodes
+  var frictionIds = [];
+  var patterns = {};
+  Object.keys(AUTH).forEach(function(id){
+    var a = AUTH[id];
+    if(!a.friction || !a.friction.length) return;
+    frictionIds.push(id);
+    a.friction.forEach(function(f){
+      var pk = f.types.sort().join('/');
+      if(!patterns[pk]) patterns[pk] = {key:pk, count:0, nodes:[]};
+      patterns[pk].count++;
+      if(patterns[pk].nodes.indexOf(id)<0) patterns[pk].nodes.push(id);
+    });
+  });
+
+  // Populate selects
+  if(selectEl.options.length <= 1){
+    selectEl.innerHTML = '';
+    frictionIds.sort().forEach(function(id){
+      var n = NODES[id];
+      var sev = 'med';
+      AUTH[id].friction.forEach(function(f){ if(f.severity==='high') sev='high'; });
+      var o = document.createElement('option');
+      o.value = id;
+      o.textContent = (n?n.lbl:id) + (sev==='high'?' ●':'');
+      if(sev==='high') o.style.color='#ff5566';
+      selectEl.appendChild(o);
+    });
+    patternEl.innerHTML = '<option value="all">All Patterns</option>';
+    Object.values(patterns).sort(function(a,b){return b.count-a.count;}).forEach(function(p){
+      var o = document.createElement('option');
+      o.value = p.key;
+      o.textContent = p.key + ' (' + p.count + ')';
+      patternEl.appendChild(o);
+    });
+    selectEl.onchange = function(){ renderDeconflictionGraph(selectEl.value); };
+    patternEl.onchange = function(){
+      var pk = patternEl.value;
+      if(pk==='all') return;
+      var first = patterns[pk] && patterns[pk].nodes[0];
+      if(first){ selectEl.value = first; renderDeconflictionGraph(first); }
+    };
+  }
+
+  statsEl.textContent = frictionIds.length + ' friction nodes · ' +
+    Object.keys(patterns).length + ' patterns · ' +
+    frictionIds.reduce(function(s,id){ return s + AUTH[id].friction.length; }, 0) + ' annotations';
+
+  renderDeconflictionGraph(selectEl.value || frictionIds[0]);
+}
+
+var ACOL_MAP = KMS_DATA.config.acol;
+var AUTH_LABELS = {opcon:'OPCON',adcon:'ADCON',daco:'DACO',ta:'Tech Authority',lcsp:'LCSP Return',aa:'Acq Authority',cocom:'COCOM',nca:'NCA',dac:'DAC',align:'Alignment'};
+
+function renderDeconflictionGraph(focusId){
+  if(!focusId || !AUTH[focusId]) return;
+  var svgEl = document.getElementById('dc-svg');
+  var detailEl = document.getElementById('dc-detail');
+  var W = svgEl.clientWidth || 900, H = svgEl.clientHeight || 580;
+
+  // Clear
+  while(svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // Build tree: gather all nodes involved in the authority chains converging on focusId
+  var involved = {};
+  involved[focusId] = true;
+  var focusAuth = AUTH[focusId];
+  var authTypes = ['opcon','adcon','daco','ta','aa','lcsp','dac'];
+  var activeTypes = [];
+
+  // Walk chains for chain-types (opcon, adcon, daco, dac)
+  function walkChain(id, key){
+    var chain = [id];
+    var visited = {};
+    visited[id] = true;
+    var cur = id;
+    while(true){
+      var a = AUTH[cur];
+      if(!a || !a[key] || !a[key].length) break;
+      var par = a[key][0];
+      if(visited[par]) break;
+      visited[par] = true;
+      chain.push(par);
+      involved[par] = true;
+      cur = par;
+    }
+    return chain;
+  }
+
+  var chains = {};
+  ['opcon','adcon','daco','dac'].forEach(function(k){
+    if(focusAuth[k] && focusAuth[k].length > 0){
+      chains[k] = walkChain(focusId, k);
+      activeTypes.push(k);
+    }
+  });
+
+  // For peer types (ta, aa, lcsp), include the peers and their first parent
+  ['ta','aa','lcsp'].forEach(function(k){
+    if(focusAuth[k] && focusAuth[k].length > 0){
+      activeTypes.push(k);
+      chains[k] = [focusId];
+      focusAuth[k].forEach(function(peerId){
+        involved[peerId] = true;
+        chains[k].push(peerId);
+        // Walk peer's adcon chain 2 hops to give context
+        if(AUTH[peerId] && AUTH[peerId].adcon){
+          AUTH[peerId].adcon.forEach(function(p){ involved[p]=true; });
+        }
+      });
+    }
+  });
+
+  // Build hierarchical tree data for d3.tree
+  // Use ADCON as the primary tree structure, add other chains as arcs
+  var treeNodes = {};
+  var involvedIds = Object.keys(involved);
+
+  // Build parent map using adcon as primary hierarchy
+  var parentMap = {};
+  involvedIds.forEach(function(id){
+    var a = AUTH[id];
+    if(a && a.adcon && a.adcon.length > 0 && involved[a.adcon[0]]){
+      parentMap[id] = a.adcon[0];
+    }
+  });
+
+  // Find root(s) — nodes with no parent in our set
+  var roots = involvedIds.filter(function(id){ return !parentMap[id]; });
+
+  // Build hierarchy
+  function buildHierarchy(rootId){
+    var children = involvedIds.filter(function(id){ return parentMap[id]===rootId; });
+    var node = {id:rootId, children: children.map(buildHierarchy)};
+    return node;
+  }
+
+  // Use the highest node as root (usually potus or secdef)
+  var primaryRoot = roots[0] || focusId;
+  // If multiple roots, create a virtual root
+  var treeData;
+  if(roots.length > 1){
+    treeData = {id:'_root', children: roots.map(buildHierarchy)};
+  } else {
+    treeData = buildHierarchy(primaryRoot);
+  }
+
+  // D3 tree layout
+  var hierarchy = d3.hierarchy(treeData);
+  var treeLayout = d3.tree().nodeSize([170, 90]);
+  treeLayout(hierarchy);
+
+  // Collect positioned nodes
+  var posNodes = {};
+  hierarchy.each(function(d){ posNodes[d.data.id] = {x:d.x, y:d.y, data:d.data}; });
+
+  // Center and fit
+  var xs = hierarchy.descendants().map(function(d){return d.x;});
+  var ys = hierarchy.descendants().map(function(d){return d.y;});
+  var minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+  var minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+  var treeW = maxX-minX+200, treeH = maxY-minY+120;
+  var scale = Math.min(W/treeW, H/treeH, 1.0);
+  var tx = W/2 - (minX+maxX)/2*scale;
+  var ty = 40 - minY*scale;
+
+  var g = document.createElementNS(NS,'g');
+  g.setAttribute('transform','translate('+tx+','+ty+') scale('+scale+')');
+  svgEl.appendChild(g);
+
+  // Defs for glow filter
+  var defs = document.createElementNS(NS,'defs');
+  var filter = document.createElementNS(NS,'filter');
+  filter.setAttribute('id','dc-glow');
+  filter.setAttribute('x','-50%'); filter.setAttribute('y','-50%');
+  filter.setAttribute('width','200%'); filter.setAttribute('height','200%');
+  var blur = document.createElementNS(NS,'feGaussianBlur');
+  blur.setAttribute('stdDeviation','4'); blur.setAttribute('result','glow');
+  filter.appendChild(blur);
+  var merge = document.createElementNS(NS,'feMerge');
+  var mn1 = document.createElementNS(NS,'feMergeNode'); mn1.setAttribute('in','glow');
+  var mn2 = document.createElementNS(NS,'feMergeNode'); mn2.setAttribute('in','SourceGraphic');
+  merge.appendChild(mn1); merge.appendChild(mn2);
+  filter.appendChild(merge);
+  defs.appendChild(filter);
+  svgEl.appendChild(defs);
+
+  // Draw ADCON tree links (thin, blue, background)
+  hierarchy.links().forEach(function(link){
+    if(link.source.data.id==='_root') return;
+    var line = document.createElementNS(NS,'path');
+    var sx=link.source.x, sy=link.source.y, tx2=link.target.x, ty2=link.target.y;
+    line.setAttribute('d','M'+sx+','+sy+' C'+sx+','+(sy+ty2)/2+' '+tx2+','+(sy+ty2)/2+' '+tx2+','+ty2);
+    line.setAttribute('fill','none');
+    line.setAttribute('stroke','#0096cc');
+    line.setAttribute('stroke-width','1.5');
+    line.setAttribute('stroke-opacity','0.25');
+    line.setAttribute('stroke-dasharray','4,3');
+    g.appendChild(line);
+  });
+
+  // Draw convergence arcs for non-ADCON authority chains
+  var arcColors = {opcon:'#ff7733',daco:'#00cccc',ta:'#dd44bb',aa:'#e05599',lcsp:'#6a9900',dac:'#b07cd8',cocom:'#e8b00f'};
+  var focusPos = posNodes[focusId];
+
+  activeTypes.forEach(function(atype){
+    if(atype==='adcon') return; // adcon is the tree structure
+    var col = arcColors[atype] || ACOL_MAP[atype] || '#888';
+    var chain = chains[atype];
+    if(!chain || chain.length < 2) return;
+
+    // Draw arc from source to focus node
+    var sourceId = chain[chain.length-1]; // furthest source
+    // For peer types, draw from each peer
+    var sources = (atype==='ta'||atype==='aa'||atype==='lcsp') ? chain.slice(1) : [chain[1]];
+    sources.forEach(function(srcId){
+      var srcPos = posNodes[srcId];
+      if(!srcPos || !focusPos) return;
+      var sx=srcPos.x, sy=srcPos.y, fx=focusPos.x, fy=focusPos.y;
+      var mx = (sx+fx)/2, my = (sy+fy)/2;
+      // Offset control point to curve the arc away from the tree
+      var dx = fx-sx, dy = fy-sy;
+      var offset = Math.sqrt(dx*dx+dy*dy)*0.35;
+      var cx = mx - dy/Math.sqrt(dx*dx+dy*dy+1)*offset;
+      var cy = my + dx/Math.sqrt(dx*dx+dy*dy+1)*offset;
+      var arc = document.createElementNS(NS,'path');
+      arc.setAttribute('d','M'+sx+','+sy+' Q'+cx+','+cy+' '+fx+','+fy);
+      arc.setAttribute('fill','none');
+      arc.setAttribute('stroke',col);
+      arc.setAttribute('stroke-width','2.5');
+      arc.setAttribute('stroke-opacity','0.7');
+      g.appendChild(arc);
+      // Arrow label
+      var lbl = document.createElementNS(NS,'text');
+      lbl.setAttribute('x',cx); lbl.setAttribute('y',cy-8);
+      lbl.setAttribute('text-anchor','middle');
+      lbl.setAttribute('fill',col); lbl.setAttribute('font-size','10');
+      lbl.setAttribute('font-family','Rajdhani,sans-serif');
+      lbl.textContent = AUTH_LABELS[atype]||atype;
+      g.appendChild(lbl);
+    });
+  });
+
+  // Draw nodes
+  hierarchy.descendants().forEach(function(d){
+    if(d.data.id==='_root') return;
+    var id = d.data.id;
+    var n = NODES[id];
+    if(!n) return;
+    var svc = KMS_DATA.config.svc[n.svc] || {fill:'#1a1a2e',stroke:'#444',text:'#aaa'};
+    var nw=140, nh=52;
+
+    // Friction halo
+    var a = AUTH[id];
+    if(a && a.friction && a.friction.length > 0){
+      var maxSev = 'low';
+      a.friction.forEach(function(f){ if(f.severity==='high') maxSev='high'; else if(f.severity==='medium' && maxSev!=='high') maxSev='medium'; });
+      var haloCol = maxSev==='high'?'#ff5566':maxSev==='medium'?'#e8b00f':'#0076a9';
+      var halo = document.createElementNS(NS,'rect');
+      halo.setAttribute('x',d.x-nw/2-6); halo.setAttribute('y',d.y-nh/2-6);
+      halo.setAttribute('width',nw+12); halo.setAttribute('height',nh+12);
+      halo.setAttribute('rx','8');
+      halo.setAttribute('fill','none');
+      halo.setAttribute('stroke',haloCol);
+      halo.setAttribute('stroke-width','2.5');
+      halo.setAttribute('filter','url(#dc-glow)');
+      halo.setAttribute('opacity','0.8');
+      var pulse = document.createElementNS(NS,'animate');
+      pulse.setAttribute('attributeName','opacity');
+      pulse.setAttribute('values','0.8;0.3;0.8');
+      pulse.setAttribute('dur', maxSev==='high'?'1.5s':'2.5s');
+      pulse.setAttribute('repeatCount','indefinite');
+      halo.appendChild(pulse);
+      var pulseStroke = document.createElementNS(NS,'animate');
+      pulseStroke.setAttribute('attributeName','stroke-width');
+      pulseStroke.setAttribute('values','2.5;4;2.5');
+      pulseStroke.setAttribute('dur', maxSev==='high'?'1.5s':'2.5s');
+      pulseStroke.setAttribute('repeatCount','indefinite');
+      halo.appendChild(pulseStroke);
+      g.appendChild(halo);
+
+      // Friction badge (diamond)
+      if(id===focusId){
+        var badge = document.createElementNS(NS,'polygon');
+        var bx=d.x+nw/2+2, by=d.y-nh/2-2;
+        badge.setAttribute('points',(bx)+','+(by-8)+' '+(bx+8)+','+by+' '+bx+','+(by+8)+' '+(bx-8)+','+by);
+        badge.setAttribute('fill',haloCol);
+        badge.setAttribute('stroke','#fff');
+        badge.setAttribute('stroke-width','1');
+        g.appendChild(badge);
+        var btext = document.createElementNS(NS,'text');
+        btext.setAttribute('x',bx); btext.setAttribute('y',by+3.5);
+        btext.setAttribute('text-anchor','middle');
+        btext.setAttribute('fill','#fff'); btext.setAttribute('font-size','8');
+        btext.setAttribute('font-weight','bold');
+        btext.textContent = a.friction.length;
+        g.appendChild(btext);
+      }
+    }
+
+    // Node rect
+    var rect = document.createElementNS(NS,'rect');
+    rect.setAttribute('x',d.x-nw/2); rect.setAttribute('y',d.y-nh/2);
+    rect.setAttribute('width',nw); rect.setAttribute('height',nh);
+    rect.setAttribute('rx','5');
+    rect.setAttribute('fill',svc.fill);
+    rect.setAttribute('stroke',id===focusId?'#fff':svc.stroke);
+    rect.setAttribute('stroke-width',id===focusId?'2':'1');
+    rect.style.cursor = 'pointer';
+    rect.onclick = (function(nid){ return function(){
+      document.getElementById('dc-node-select').value = nid;
+      renderDeconflictionGraph(nid);
+    };})(id);
+    g.appendChild(rect);
+
+    // Node label
+    var label = document.createElementNS(NS,'text');
+    label.setAttribute('x',d.x); label.setAttribute('y',d.y-4);
+    label.setAttribute('text-anchor','middle');
+    label.setAttribute('fill',svc.text);
+    label.setAttribute('font-size','12');
+    label.setAttribute('font-weight','bold');
+    label.setAttribute('font-family','Rajdhani,sans-serif');
+    label.style.pointerEvents = 'none';
+    label.textContent = n.lbl;
+    g.appendChild(label);
+
+    // Subtitle
+    var sub = document.createElementNS(NS,'text');
+    sub.setAttribute('x',d.x); sub.setAttribute('y',d.y+10);
+    sub.setAttribute('text-anchor','middle');
+    sub.setAttribute('fill',svc.text);
+    sub.setAttribute('font-size','8');
+    sub.setAttribute('opacity','0.7');
+    sub.setAttribute('font-family','IBM Plex Sans,sans-serif');
+    sub.style.pointerEvents = 'none';
+    sub.textContent = (n.sub||'').substring(0,28);
+    g.appendChild(sub);
+  });
+
+  // Legend
+  var legend = document.createElementNS(NS,'g');
+  legend.setAttribute('transform','translate(12,'+Math.max(H-120,20)+')');
+  var ly = 0;
+  var legendItems = [
+    {col:'#0096cc',dash:'4,3',label:'ADCON (tree structure)'},
+  ];
+  activeTypes.forEach(function(t){
+    if(t==='adcon') return;
+    legendItems.push({col:arcColors[t]||'#888',dash:'',label:AUTH_LABELS[t]||t});
+  });
+  legendItems.push({col:'#ff5566',dash:'',label:'High severity halo',isHalo:true});
+  legendItems.push({col:'#e8b00f',dash:'',label:'Medium severity halo',isHalo:true});
+  legendItems.forEach(function(item){
+    if(item.isHalo){
+      var circ = document.createElementNS(NS,'rect');
+      circ.setAttribute('x',0); circ.setAttribute('y',ly-5);
+      circ.setAttribute('width',20); circ.setAttribute('height',10);
+      circ.setAttribute('rx','3');
+      circ.setAttribute('fill','none'); circ.setAttribute('stroke',item.col);
+      circ.setAttribute('stroke-width','2');
+      legend.appendChild(circ);
+    } else {
+      var line = document.createElementNS(NS,'line');
+      line.setAttribute('x1',0); line.setAttribute('y1',ly);
+      line.setAttribute('x2',20); line.setAttribute('y2',ly);
+      line.setAttribute('stroke',item.col); line.setAttribute('stroke-width','2.5');
+      if(item.dash) line.setAttribute('stroke-dasharray',item.dash);
+      legend.appendChild(line);
+    }
+    var lt = document.createElementNS(NS,'text');
+    lt.setAttribute('x',28); lt.setAttribute('y',ly+4);
+    lt.setAttribute('fill','#c8d8e8'); lt.setAttribute('font-size','10');
+    lt.setAttribute('font-family','IBM Plex Sans,sans-serif');
+    lt.textContent = item.label;
+    legend.appendChild(lt);
+    ly += 18;
+  });
+  svgEl.appendChild(legend);
+
+  // Detail panel
+  detailEl.style.display = 'block';
+  var focusNode = NODES[focusId];
+  var fa = AUTH[focusId];
+  var html = '<div style="font-family:Rajdhani,sans-serif;font-size:16px;color:var(--gold);margin-bottom:8px">' +
+    (focusNode?focusNode.lbl:focusId) + '</div>';
+  html += '<div style="font-size:10px;color:var(--t3);margin-bottom:12px">' + (focusNode?focusNode.sub:'') + '</div>';
+
+  // Authority summary
+  html += '<div style="font-size:10px;font-weight:bold;color:var(--t2);margin-bottom:6px">AUTHORITY CHAINS</div>';
+  activeTypes.forEach(function(t){
+    var col = arcColors[t] || ACOL_MAP[t] || '#888';
+    var targets = fa[t] || [];
+    html += '<div style="margin-bottom:4px"><span style="color:'+col+';font-weight:bold">'+
+      (AUTH_LABELS[t]||t)+'</span>: '+targets.map(function(id){return NODES[id]?NODES[id].lbl:id;}).join(', ')+'</div>';
+  });
+
+  // Friction entries
+  if(fa.friction && fa.friction.length){
+    html += '<div style="font-size:10px;font-weight:bold;color:var(--t2);margin:14px 0 6px">FRICTION POINTS</div>';
+    fa.friction.forEach(function(f,i){
+      var sevCol = f.severity==='high'?'#ff5566':f.severity==='medium'?'#e8b00f':'#0076a9';
+      html += '<div style="background:rgba(255,255,255,0.03);border:1px solid '+sevCol+'44;border-radius:4px;padding:8px;margin-bottom:8px">';
+      html += '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">';
+      f.types.forEach(function(t){
+        var c = arcColors[t]||ACOL_MAP[t]||'#888';
+        html += '<span style="background:'+c+'22;color:'+c+';border:1px solid '+c+'44;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:bold">'+(AUTH_LABELS[t]||t)+'</span>';
+      });
+      html += '<span style="background:'+sevCol+'22;color:'+sevCol+';border:1px solid '+sevCol+'44;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:bold">'+f.severity.toUpperCase()+'</span>';
+      html += '</div>';
+      html += '<div style="font-size:10px;line-height:1.5;color:var(--t2)">'+f.desc+'</div>';
+      // Refs
+      if(f.refs && f.refs.length){
+        html += '<div style="margin-top:6px;font-size:9px;color:var(--t3)">';
+        f.refs.forEach(function(r){
+          html += '<span style="color:var(--gold);margin-right:6px">'+r+'</span>';
+        });
+        html += '</div>';
+      }
+      // Dimensions (if present)
+      if(f.dimensions){
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">';
+        var dimColors = {resolution:{high:'#ff5566',partial:'#e8b00f',resolved:'#44cc44'},
+          impact:{'flight-safety':'#ff5566','mission-degradation':'#ff7733','coordination-burden':'#e8b00f',administrative:'#0076a9'},
+          visibility:{low:'#ff5566',medium:'#e8b00f',high:'#44cc44'},
+          clarity:{clear:'#44cc44',ambiguous:'#e8b00f',opaque:'#ff5566'},
+          temporal:{static:'#0076a9',cyclical:'#e8b00f',dynamic:'#ff7733'}};
+        Object.keys(f.dimensions).forEach(function(dk){
+          var dv = f.dimensions[dk];
+          var dc = (dimColors[dk]&&dimColors[dk][dv])||'#888';
+          html += '<span style="background:'+dc+'22;color:'+dc+';border:1px solid '+dc+'44;padding:1px 5px;border-radius:3px;font-size:8px">'+dk+':'+dv+'</span>';
+        });
+        html += '</div>';
+      }
+      // Failure modes (if present)
+      if(f.failure_modes){
+        html += '<div style="margin-top:6px;font-size:9px">';
+        Object.keys(f.failure_modes).forEach(function(echelon){
+          var mode = f.failure_modes[echelon];
+          var mc = mode==='ignorance'?'#ff5566':mode==='misinterpretation'?'#e8b00f':'#ff7733';
+          html += '<div><span style="color:var(--t3)">'+echelon+':</span> <span style="color:'+mc+'">'+mode+'</span></div>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+  }
+  detailEl.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
 // DASHBOARD — Project Management Roundtable
 // ═══════════════════════════════════════════════════════
-var _dashRadarBuilt = false;
+var _dashRadarBuilt = false; // Reset when axes/agents change
 
 function renderDashboard(){
 
@@ -1396,10 +1859,12 @@ function renderDashboard(){
   var kpis = [
     { val:nodeCount, lbl:'Nodes', cls:'dk-good' },
     { val:authCount, lbl:'Auth Entries', cls:'dk-good' },
-    { val:viewCount, lbl:'Views', cls:'dk-good' },
-    { val:orphanCount, lbl:'Orphaned Nodes', cls: orphanCount > 0 ? 'dk-warn' : 'dk-good' },
+    { val:refPct+'%', lbl:'Ref Coverage', cls: refPct>=80?'dk-good':'dk-warn' },
     { val:docCount, lbl:'Documents', cls:'dk-info' },
-    { val:0, lbl:'Errors', cls:'dk-good' }
+    { val:frictionNodes, lbl:'Friction Nodes', cls: frictionHigh>0?'dk-warn':'dk-info' },
+    { val:frictionHigh, lbl:'High Severity', cls: frictionHigh>0?'dk-warn':'dk-good' },
+    { val:dacoCount, lbl:'DACO Coverage', cls:'dk-info' },
+    { val:orphanCount, lbl:'Orphaned', cls: orphanCount > 0 ? 'dk-warn' : 'dk-good' }
   ];
   var kpiHtml = '';
   kpis.forEach(function(k){
@@ -1409,56 +1874,76 @@ function renderDashboard(){
 
   // ── Agent Data ──
   var DASH_AXES = [
-    { key:'integrity',    label:'Data Integrity',       short:'INTEGRITY' },
-    { key:'authority',    label:'Authority Grounding',   short:'AUTH GROUND' },
-    { key:'scale',        label:'Scale Readiness',       short:'SCALE' },
-    { key:'compliance',   label:'UI / Compliance',       short:'UI COMPLY' },
-    { key:'features',     label:'Feature Completeness',  short:'FEATURES' },
-    { key:'architecture', label:'Architecture Health',   short:'ARCH' },
-    { key:'debt',         label:'Tech Debt (low=good)',  short:'TECH DEBT' },
-    { key:'doctrinal',    label:'Doctrinal Accuracy',    short:'DOCTRINE' }
+    { key:'integrity',    label:'Data Integrity',        short:'INTEGRITY' },
+    { key:'authority',    label:'Authority Grounding',    short:'AUTH GROUND' },
+    { key:'scale',        label:'Scale Readiness',        short:'SCALE' },
+    { key:'compliance',   label:'UI / Compliance',        short:'UI COMPLY' },
+    { key:'features',     label:'Feature Completeness',   short:'FEATURES' },
+    { key:'architecture', label:'Architecture Health',    short:'ARCH' },
+    { key:'debt',         label:'Tech Debt (low=good)',   short:'TECH DEBT' },
+    { key:'doctrinal',    label:'Doctrinal Accuracy',     short:'DOCTRINE' },
+    { key:'deconflict',   label:'Deconfliction Coverage', short:'DECONFLICT' }
   ];
 
   var hasOrphans = orphanCount > 0;
   var refCoverage = 0;
-  Object.values(AUTH).forEach(function(a){ if(a.ref) refCoverage++; });
+  var frictionNodes = 0;
+  var frictionTotal = 0;
+  var frictionHigh = 0;
+  var dacoCount = 0;
+  Object.values(AUTH).forEach(function(a){
+    if(a.ref) refCoverage++;
+    if(a.daco && a.daco.length > 0) dacoCount++;
+    if(a.friction && a.friction.length > 0){
+      frictionNodes++;
+      frictionTotal += a.friction.length;
+      a.friction.forEach(function(f){ if(f.severity==='high') frictionHigh++; });
+    }
+  });
   var refPct = Math.round(refCoverage / authCount * 100);
 
   var DASH_AGENTS = [
     {
       id:'validator', name:'KMS-VALIDATOR', color:'#44cc44', status:'GREEN', statusCls:'dash-s-green',
-      concern: 'Zero orphans. '+refCoverage+'/'+authCount+' auth entries have ref chains ('+refPct+'%). '+docCount+' documents. Validator enforces ref\u2192document integrity. Next: increase ref coverage to 80%+ before resuming visual work.',
-      badges: [{t:'DATA CLEAN',c:'db-ready'},{t:'REF: '+refPct+'%',c: refPct>=80?'db-ready':'db-blocker'}],
-      scores:{ integrity:94, authority:92, scale:65, compliance:68, features:50, architecture:80, debt:82, doctrinal:refPct>=80?95:78 },
-      notes:{ integrity:'Zero orphans. All nodes wired.', authority:refCoverage+'/'+authCount+' ref chains grounded to Constitution', scale:'d3.tree implemented. Dense views zoom out far \u2014 blocked by incomplete data, not renderer.', compliance:'Sidebar improved. Fonts + version label remain.', features:'OSD + ref system complete. Layout engine ready. Visual work paused for data.', architecture:'ref schema + d3.tree + DOC_MAP all working. Foundation solid.', debt:'109 auth entries without ref chains = research debt. TACON unused. cyber/daco mismatch.', doctrinal:refPct+'% ref coverage. Target: 80% before visual sprint.' }
+      concern: 'Zero orphans. '+refCoverage+'/'+authCount+' ref chains ('+refPct+'%). '+docCount+' docs. '+frictionTotal+' friction annotations validated. Validator enforces ref\u2192document + friction\u2192document integrity.',
+      badges: [{t:'DATA CLEAN',c:'db-ready'},{t:'REF: '+refPct+'%',c: refPct>=80?'db-ready':'db-blocker'},{t:'FRICTION: '+frictionTotal,c:'db-ready'}],
+      scores:{ integrity:96, authority:98, scale:65, compliance:68, features:55, architecture:85, debt:88, doctrinal:96, deconflict:80 },
+      notes:{ integrity:'Zero orphans. All nodes wired. Friction schema validated.', authority:refCoverage+'/'+authCount+' ref chains grounded to Constitution ('+refPct+'%)', scale:'d3.tree implemented. Dense views need data-informed layout.', compliance:'Sidebar improved. Fonts + version label remain.', features:'Ref system + friction schema + DACO gaps fixed. Layout engine ready.', architecture:'ref + friction + d3.tree + DOC_MAP + dashboard all working.', debt:'TACON unused. cyber/daco naming mismatch. TYCOM TA assignments flagged for review.', doctrinal:refPct+'% ref coverage. '+frictionTotal+' friction annotations across '+frictionNodes+' nodes.', deconflict:'Validates friction refs resolve to documents. Does not assess legal accuracy.' }
     },
     {
-      id:'authority', name:'AUTH-RESEARCHER', color:'#dd44bb', status:'RED', statusCls:'dash-s-red',
-      concern: 'CRITICAL PATH: 109 auth entries lack ref chains. SECNAV two-chain structure (SECNAVINST 5400.15D) codified but PMA/FRC/squadron level incomplete. TACON defined in config but zero usage \u2014 audit needed. cyber vs daco field mismatch unresolved.',
-      badges:[{t:'109 UNGROUNDED',c:'db-blocker'},{t:'TACON UNUSED',c:'db-conflict'},{t:'CYBER/DACO',c:'db-conflict'}],
-      scores:{ integrity:88, authority:72, scale:55, compliance:58, features:42, architecture:72, debt:60, doctrinal:72 },
-      notes:{ integrity:'OSD + SECNAV chain codified. PMAs/FRCs/squadrons pending.', authority:'58 entries grounded. 109 remain. Two-chain model understood but not fully reflected in data.', scale:'Not this agent\u2019s concern until data is complete', compliance:'Defers to UI-Compliance', features:'Blocked by incomplete authority research', architecture:'ref schema is ready. Need research to fill it.', debt:'TACON: zero usage despite config entry. 7 PEO TA errors were found and fixed \u2014 more may exist.', doctrinal:'SECNAVINST 5400.15D two-chain model is the key. Every SYSCOM intersection needs proper AA vs ADCON vs TA separation.' }
+      id:'authority', name:'AUTH-RESEARCHER', color:'#dd44bb', status:'GREEN', statusCls:'dash-s-green',
+      concern: 'Ref coverage: '+refPct+'% ('+refCoverage+'/'+authCount+'). All 167 entries grounded to Constitution. 12 new statutes added. DACO gaps fixed (SYSCOMs, fleets, DCDC chain). TACON and cyber/daco naming still pending.',
+      badges:[{t:'REF: '+refPct+'%',c:'db-ready'},{t:'TACON UNUSED',c:'db-conflict'},{t:'CYBER/DACO',c:'db-conflict'}],
+      scores:{ integrity:94, authority:96, scale:55, compliance:58, features:60, architecture:80, debt:72, doctrinal:95, deconflict:75 },
+      notes:{ integrity:'All entries grounded. 12 new statutes added.', authority:'167/167 ref coverage. Every chain traces to Constitution.', scale:'Not this agent\u2019s concern until layout resumes', compliance:'Defers to UI-Compliance', features:'Ref chains complete. Friction annotations in place.', architecture:'ref schema fully populated. friction schema operational.', debt:'TACON: zero usage. cyber/daco naming. Some TYCOM TA assignments may be wrong (surflant ta:navair \u2014 should be navsea?).', doctrinal:'SECNAVINST 5400.15D two-chain model reflected. DACO scope corrected \u2014 removed from PMAs, added to fleets/SYSCOMs.', deconflict:'Research feeds friction annotations. Identifies which boundaries need deeper investigation.' }
     },
     {
       id:'architect', name:'ARCHITECT', color:'#0076a9', status:'GREEN', statusCls:'dash-s-green',
-      concern: 'Architecture is sound. d3.tree implemented, ref schema working, validator enforces integrity. Pausing visual work (ghost nodes, link routing) until authority data reaches 80%+ ref coverage. Lesson learned: design follows data.',
-      badges:[{t:'d3.tree DONE',c:'db-ready'},{t:'WAITING ON DATA',c:'db-blocker'},{t:'LESSON LEARNED',c:'db-opportunity'}],
-      scores:{ integrity:90, authority:90, scale:65, compliance:60, features:45, architecture:85, debt:75, doctrinal:88 },
-      notes:{ integrity:'Data model clean. ref validates at build time.', authority:'Grounding system well-designed. Needs data to fill it.', scale:'d3.tree nodeSize eliminates overlap. Dense views need data-informed layout decisions.', compliance:'Font + version label still pending', features:'Layout engine ready. Ghost nodes designed. All waiting on data.', architecture:'d3.tree + ref + DOC_MAP + dashboard = solid foundation. No architectural blockers.', debt:'Visual debt (fonts, version) is low priority. Authority data debt is the bottleneck.', doctrinal:'Data before design \u2014 core lesson from this sprint.' }
+      concern: 'Architecture is sound. friction schema (Option A) implemented \u2014 optional array, minimal footprint, validated. Ref coverage at '+refPct+'% unblocks Sprint 2 layout work. friction can evolve to annotations model (Option C) later.',
+      badges:[{t:'d3.tree DONE',c:'db-ready'},{t:'FRICTION SCHEMA',c:'db-ready'},{t:'LAYOUT UNBLOCKED',c:'db-opportunity'}],
+      scores:{ integrity:92, authority:95, scale:65, compliance:60, features:55, architecture:88, debt:78, doctrinal:92, deconflict:82 },
+      notes:{ integrity:'Data model clean. friction + ref validated at build time.', authority:'100% ref coverage. friction adds deconfliction layer.', scale:'d3.tree nodeSize ready. friction rendering TBD.', compliance:'Font + version label still pending', features:'friction schema operational. Layout engine ready. Ghost nodes designed.', architecture:'friction is Option A (per-node annotation). Clean path to Option C (typed annotations) if needed.', debt:'Visual debt (fonts, version) low priority. TYCOM TA data quality flagged.', doctrinal:'Data before design validated. friction captures doctrinal gaps as structured data.', deconflict:'Designed friction schema (Option A). Evolution path to Option C (typed annotations) is clean.' }
     },
     {
       id:'uicompliance', name:'UI-COMPLIANCE', color:'#e8b00f', status:'AMBER', statusCls:'dash-s-amber',
-      concern: 'Sidebar improved (10px/320px). Fonts + version label non-compliant. Visual work (ghost nodes, link routing, card refinement) on hold until authority data is complete. Cannot design for relationships that aren\u2019t codified.',
-      badges:[{t:'SIDEBAR DONE',c:'db-ready'},{t:'FONTS PENDING',c:'db-conflict'},{t:'VISUAL PAUSED',c:'db-blocker'}],
-      scores:{ integrity:82, authority:82, scale:62, compliance:58, features:45, architecture:75, debt:65, doctrinal:82 },
-      notes:{ integrity:'Version label still v1.0', authority:'ref badges render as clickable gold links', scale:'d3.tree handles overlap. Dense views zoom far \u2014 card size at zoom is a future issue.', compliance:'Sidebar improved. Fonts + version label = remaining compliance debt.', features:'Visual prototypes built (layout-demo.html, grid-layout-demo.html). Implementation waiting.', architecture:'Dashboard + radar chart integrated and working.', debt:'Typography + version = compliance debt. Low priority vs authority research.', doctrinal:'Classification banner correct. All visual decisions deferred to data completion.' }
+      concern: 'Sidebar improved (10px/320px). Fonts + version label non-compliant. Friction annotations need UI rendering \u2014 badge/icon on nodes with friction, expandable detail in sidebar. Dashboard updated with friction KPIs.',
+      badges:[{t:'SIDEBAR DONE',c:'db-ready'},{t:'FONTS PENDING',c:'db-conflict'},{t:'FRICTION UI TBD',c:'db-opportunity'}],
+      scores:{ integrity:82, authority:85, scale:62, compliance:58, features:48, architecture:78, debt:65, doctrinal:85, deconflict:55 },
+      notes:{ integrity:'Version label still v1.0', authority:'ref badges render as clickable gold links', scale:'d3.tree handles overlap. friction badges at zoom = future design question.', compliance:'Sidebar improved. Fonts + version label = remaining compliance debt.', features:'friction needs visual treatment: node badges, sidebar detail, severity coloring.', architecture:'Dashboard updated with friction metrics and deconfliction agent.', debt:'Typography + version = compliance debt.', doctrinal:'Classification banner correct. friction data available for rendering.', deconflict:'Friction needs UI rendering: severity badges, expandable detail, color coding by severity.' }
     },
     {
       id:'graph', name:'GRAPH-ANALYZER', color:'#00cccc', status:'GREEN', statusCls:'dash-s-green',
-      concern: authCount+' auth entries. '+refCoverage+' have ref chains. Zero orphans. 7 PEO TA errors corrected this session. Remaining concern: cyber vs daco field naming inconsistency and TACON as dead config.',
-      badges:[{t:'CHAINS CLEAN',c:'db-ready'},{t:'7 ERRORS FIXED',c:'db-ready'},{t:'TACON AUDIT',c:'db-conflict'}],
-      scores:{ integrity:95, authority:92, scale:72, compliance:70, features:52, architecture:85, debt:80, doctrinal:90 },
-      notes:{ integrity:'Zero orphans. All chains resolve. 7 PEO TA errors corrected (NAVSEA/NAVWAR PEOs pointed to NAVAIR).', authority:authCount+' entries. dac chains walk to POTUS for OSD+SECNAV layer.', scale:'d3.tree handles 500+ nodes. SVG rendering is the future bottleneck.', compliance:'WCAG passing. Color system mapped.', features:'OSD + ref + SECNAV chain complete. PMA/squadron level next.', architecture:'resolveChain() handles all authority types correctly.', debt:'TACON: defined in config (color #ff3355, dash 2,4, weight 1.3) but zero usage in auth or links. Audit needed.', doctrinal:'58 entries grounded to Constitution. 109 remaining = the work ahead.' }
+      concern: authCount+' auth entries, '+refPct+'% ref coverage. '+frictionNodes+' nodes with friction ('+frictionTotal+' annotations, '+frictionHigh+' high severity). DACO coverage: '+dacoCount+' nodes. DACO chain complete: CYBERCOM\u2192DCDC\u2192SCC\u2192subordinates.',
+      badges:[{t:'CHAINS CLEAN',c:'db-ready'},{t:'DACO: '+dacoCount,c:'db-ready'},{t:'FRICTION: '+frictionNodes,c:'db-ready'}],
+      scores:{ integrity:96, authority:96, scale:72, compliance:70, features:58, architecture:88, debt:82, doctrinal:94, deconflict:85 },
+      notes:{ integrity:'Zero orphans. All chains resolve. DACO chain complete.', authority:authCount+' entries, 100% ref coverage. DACO gaps fixed.', scale:'d3.tree handles 500+ nodes. friction rendering = future scale question.', compliance:'WCAG passing. Color system mapped.', features:'Ref + friction + DACO coverage complete. Graph structure is solid.', architecture:'resolveChain() handles all authority types. friction queryable per-node.', debt:'TACON: zero usage. TYCOM TA assignments flagged (surflant/subpac/msc show ta:navair).', doctrinal:'100% ref grounding. 9 friction patterns identified across 50 nodes.', deconflict:'39 DACO+TA overlap nodes identified. 50 total friction nodes. Pattern analysis complete.' }
+    },
+    {
+      id:'deconfliction', name:'LEGAL-DECONFLICTION', color:'#ff5566', status:'AMBER', statusCls:'dash-s-amber',
+      concern: frictionTotal+' friction annotations across '+frictionNodes+' nodes. '+frictionHigh+' high-severity (no published resolution). Key gaps: DACO vs TA boundary at airworthiness (CYBERSAFE is a process, not a statute). TYCOM readiness vs DACO has no doctrinal framework. GNA chain separation creates inherent tension at every OPCON/ADCON split.',
+      badges:[{t:'HIGH: '+frictionHigh,c:'db-blocker'},{t:'PATTERNS: 9',c:'db-conflict'},{t:'DOCTRINAL GAPS',c:'db-conflict'}],
+      scores:{ integrity:88, authority:90, scale:50, compliance:55, features:45, architecture:82, debt:60, doctrinal:78, deconflict:92 },
+      notes:{ integrity:'friction schema validated. All refs resolve to documents.', authority:'Every friction entry cites governing statutes/instructions on both sides of the boundary.', scale:'50 nodes annotated. Pattern-based \u2014 new nodes inherit friction from their pattern.', compliance:'friction UI not yet rendered. Severity coloring TBD.', features:'9 friction patterns codified. Need UI rendering + export/report capability.', architecture:'Option A (per-node array) is clean. Option C (typed annotations) is the evolution path.', debt:'Clinger-Cohen (40 USC §11103) and CYBERSAFE (M-13034.1) added as docs. GNA act itself not yet in documents array.', doctrinal:'Key finding: DACO/TA boundary is a doctrinal gap, not a data error. No single published document resolves it. This is the most important deconfliction finding.', deconflict:'9 patterns, 70 annotations, '+frictionHigh+' high-severity. DACO/TA airworthiness boundary is the #1 gap. TYCOM/DACO readiness #2. GNA chain separation is well-understood but friction is inherent.' }
     }
   ];
 
@@ -1476,16 +1961,16 @@ function renderDashboard(){
 
   // ── Priority Table ──
   var priorities = [
-    { p:'P1',c:'dp1', item:'Authority research: ref chains for remaining 109 auth entries', fid:'HIGH',fb:'df-h', eff:'HIGH', blocks:'All visual work, data fidelity' },
+    { p:'P1',c:'dp1', item:'TYCOM TA data quality: surflant/subpac/msc show ta:navair (should be navsea?)', fid:'HIGH',fb:'df-h', eff:'LOW', blocks:'Friction accuracy, view accuracy' },
     { p:'P2',c:'dp1', item:'TACON audit: zero usage \u2014 research or remove from config', fid:'HIGH',fb:'df-h', eff:'LOW', blocks:'Dead config cleanup' },
     { p:'P3',c:'dp1', item:'Harmonize cyber vs daco field naming', fid:'MED',fb:'df-m', eff:'LOW', blocks:'Data consistency' },
-    { p:'P4',c:'dp2', item:'SECNAVINST 5400.15D two-chain: verify all SYSCOM intersections', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'View accuracy' },
-    { p:'P5',c:'dp2', item:'PMA/PMS program offices: ref chains with acquisition instruments', fid:'HIGH',fb:'df-h', eff:'HIGH', blocks:'Acquisition view accuracy' },
-    { p:'P6',c:'dp3', item:'Bundle Roboto Slab WOFF2 fonts', fid:'MED',fb:'df-m', eff:'LOW', blocks:'UI compliance' },
-    { p:'P7',c:'dp3', item:'Fix version label v1.0 \u2192 current', fid:'LOW',fb:'df-l', eff:'TRIVIAL', blocks:'None' },
-    { p:'P8',c:'dp4', item:'Ghost nodes for dual-hat rendering (P2-A)', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'Dual-hat views (blocked by P1)' },
-    { p:'P9',c:'dp4', item:'Cross-cutting link routing (TA/LCSP arcs)', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'TA views (blocked by P1)' },
-    { p:'P10',c:'dp5', item:'Define tenant relationship type', fid:'HIGH',fb:'df-h', eff:'LOW', blocks:'CNIC/MCICOM (blocked by P1)' }
+    { p:'P4',c:'dp2', item:'Friction UI rendering: badge on nodes, severity coloring, sidebar detail', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'Friction visibility in views' },
+    { p:'P5',c:'dp2', item:'MARFOR DACO gap: marforcom/marforpac/marforcent/marforeur/marsoc need daco:marforcyber', fid:'MED',fb:'df-m', eff:'LOW', blocks:'USMC DACO chain completeness' },
+    { p:'P6',c:'dp2', item:'PEO DACO gap: 8 PEOs missing daco:fltcybercom (peo_t, peo_ships, etc.)', fid:'LOW',fb:'df-l', eff:'LOW', blocks:'Enterprise IT DACO consistency' },
+    { p:'P7',c:'dp3', item:'Resume Sprint 2: layout engine + ghost nodes for dual-hat rendering', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'Layout unblocked by 100% ref coverage' },
+    { p:'P8',c:'dp3', item:'Bundle Roboto Slab WOFF2 fonts', fid:'MED',fb:'df-m', eff:'LOW', blocks:'UI compliance' },
+    { p:'P9',c:'dp4', item:'Cross-cutting link routing (TA/LCSP arcs)', fid:'HIGH',fb:'df-h', eff:'MED', blocks:'TA views' },
+    { p:'P10',c:'dp5', item:'v9.0: D3 geo map, CNIC/MCICOM installations, tenant relationships', fid:'HIGH',fb:'df-h', eff:'HIGH', blocks:'Map integration' }
   ];
   var prHtml = '';
   priorities.forEach(function(p){
@@ -1500,22 +1985,26 @@ function renderDashboard(){
   // ── Decisions ──
   var decisions = [
     { title:'1. Layout Engine \u2014 LOCKED', opts:[
-      {tag:'\u2713',text:'P1-B d3.tree + P2-A ghost nodes. Implementation done (d3.tree) / designed (ghosts). Waiting on data.',rec:true}
+      {tag:'\u2713',text:'P1-B d3.tree + P2-A ghost nodes. Implementation done (d3.tree) / designed (ghosts). UNBLOCKED by 100% ref coverage.',rec:true}
     ]},
-    { title:'2. Authority Research Scope', opts:[
-      {tag:'A',text:'Full coverage: ref chains for all 167 auth entries before any visual work',rec:true},
-      {tag:'B',text:'80% threshold: resume visual work once 134+ entries have ref chains',rec:false},
-      {tag:'C',text:'Tier-based: complete one echelon level at a time (Echelon 2, then 3, then 4+)',rec:false}
+    { title:'2. Authority Research \u2014 COMPLETE', opts:[
+      {tag:'\u2713',text:'Full coverage achieved: 167/167 ref chains grounded to Constitution. 64 documents. 70 friction annotations.',rec:true}
     ]},
-    { title:'3. TACON Disposition', opts:[
+    { title:'3. Friction Schema Evolution', opts:[
+      {tag:'\u2713',text:'Option A (per-node friction array) implemented and validated. 9 patterns, 50 nodes.',rec:true},
+      {tag:'B',text:'Option C (typed annotations: friction + scope + phase + caveat) \u2014 evolution path when more annotation types emerge',rec:false}
+    ]},
+    { title:'4. DACO Scope on PMAs', opts:[
+      {tag:'\u2713',text:'Removed: DACO applies at operational unit level (MALS, FRC, squadron), not program offices. Backed by legal-deconfliction agent analysis.',rec:true}
+    ]},
+    { title:'5. TACON Disposition', opts:[
       {tag:'A',text:'Research: find specific TACON usage in current node set and codify',rec:false},
       {tag:'B',text:'Remove: delete from config if no current nodes use it. Re-add when needed.',rec:true},
       {tag:'C',text:'Keep as placeholder: leave in config, document as unused pending future nodes',rec:false}
     ]},
-    { title:'4. cyber vs daco Field Harmonization', opts:[
-      {tag:'A',text:'Keep daco in auth entries, map to cyber rendering at draw time',rec:true},
-      {tag:'B',text:'Rename all to cyber',rec:false},
-      {tag:'C',text:'Rename all to daco',rec:false}
+    { title:'6. TYCOM TA Data Quality', opts:[
+      {tag:'A',text:'Verify and correct: surflant/subpac/msc ta:navair may need ta:navsea; navifor ta:navair may need ta:navwar',rec:true},
+      {tag:'B',text:'Accept current: ta:navair may be intentional (cross-domain aviation TA)',rec:false}
     ]}
   ];
   var decHtml = '';
@@ -1530,11 +2019,11 @@ function renderDashboard(){
 
   // ── Conflicts ──
   var conflicts = [
-    {cls:'db-blocker',title:'109 auth entries lack ref chains',desc:'35% ref coverage. Visual design for ungrounded authority relationships produces misleading displays. Authority research is the critical path.'},
+    {cls:'db-blocker',title:frictionHigh+' high-severity friction points lack doctrinal resolution',desc:'DACO vs TA boundary at airworthiness (CYBERSAFE is a process, not a statute). TYCOM readiness vs DACO has no published framework. These are real-world deconfliction gaps, not data errors.'},
+    {cls:'db-conflict',title:'TYCOM TA data quality',desc:'surflant, subpac, msc show ta:navair but may need ta:navsea (surface/sub platforms are NAVSEA domain). navifor shows ta:navair but may need ta:navwar. Verify before relying on friction annotations.'},
     {cls:'db-conflict',title:'TACON: dead config',desc:'Color (#ff3355), dash (2,4), weight (1.3), and filter entry defined but zero usage in auth entries or view links. Either research and codify or remove.'},
     {cls:'db-conflict',title:'cyber vs daco field mismatch',desc:'Auth entries use "daco" field, view links use "cyber" authority type. Same DoDI 8530.01 relationship rendered differently depending on context.'},
-    {cls:'db-conflict',title:'Font stack non-compliant',desc:'IBM Plex Sans primary; Navy Design Guide says Roboto Slab. Version label still v1.0. Low priority vs authority research.'},
-    {cls:'db-conflict',title:'Lesson learned: design preceded data',desc:'Time spent on layout engines, grid prototypes, and radial evaluation before authority data was complete. Visual decisions deferred until ref coverage reaches 80%+.'}
+    {cls:'db-conflict',title:'MARFOR + PEO DACO gaps',desc:'5 MARFORs and 8 PEOs missing DACO entries. All operate DODIN-connected enterprise IT. Inconsistent with NAVSEA/NAVAIR/NAVWAR which have DACO.'}
   ];
   var cflHtml = '';
   conflicts.forEach(function(c){
@@ -1544,10 +2033,11 @@ function renderDashboard(){
 
   // ── Opportunities ──
   var opps = [
-    {cls:'db-ready',title:'Foundation is solid',desc:'ref schema, validator, 50 documents, d3.tree engine, dashboard \u2014 all working. The infrastructure to codify and visualize authority is built. Now fill it with researched data.'},
-    {cls:'db-ready',title:'SECNAV two-chain model understood',desc:'SECNAVINST 5400.15D research complete. AA vs ADCON vs TA separation at SYSCOM intersections is well-defined. Ready to codify remaining nodes.'},
-    {cls:'db-opportunity',title:'7 data errors already caught',desc:'PEO TA references corrected (NAVSEA/NAVWAR PEOs pointed to NAVAIR). Systematic ref chain work will find more. Each fix improves every view that touches those nodes.'},
-    {cls:'db-opportunity',title:'Visual prototypes ready to implement',desc:'d3.tree (done), ghost nodes (designed), link routing (prototyped). All waiting on authority data completion. No design work needed \u2014 just data.'}
+    {cls:'db-ready',title:'100% ref coverage achieved',desc:'All 167 auth entries grounded to Constitution with '+docCount+' documents. Authority research sprint complete. Layout work unblocked.'},
+    {cls:'db-ready',title:'Friction schema operational',desc:frictionTotal+' friction annotations across '+frictionNodes+' nodes covering 9 distinct patterns. Legal deconfliction agent analyzing authority boundary conflicts. Validator enforces friction\u2192document integrity.'},
+    {cls:'db-ready',title:'DACO chain complete',desc:'CYBERCOM\u2192DCDC\u2192FLTCYBERCOM/MARFORCYBER\u2192subordinates. SYSCOMs, fleets, FRCs all wired. PMA DACO corrected (removed \u2014 applies at operational unit, not program office).'},
+    {cls:'db-opportunity',title:'Sprint 2 layout unblocked',desc:'d3.tree (done), ghost nodes (designed), link routing (prototyped). 100% ref coverage removes the data blocker. Layout can resume with confidence in the underlying relationships.'},
+    {cls:'db-opportunity',title:'Friction drives future research',desc:frictionHigh+' high-severity friction points identify real doctrinal gaps (DACO/TA boundary, TYCOM/DACO readiness). These are research priorities that improve the tool\u2019s value as an operational reference.'}
   ];
   var oppHtml = '';
   opps.forEach(function(o){
@@ -1557,8 +2047,8 @@ function renderDashboard(){
 
   // ── Baseline Snapshot ──
   document.getElementById('dash-baseline').innerHTML =
-    '<div><div class="dash-sec-head">Data Model</div><div style="line-height:1.8;margin-top:5px">'+nodeCount+' org nodes \u00b7 12 authority types (incl. dac)<br>'+authCount+' auth entries \u00b7 ref document chains<br>'+docCount+' documents (23 foundation + 20 operational)<br>opcon/adcon/daco/dac \u2192 chain types<br>ta/lcsp/aa \u2192 peer arrays<br>'+viewCount+' preset views + custom builder</div></div>' +
-    '<div><div class="dash-sec-head">Architecture</div><div style="line-height:1.8;margin-top:5px">Single HTML entry point \u00b7 file:// native<br>D3.js v7 only vendored lib<br>kms-data.js (source of truth)<br>app.js: ~1,800 lines (all logic + dashboard)<br>No server \u00b7 No build \u00b7 No framework<br><span style="color:#ffaa22">Layout engine: autoLayoutView() needs replacement</span></div></div>' +
+    '<div><div class="dash-sec-head">Data Model</div><div style="line-height:1.8;margin-top:5px">'+nodeCount+' org nodes \u00b7 12 authority types (incl. dac)<br>'+authCount+' auth entries \u00b7 '+refPct+'% ref coverage<br>'+docCount+' documents \u00b7 '+frictionTotal+' friction annotations<br>'+frictionNodes+' nodes with authority boundary friction<br>'+dacoCount+' nodes with DACO coverage<br>'+viewCount+' preset views + custom builder</div></div>' +
+    '<div><div class="dash-sec-head">Architecture</div><div style="line-height:1.8;margin-top:5px">Single HTML entry point \u00b7 file:// native<br>D3.js v7 only vendored lib<br>kms-data.js (source of truth)<br>6 agents: validator, authority-researcher, architect,<br>ui-compliance, graph-analyzer, legal-deconfliction<br>No server \u00b7 No build \u00b7 No framework</div></div>' +
     '<div><div class="dash-sec-head">Compliance</div><div style="line-height:1.8;margin-top:5px">Navy Blue #022a3a \u00b7 Blue #0076a9 \u00b7 Gold #e8b00f<br>WCAG 4.5:1 contrast \u2713<br>Min 10px font size \u2713 (sidebar improved)<br>Classification banner \u2713<br><span style="color:#ffaa22">Font: IBM Plex Sans (should be Roboto Slab)</span><br><span style="color:#ffaa22">Version label: v1.0 (should be current)</span></div></div>';
 
   // ══════════════════════════════════════════

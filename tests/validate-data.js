@@ -75,6 +75,53 @@ for (const [id, entry] of Object.entries(AUTH)) {
     if (!nodeIds.has(entry.mte)) error(`Auth "${id}".mte references unknown node "${entry.mte}"`);
   }
 
+  // Validate friction field (authority boundary friction annotations)
+  if (entry.friction) {
+    if (!Array.isArray(entry.friction)) {
+      error(`Auth "${id}".friction should be an array`);
+    } else {
+      const validSeverities = new Set(['low', 'medium', 'high']);
+      const validFrictionTypes = new Set([...authArrayKeys, 'opcon', 'adcon', 'cocom', 'tacon', 'nca']);
+      for (let fi = 0; fi < entry.friction.length; fi++) {
+        const f = entry.friction[fi];
+        if (!Array.isArray(f.types) || f.types.length < 2) {
+          error(`Auth "${id}".friction[${fi}].types must list at least 2 authority types`);
+        } else {
+          for (const t of f.types) {
+            if (!validFrictionTypes.has(t)) error(`Auth "${id}".friction[${fi}].types contains unknown type "${t}"`);
+          }
+        }
+        if (!f.desc) warn(`Auth "${id}".friction[${fi}] has no description`);
+        if (f.refs) {
+          for (const did of f.refs) {
+            if (!docIds.has(did)) error(`Auth "${id}".friction[${fi}].refs references unknown document "${did}"`);
+          }
+        }
+        if (f.severity && !validSeverities.has(f.severity)) {
+          error(`Auth "${id}".friction[${fi}].severity must be low|medium|high`);
+        }
+        if (f.dimensions) {
+          const validImpact = new Set(['flight-safety','mission-degradation','coordination-burden','administrative']);
+          const validVisibility = new Set(['low','medium','high']);
+          const validClarity = new Set(['clear','ambiguous','opaque']);
+          const validTemporal = new Set(['static','cyclical','dynamic']);
+          const validResolution = new Set(['high','partial','resolved']);
+          if (f.dimensions.resolution && !validResolution.has(f.dimensions.resolution)) error(`Auth "${id}".friction[${fi}].dimensions.resolution invalid`);
+          if (f.dimensions.impact && !validImpact.has(f.dimensions.impact)) error(`Auth "${id}".friction[${fi}].dimensions.impact invalid`);
+          if (f.dimensions.visibility && !validVisibility.has(f.dimensions.visibility)) error(`Auth "${id}".friction[${fi}].dimensions.visibility invalid`);
+          if (f.dimensions.clarity && !validClarity.has(f.dimensions.clarity)) error(`Auth "${id}".friction[${fi}].dimensions.clarity invalid`);
+          if (f.dimensions.temporal && !validTemporal.has(f.dimensions.temporal)) error(`Auth "${id}".friction[${fi}].dimensions.temporal invalid`);
+        }
+        if (f.failure_modes) {
+          const validModes = new Set(['ignorance','misinterpretation','non-compliance']);
+          for (const [ech, mode] of Object.entries(f.failure_modes)) {
+            if (!validModes.has(mode)) error(`Auth "${id}".friction[${fi}].failure_modes.${ech} invalid mode "${mode}"`);
+          }
+        }
+      }
+    }
+  }
+
   // Validate ref field (document reference chains)
   if (entry.ref) {
     if (typeof entry.ref !== 'object' || Array.isArray(entry.ref)) {

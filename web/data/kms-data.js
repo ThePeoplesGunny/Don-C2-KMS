@@ -58,7 +58,6 @@ const KMS_DATA = {
    "cocom": "#e8b00f",
    "adcon": "#0096cc",
    "opcon": "#ff7733",
-   "tacon": "#ff3355",
    "cyber": "#00cccc",
    "ta": "#dd44bb",
    "lcsp": "#6a9900",
@@ -71,7 +70,6 @@ const KMS_DATA = {
    "cocom": null,
    "adcon": "6,3",
    "opcon": "3,3",
-   "tacon": "2,4",
    "cyber": "4,2",
    "ta": "9,3,2,3",
    "lcsp": "8,4",
@@ -84,7 +82,6 @@ const KMS_DATA = {
    "cocom": 2.5,
    "adcon": 1.8,
    "opcon": 1.8,
-   "tacon": 1.3,
    "cyber": 2.2,
    "ta": 1.8,
    "lcsp": 1.1,
@@ -3083,7 +3080,81 @@ const KMS_DATA = {
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-16 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ],
+   "note": "MALS-16 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot)."
   },
   "mals24": {
    "opcon": [
@@ -3106,7 +3177,81 @@ const KMS_DATA = {
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-24 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-24 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals36": {
    "opcon": [
@@ -3125,7 +3270,81 @@ const KMS_DATA = {
     "marforcyber"
    ],
    "mte": "marforpac",
-   "note": "MALS-36 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-36 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals14": {
    "opcon": [
@@ -3148,7 +3367,81 @@ const KMS_DATA = {
     "marforcyber"
    ],
    "mte": "marforcom",
-   "note": "MALS-14 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-14 — I-level (intermediate) maintenance capability tier. Per COMNAVAIRFORINST 4790.2 series (NAMP), MALS provides intermediate-level maintenance, ordnance, supply, and aviation information management support to all squadrons within the parent MAG. Represents a maintenance capability level (equivalent to Navy AIMD), not a unique unit-to-unit authority relationship. Three-level maintenance: O-level (squadron organic), I-level (MALS/AIMD), D-level (FRC/depot). Per OPNAVINST 4790.2K (25 Apr 2025) and COMNAVAIRFORINST 4790.2E.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals11": {
    "adcon": [
@@ -3167,7 +3460,81 @@ const KMS_DATA = {
     "f35jpo",
     "pma207"
    ],
-   "note": "MALS-11, MAG-11, 3d MAW, I MEF. MCAS Miramar, CA."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-11, MAG-11, 3d MAW, I MEF. MCAS Miramar, CA.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals12": {
    "adcon": [
@@ -3184,7 +3551,81 @@ const KMS_DATA = {
     "f35jpo",
     "pma207"
    ],
-   "note": "MALS-12, MAG-12, 1st MAW, III MEF. MCAS Iwakuni, Japan. Supports F-35B (VMFA-121, VMFA-242) and KC-130J (VMGR-152)."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-12, MAG-12, 1st MAW, III MEF. MCAS Iwakuni, Japan. Supports F-35B (VMFA-121, VMFA-242) and KC-130J (VMGR-152).",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals13": {
    "adcon": [
@@ -3201,7 +3642,81 @@ const KMS_DATA = {
     "f35jpo",
     "pma263"
    ],
-   "note": "MALS-13, MAG-13, 3d MAW, I MEF. MCAS Yuma, AZ."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-13, MAG-13, 3d MAW, I MEF. MCAS Yuma, AZ.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals26": {
    "adcon": [
@@ -3216,7 +3731,81 @@ const KMS_DATA = {
    "lcsp": [
     "pma272"
    ],
-   "note": "MALS-26, MAG-26, 2d MAW, II MEF. MCAS New River, NC."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-26, MAG-26, 2d MAW, II MEF. MCAS New River, NC.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals29": {
    "adcon": [
@@ -3233,7 +3822,81 @@ const KMS_DATA = {
     "pma261",
     "pma276"
    ],
-   "note": "MALS-29, MAG-29, 2d MAW, II MEF. MCAS New River, NC."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-29, MAG-29, 2d MAW, II MEF. MCAS New River, NC.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals31": {
    "adcon": [
@@ -3250,7 +3913,81 @@ const KMS_DATA = {
     "pma265",
     "f35jpo"
    ],
-   "note": "MALS-31, MAG-31, 2d MAW, II MEF. MCAS Beaufort, SC."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-31, MAG-31, 2d MAW, II MEF. MCAS Beaufort, SC.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals39": {
    "adcon": [
@@ -3267,7 +4004,81 @@ const KMS_DATA = {
     "pma276",
     "pma272"
    ],
-   "note": "MALS-39, MAG-39, 3d MAW, I MEF. MCAS Camp Pendleton, CA."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-39, MAG-39, 3d MAW, I MEF. MCAS Camp Pendleton, CA.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals41": {
    "adcon": [
@@ -3286,7 +4097,81 @@ const KMS_DATA = {
     "pma276",
     "pma207"
    ],
-   "note": "MALS-41, MAG-41, 4th MAW, MARFORRES. NAS JRB Fort Worth, TX."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-41, MAG-41, 4th MAW, MARFORRES. NAS JRB Fort Worth, TX.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "mals42": {
    "adcon": [
@@ -3297,6 +4182,19 @@ const KMS_DATA = {
    ],
    "ta": [],
    "lcsp": [],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "MALS-42, MAG-42, 4th MAW, MARFORRES. NAS Atlanta, GA."
   },
   "mals49": {
@@ -3316,7 +4214,81 @@ const KMS_DATA = {
     "pma276",
     "pma272"
    ],
-   "note": "MALS-49, MAG-49, 4th MAW, MARFORRES. Stewart ANGB, NY."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "namp4790",
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "MALS-49, MAG-49, 4th MAW, MARFORRES. Stewart ANGB, NY.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (airworthiness, config mgmt via CYBERSAFE M-13034.1) vs MARFORCYBER DACO (DODIN defense via DoDI 8530.01). DACO cannot direct patches to flight-critical embedded software without NAVAIR flight clearance from AIR-4.0P. Weapon systems exempt from Clinger-Cohen IT governance (40 USC §11103) but not from Title 10 DACO. Boundary is doctrinal gap — resolved by coordination, not statute.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "flight-safety",
+      "visibility": "low",
+      "clarity": "clear",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "ta"
+     ],
+     "desc": "USMC ADCON chain (MAG→MAW→MEF→MARFOR→CMC per §8043) vs Navy acquisition TA chain (PMA→NAVAIR per OPNAVINST 5450.350B). MALS receives I-level maintenance direction through USMC ADCON but technical standards/configuration authority from Navy PMAs. Cross-service authority intersection — Goldwater-Nichols chain separation applies.",
+     "refs": [
+      "usc_10_8043",
+      "opnav5450_350b",
+      "namp4790"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "pma281": {
    "opcon": [],
@@ -3328,11 +4300,25 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "daco": [
-    "fltcybercom"
-   ],
    "mte": null,
-   "note": "PMA-281 Strike Planning and Execution Systems. Under PEO(U&W). Verified per navair.navy.mil."
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "PMA-281 Strike Planning and Execution Systems. Under PEO(U&W). DACO removed: PMAs are acquisition organizations in the SECNAV chain (PMA→PEO→ASN(RDA)→SECNAV), not operational units. DACO per DoDI 8530.01 applies to DODIN-connected operational systems at the unit level, not to the program office. Enterprise IT (NIPR/SIPR) is trivially under DACO for all DoD components."
   },
   "pma272": {
    "opcon": [],
@@ -3344,11 +4330,25 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "daco": [
-    "fltcybercom"
-   ],
    "mte": null,
-   "note": "PMA-272. KMS lists as V-22 Osprey program. Verification report flagged possible discrepancy — navair.navy.mil may show different program assignment. Requires further verification."
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "PMA-272. V-22 Osprey program. Under PEO(A). DACO removed: acquisition chain authority (PMA→PEO→ASN(RDA)→SECNAV) is outside the military cyber chain. DACO applies at the operational unit level where V-22 systems connect to the DODIN."
   },
   "pma276": {
    "opcon": [],
@@ -3360,11 +4360,25 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "daco": [
-    "fltcybercom"
-   ],
    "mte": null,
-   "note": "H-1 TA holder (AH-1Z Viper, UH-1Y Venom). Governs airworthiness for all USMC H-1 variants."
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "H-1 TA holder (AH-1Z Viper, UH-1Y Venom). DACO removed: acquisition chain authority is outside the military cyber chain. DACO applies at the operational unit level where H-1 systems connect to the DODIN. NAVAIR retains airworthiness TA per CYBERSAFE process (M-13034.1)."
   },
   "fltcybercom": {
    "opcon": [
@@ -3396,6 +4410,35 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "FLTCYBERCOM exercises DACO over Navy DODIN-connected systems, but SYSCOM TA (NAVAIR/NAVSEA/NAVWAR) governs configuration of weapon system software. DACO cyber directives affecting Platform IT (avionics, combat systems, HM&E control systems) require coordination with the cognizant SYSCOM. No single published deconfliction framework exists. NAVAIR CYBERSAFE (M-13034.1) provides airworthiness firewall for aviation systems; NAVSEA equivalent for shipboard systems is less formalized.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "opnav5450_340a",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "medium",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ],
    "note": "Fleet Cyber Command / 10th Fleet. Echelon 2 under CNO ADCON per OPNAVINST 5450.345. OPCON to CYBERCOM. DACO from DCDC per DoDI 8530.01. CDR dual-hatted: COMTENTHFLT + Naval Space Command. Central operational authority for Navy networks, cryptology, SIGINT, IO, cyber, EW, space. UIC 00055."
   },
   "marforcyber": {
@@ -3427,7 +4470,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Marine Forces Cyberspace Command. ADCON from CMC. OPCON to CYBERCOM. DACO from DCDC per DoDI 8530.01."
+   "note": "Marine Forces Cyberspace Command. ADCON from CMC. OPCON to CYBERCOM. DACO from DCDC per DoDI 8530.01.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "navsea": {
    "adcon": [
@@ -3460,7 +4532,35 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Sea Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.340A. PEO Holding Command for ship/sub programs. COMNAVSEA exercises TA for HM&E, ship design, propulsion (conventional). NAVSEA 08 exercises independent nuclear TA per 50 USC §2406 / EO 12344. UIC 00017."
+   "note": "Naval Sea Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.340A. PEO Holding Command for ship/sub programs. COMNAVSEA exercises TA for HM&E, ship design, propulsion (conventional). NAVSEA 08 exercises independent nuclear TA per 50 USC §2406 / EO 12344. UIC 00017.",
+   "friction": [
+    {
+     "types": [
+      "aa",
+      "adcon",
+      "daco"
+     ],
+     "desc": "SYSCOM triple-authority intersection. CNO ADCON (10 USC §8033) for service administration, ASN(RD&A) AA (SECNAVINST 5400.15D) for acquisition governance, FLTCYBERCOM DACO (DoDI 8530.01) for cyber defense. DACO directives affecting acquisition systems intersect with acquisition authority.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "secnavinst_5400_15d"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "coordination-burden",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "airlant": {
    "adcon": [
@@ -3496,6 +4596,59 @@ const KMS_DATA = {
    "note": "Naval Air Force Atlantic. ADCON: CNO→USFFC→AIRLANT. TA from NAVAIR for airworthiness and configuration. Dual authority nexus.",
    "opcon": [
     "usffc"
+   ],
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "SYSCOM TA (platform configuration, maintenance standards) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Cyber patch directives affecting combat system or platform IT require SYSCOM TA coordination. NAVAIR airworthiness firewall applies via CYBERSAFE for aviation TYCOMs; NAVSEA equivalent for surface/sub TYCOMs is less formalized.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "opnav5450_340a",
+      "navair_m13034_1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "airpac": {
@@ -3532,6 +4685,59 @@ const KMS_DATA = {
    "note": "Naval Air Force Pacific. ADCON: CNO→COMPACFLT→AIRPAC. TA from NAVAIR. CDR dual-hatted as COMNAVAIRFOR. UIC 57025.",
    "opcon": [
     "compacflt"
+   ],
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "SYSCOM TA (platform configuration, maintenance standards) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Cyber patch directives affecting combat system or platform IT require SYSCOM TA coordination. NAVAIR airworthiness firewall applies via CYBERSAFE for aviation TYCOMs; NAVSEA equivalent for surface/sub TYCOMs is less formalized.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "opnav5450_340a",
+      "navair_m13034_1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "comfrc": {
@@ -3567,7 +4773,35 @@ const KMS_DATA = {
      "usc_10_113",
      "constitution_art2"
     ]
-   }
+   },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frce": {
    "opcon": [],
@@ -3586,7 +4820,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Depot capability: F/A-18, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC. Receives TA from PMA-265 (F/A-18) and PMA-299 (F-35). Returns MDS configuration data to PMAs per 10 USC § 4324(b)."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Depot capability: F/A-18, F-35C, C-130J, structural repair, T-56 engine. Largest industrial employer east of I-95 in NC. Receives TA from PMA-265 (F/A-18) and PMA-299 (F-35). Returns MDS configuration data to PMAs per 10 USC § 4324(b).",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcse": {
    "opcon": [],
@@ -3605,7 +4888,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Depot: F/A-18, F-35, E-2/C-2, P-8A, T-45, E-6B. Engines: F414, F404, J52, T700, T56, TF34. First F135 power module depot capability. MDS return flows to each PMA holding TA."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Depot: F/A-18, F-35, E-2/C-2, P-8A, T-45, E-6B. Engines: F414, F404, J52, T700, T56, TF34. First F135 power module depot capability. MDS return flows to each PMA holding TA.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcsw": {
    "opcon": [],
@@ -3624,7 +4956,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Depot: F/A-18A-F, EA-18G, E-2C/D, AV-8B, MV-22B, MH-60. Sites: Yuma AZ, Kaneohe Bay HI, Pt. Mugu CA, MCAS Pendleton CA. Primary USMC MV-22 and CH-53 maintenance source."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Depot: F/A-18A-F, EA-18G, E-2C/D, AV-8B, MV-22B, MH-60. Sites: Yuma AZ, Kaneohe Bay HI, Pt. Mugu CA, MCAS Pendleton CA. Primary USMC MV-22 and CH-53 maintenance source.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcma": {
    "opcon": [],
@@ -3643,7 +5024,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Intermediate level: Strike fighter support, component repair. DET NAS Norfolk."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Intermediate level: Strike fighter support, component repair. DET NAS Norfolk.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcw": {
    "opcon": [],
@@ -3662,7 +5092,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Echelon 5, UIC 44321. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Echelon 5, UIC 44321. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcnw": {
    "opcon": [],
@@ -3681,7 +5160,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Echelon 5, UIC 44329. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Echelon 5, UIC 44329. ISIC: FRCSW (not COMFRC directly). I-level maintenance. Source: SNDL.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frcwp": {
    "opcon": [],
@@ -3700,7 +5228,56 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "INDOPACOM/CENTCOM forward depot. Origin: FAWPRA(1950s)→NAPRA(1980)→FRC WestPac(2008). Forward-deployed configuration data return is critical to PM lifecycle visibility."
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "INDOPACOM/CENTCOM forward depot. Origin: FAWPRA(1950s)→NAPRA(1980)→FRC WestPac(2008). Forward-deployed configuration data return is critical to PM lifecycle visibility.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frc_ase": {
    "opcon": [],
@@ -3715,7 +5292,55 @@ const KMS_DATA = {
    ],
    "lcsp": [],
    "mte": null,
-   "note": "Aviation support equipment repair, calibration, metrology, SE overhaul."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Aviation support equipment repair, calibration, metrology, SE overhaul.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "frc_rmw": {
    "opcon": [],
@@ -3734,7 +5359,55 @@ const KMS_DATA = {
     "pma272"
    ],
    "mte": null,
-   "note": "Echelon 4, UIC 4828A. ISIC: NAVAIRFORES (CNAF) — NOT COMFRC. Reserve FRC at NAS Fort Worth. Different ADCON chain from all other FRCs. Source: SNDL."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Echelon 4, UIC 4828A. ISIC: NAVAIRFORES (CNAF) — NOT COMFRC. Reserve FRC at NAS Fort Worth. Different ADCON chain from all other FRCs. Source: SNDL.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (depot-level airworthiness, CYBERSAFE M-13034.1) vs FLTCYBERCOM DACO (DoDI 8530.01). Depot maintenance IT systems (NALCOMIS, ERP, logistics networks) fall under DACO. Depot test equipment and aircraft configuration tooling fall under NAVAIR TA. Cyber patch directives affecting depot production systems require NAVAIR coordination.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "navair": {
    "adcon": [
@@ -3767,7 +5440,35 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Air Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.350B. PEO Holding Command — provides workforce and TA for aviation programs. COMNAVAIR exercises Technical Authority for airworthiness, configuration management, engineering standards (NAVAIRINST 13034 series). Acquisition authority flows through ASN(RD&A)→PEOs, NOT through NAVAIR. UIC 00019."
+   "note": "Naval Air Systems Command. Echelon 2 under CNO for ADCON per OPNAVINST 5450.350B. PEO Holding Command — provides workforce and TA for aviation programs. COMNAVAIR exercises Technical Authority for airworthiness, configuration management, engineering standards (NAVAIRINST 13034 series). Acquisition authority flows through ASN(RD&A)→PEOs, NOT through NAVAIR. UIC 00019.",
+   "friction": [
+    {
+     "types": [
+      "aa",
+      "adcon",
+      "daco"
+     ],
+     "desc": "SYSCOM triple-authority intersection. CNO ADCON (10 USC §8033) for service administration, ASN(RD&A) AA (SECNAVINST 5400.15D) for acquisition governance, FLTCYBERCOM DACO (DoDI 8530.01) for cyber defense. DACO directives affecting acquisition systems intersect with acquisition authority.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "secnavinst_5400_15d"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "coordination-burden",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "asn_rda": {
    "dac": [
@@ -3829,7 +5530,34 @@ const KMS_DATA = {
      "usc_10_113",
      "constitution_art2"
     ]
-   }
+   },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (R&D/T&E configuration authority) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO is connection-based — isolated lab networks have no DACO exposure, but DODIN-connected R&D systems do. Dynamic boundary that shifts with network topology.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "coordination-burden",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "dynamic"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "nawcwd": {
    "opcon": [],
@@ -3864,7 +5592,34 @@ const KMS_DATA = {
      "usc_10_113",
      "constitution_art2"
     ]
-   }
+   },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVAIR TA (R&D/T&E configuration authority) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO is connection-based — isolated lab networks have no DACO exposure, but DODIN-connected R&D systems do. Dynamic boundary that shifts with network topology.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "navair_m13034_1"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "coordination-burden",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "dynamic"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "navrmc": {
    "opcon": [],
@@ -3878,6 +5633,27 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": null,
+   "ref": {
+    "adcon": [
+     "opnav5450_340a",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Echelon 3, UIC 58400. ISIC: NAVSEA. Navy Regional Maintenance Center — bridge between NAVSEA TA and fleet surface maintenance. Source: SNDL."
   },
   "cnic": {
@@ -3952,7 +5728,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Special Warfare Command. Echelon 2 under CNO ADCON. OPCON to SOCOM per UCP."
+   "note": "Naval Special Warfare Command. Echelon 2 under CNO ADCON. OPCON to SOCOM per UCP.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "chnavpers": {
    "adcon": [
@@ -3984,6 +5789,15 @@ const KMS_DATA = {
    "ta": [],
    "daco": [],
    "mte": null,
+   "ref": {
+    "adcon": [
+     "opnav5450_352b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Naval Safety Command (formerly Naval Safety Center). Echelon 2 under CNO per OPNAVINST 5450.352B."
   },
   "msc": {
@@ -3994,13 +5808,68 @@ const KMS_DATA = {
     "usffc"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
    "daco": [
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Echelon 3, UIC 00033. ISIC: USFFC. ADCON through USFFC. OPCON to TRANSCOM as Navy Component. Source: SNDL."
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Echelon 3, UIC 00033. ISIC: USFFC. ADCON through USFFC. OPCON to TRANSCOM as Navy Component. Source: SNDL.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "necc": {
    "opcon": [],
@@ -4036,6 +5905,15 @@ const KMS_DATA = {
    "ta": [],
    "daco": [],
    "mte": "usffc",
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Navy Warfare Development Command. Echelon 3 under USFFC (ISIC per OPNAVINST 5440.77C para 6a(2)(i)). Concept development, experimentation, war games."
   },
   "cnmoc": {
@@ -4046,6 +5924,15 @@ const KMS_DATA = {
    "ta": [],
    "daco": [],
    "mte": "usffc",
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Naval Meteorology and Oceanography Command. Echelon 3 under USFFC per OPNAVINST 5440.77C."
   },
   "fl10": {
@@ -4060,6 +5947,20 @@ const KMS_DATA = {
     "fltcybercom"
    ],
    "mte": "fltcybercom",
+   "ref": {
+    "adcon": [
+     "opnav5450_345",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Echelon 3, UIC 3822A. ISIC: FLTCYBERCOM. Dual-hatted with FLTCYBERCOM. Source: SNDL."
   },
   "usffc": {
@@ -4091,7 +5992,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Fleet Forces Command. Echelon 2 under CNO ADCON per OPNAVINST 5440.77C. OPCON to STRATCOM as NAVSTRAT. CDR quad-hatted: NAVNORTH, NAVSTRAT, COMLANTFLT, C2F. UIC 00060."
+   "note": "Fleet Forces Command. Echelon 2 under CNO ADCON per OPNAVINST 5440.77C. OPCON to STRATCOM as NAVSTRAT. CDR quad-hatted: NAVNORTH, NAVSTRAT, COMLANTFLT, C2F. UIC 00060.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "compacflt": {
    "opcon": [
@@ -4121,7 +6051,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Pacific Fleet. Echelon 2 under CNO ADCON. OPCON to INDOPACOM as Navy component. Dual-hat: 3rd Fleet. UIC 00070."
+   "note": "Pacific Fleet. Echelon 2 under CNO ADCON. OPCON to INDOPACOM as Navy component. Dual-hat: 3rd Fleet. UIC 00070.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "naveur": {
    "opcon": [
@@ -4151,7 +6110,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Forces Europe/Africa. Echelon 2 under CNO ADCON. OPCON to EUCOM. Dual-hat: 6th Fleet."
+   "note": "Naval Forces Europe/Africa. Echelon 2 under CNO ADCON. OPCON to EUCOM. Dual-hat: 6th Fleet.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "navcent": {
    "opcon": [
@@ -4181,7 +6169,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Forces Central. Echelon 2 under CNO ADCON. OPCON to CENTCOM. Dual-hat: 5th Fleet."
+   "note": "Naval Forces Central. Echelon 2 under CNO ADCON. OPCON to CENTCOM. Dual-hat: 5th Fleet.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "navso": {
    "opcon": [
@@ -4211,7 +6228,36 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Forces Southern. Echelon 2 under CNO ADCON. OPCON to SOUTHCOM. Dual-hat: 4th Fleet."
+   "note": "Naval Forces Southern. Echelon 2 under CNO ADCON. OPCON to SOUTHCOM. Dual-hat: 4th Fleet.",
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco",
+      "opcon"
+     ],
+     "desc": "Goldwater-Nichols triple-chain separation. COCOM OPCON (10 USC §164) for operational employment vs service ADCON for organize/train/equip vs FLTCYBERCOM/MARFORCYBER DACO (DoDI 8530.01) for cyber defense. Conflicting directives have no published priority resolution framework.",
+     "refs": [
+      "usc_10_164",
+      "usc_10_8033",
+      "dodi_8530_01",
+      "jp1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "surflant": {
    "opcon": [],
@@ -4219,13 +6265,86 @@ const KMS_DATA = {
     "usffc"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
    "daco": [
     "fltcybercom"
    ],
    "mte": "usffc",
-   "note": "Surface Force Atlantic. TYCOM under USFFC. NAVSEA exercises TA as operator of RMCs and maintenance per OPNAVINST 5440.77C para 7b."
+   "ref": {
+    "adcon": [
+     "opnav5440_77c",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Surface Force Atlantic. TYCOM under USFFC. NAVSEA exercises TA as operator of RMCs and maintenance per OPNAVINST 5440.77C para 7b.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVSEA TA (ship HM&E, combat systems per OPNAVINST 5450.340A) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Cyber patch directives affecting shipboard combat systems or engineering control systems require NAVSEA TA coordination. No formalized NAVSEA equivalent to NAVAIR CYBERSAFE process for surface platforms.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_340a",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "surfpac": {
    "adcon": [
@@ -4258,7 +6377,60 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Surface Force Pacific. ADCON: CNO→COMPACFLT→SURFPAC. TA from NAVSEA for HM&E. CDR dual-hatted as COMNAVSURFOR. UIC 53824."
+   "note": "Surface Force Pacific. ADCON: CNO→COMPACFLT→SURFPAC. TA from NAVSEA for HM&E. CDR dual-hatted as COMNAVSURFOR. UIC 53824.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "SYSCOM TA (platform configuration, maintenance standards) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Cyber patch directives affecting combat system or platform IT require SYSCOM TA coordination. NAVAIR airworthiness firewall applies via CYBERSAFE for aviation TYCOMs; NAVSEA equivalent for surface/sub TYCOMs is less formalized.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "opnav5450_340a",
+      "navair_m13034_1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "sublant": {
    "adcon": [
@@ -4291,7 +6463,60 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Submarine Force Atlantic. ADCON: CNO→USFFC→SUBLANT. TA from NAVSEA for HM&E. CDR dual-hatted as COMSUBFOR. UIC 57016."
+   "note": "Submarine Force Atlantic. ADCON: CNO→USFFC→SUBLANT. TA from NAVSEA for HM&E. CDR dual-hatted as COMSUBFOR. UIC 57016.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "SYSCOM TA (platform configuration, maintenance standards) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Cyber patch directives affecting combat system or platform IT require SYSCOM TA coordination. NAVAIR airworthiness firewall applies via CYBERSAFE for aviation TYCOMs; NAVSEA equivalent for surface/sub TYCOMs is less formalized.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_350b",
+      "opnav5450_340a",
+      "navair_m13034_1"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "subpac": {
    "opcon": [],
@@ -4299,13 +6524,85 @@ const KMS_DATA = {
     "compacflt"
    ],
    "ta": [
-    "navair"
+    "navsea"
    ],
    "daco": [
     "fltcybercom"
    ],
    "mte": "compacflt",
-   "note": "Submarine Force Pacific. TYCOM under COMPACFLT."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Submarine Force Pacific. TYCOM under COMPACFLT.",
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVSEA TA (submarine HM&E, nuclear propulsion via NAVSEA 08, combat systems per OPNAVINST 5450.340A) vs FLTCYBERCOM DACO (DoDI 8530.01 cyber defense). Submarine systems have unique DACO considerations due to nuclear propulsion and strategic weapons systems. No formalized NAVSEA equivalent to NAVAIR CYBERSAFE process.",
+     "refs": [
+      "dodi_8530_01",
+      "opnav5450_340a",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "navifor": {
    "opcon": [],
@@ -4313,7 +6610,7 @@ const KMS_DATA = {
     "usffc"
    ],
    "ta": [
-    "navair"
+    "navwar"
    ],
    "daco": [
     "fltcybercom"
@@ -4332,8 +6629,66 @@ const KMS_DATA = {
      "dodi_8530_01",
      "usc_10_113",
      "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
     ]
-   }
+   },
+   "friction": [
+    {
+     "types": [
+      "daco",
+      "ta"
+     ],
+     "desc": "NAVWAR TA (C4ISR systems, enterprise IT, tactical networks per SECNAVINST 5400.15D) vs FLTCYBERCOM DACO (DoDI 8530.01). Unique tension: NAVWAR builds and sustains the networks that FLTCYBERCOM defends. Configuration changes driven by NAVWAR engineering compete with DACO defensive measures on the same infrastructure.",
+     "refs": [
+      "dodi_8530_01",
+      "secnavinst_5400_15d",
+      "usc_40_11103"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    },
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "TYCOM readiness authority (organize/train/equip per 10 USC §8033, ADCON chain) vs FLTCYBERCOM DACO (DoDI 8530.01). When a DACO directive degrades platform readiness or mission capability, no published doctrine resolves which authority takes priority. Resolved operationally by coordination.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "high",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "high",
+      "clarity": "ambiguous",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "non-compliance",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "peo_a": {
    "opcon": [],
@@ -4343,9 +6698,6 @@ const KMS_DATA = {
    ],
    "ta": [
     "navair"
-   ],
-   "daco": [
-    "fltcybercom"
    ],
    "mte": null,
    "note": "Echelon 1, UIC 68346. ISIC: ASN(RD&A). PEO Aviation — reports ADCON to ASN(RD&A), NOT through NAVAIR. NAVAIR provides TA and support only. Source: SNDL + SECNAVINST 5000.2G.",
@@ -4375,9 +6727,6 @@ const KMS_DATA = {
    ],
    "ta": [
     "navair"
-   ],
-   "daco": [
-    "fltcybercom"
    ],
    "mte": null,
    "note": "PEO Unmanned & Strike Weapons. ADCON: ASN(RD&A) → PEO(U&W). NAVAIR host command and TA support. NOT NAVAIR ADCON subordinate per SECNAVINST 5000.2G.",
@@ -4430,17 +6779,77 @@ const KMS_DATA = {
      "constitution_art2"
     ]
    },
-   "note": "Naval Information Warfare Systems Command (formerly SPAWAR, renamed 2019). Echelon 2 under CNO for ADCON. PEO Holding Command for C4ISR programs. COMNAVWAR exercises TA for C4I networks, communications, enterprise IT, CANES, SATCOM, data links."
+   "note": "Naval Information Warfare Systems Command (formerly SPAWAR, renamed 2019). Echelon 2 under CNO for ADCON. PEO Holding Command for C4ISR programs. COMNAVWAR exercises TA for C4I networks, communications, enterprise IT, CANES, SATCOM, data links.",
+   "friction": [
+    {
+     "types": [
+      "aa",
+      "adcon",
+      "daco"
+     ],
+     "desc": "SYSCOM triple-authority intersection. CNO ADCON (10 USC §8033) for service administration, ASN(RD&A) AA (SECNAVINST 5400.15D) for acquisition governance, FLTCYBERCOM DACO (DoDI 8530.01) for cyber defense. DACO directives affecting acquisition systems intersect with acquisition authority.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "secnavinst_5400_15d"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "coordination-burden",
+      "visibility": "medium",
+      "clarity": "ambiguous",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "misinterpretation",
+      "strategic": "misinterpretation"
+     }
+    }
+   ]
   },
   "navsup": {
    "adcon": [
     "cno"
-   ]
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "navfac": {
    "adcon": [
     "cno"
-   ]
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "bumed": {
    "adcon": [
@@ -4452,44 +6861,299 @@ const KMS_DATA = {
      "usc_10_8013",
      "usc_10_113",
      "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
     ]
    },
-   "note": "Bureau of Medicine and Surgery. Echelon 2 under CNO ADCON. Navy medical policy and healthcare delivery."
+   "note": "Bureau of Medicine and Surgery. Echelon 2 under CNO ADCON. Navy medical policy and healthcare delivery.",
+   "daco": [
+    "fltcybercom"
+   ]
   },
   "ssp": {
    "adcon": [
     "cno"
-   ]
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "netc": {
    "adcon": [
     "chnavpers"
    ],
-   "note": "Echelon 2, UIC 00076. ISIC: CHNAVPERS (not directly CNO). Source: SNDL. Note: SNDL shows NETC ISIC as CHNAVPERS, but NETC is listed as echelon 2 elsewhere."
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Echelon 2, UIC 00076. ISIC: CHNAVPERS (not directly CNO). Source: SNDL. Note: SNDL shows NETC ISIC as CHNAVPERS, but NETC is listed as echelon 2 elsewhere.",
+   "daco": [
+    "fltcybercom"
+   ]
   },
   "fl2": {
    "adcon": [
     "usffc"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "Fleet operational command (ADCON via NCC to CNO per 10 USC §8033) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO isolation or patching orders during deployed operations create tension with operational mission execution.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "fl3": {
    "adcon": [
     "compacflt"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "Fleet operational command (ADCON via NCC to CNO per 10 USC §8033) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO isolation or patching orders during deployed operations create tension with operational mission execution.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "fl5": {
    "adcon": [
     "navcent"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "Fleet operational command (ADCON via NCC to CNO per 10 USC §8033) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO isolation or patching orders during deployed operations create tension with operational mission execution.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "fl6": {
    "adcon": [
     "naveur"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "Fleet operational command (ADCON via NCC to CNO per 10 USC §8033) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO isolation or patching orders during deployed operations create tension with operational mission execution.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "fl7": {
    "adcon": [
     "compacflt"
+   ],
+   "daco": [
+    "fltcybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "friction": [
+    {
+     "types": [
+      "adcon",
+      "daco"
+     ],
+     "desc": "Fleet operational command (ADCON via NCC to CNO per 10 USC §8033) vs FLTCYBERCOM DACO (DoDI 8530.01). DACO isolation or patching orders during deployed operations create tension with operational mission execution.",
+     "refs": [
+      "usc_10_8033",
+      "dodi_8530_01",
+      "opnav5450_345"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "high",
+      "impact": "mission-degradation",
+      "visibility": "low",
+      "clarity": "opaque",
+      "temporal": "cyclical"
+     },
+     "failure_modes": {
+      "tactical": "ignorance",
+      "operational": "ignorance",
+      "strategic": "non-compliance"
+     }
+    }
    ]
   },
   "marforcom": {
@@ -4507,11 +7171,19 @@ const KMS_DATA = {
      "usc_10_162",
      "usc_10_113",
      "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
     ]
    },
    "note": "Marine Forces Command. ADCON from CMC per 10 USC §8043. OPCON to NORTHCOM. Dual-hat: MARFORLANT.",
    "opcon": [
     "northcom"
+   ],
+   "daco": [
+    "marforcyber"
    ]
   },
   "marforpac": {
@@ -4529,42 +7201,111 @@ const KMS_DATA = {
      "usc_10_162",
      "usc_10_113",
      "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
     ]
    },
    "note": "Marine Forces Pacific. ADCON from CMC per 10 USC §8043. OPCON to INDOPACOM.",
    "opcon": [
     "indopacom"
+   ],
+   "daco": [
+    "marforcyber"
    ]
   },
   "marforres": {
    "adcon": [
     "cmc"
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "daco": [
+    "marforcyber"
    ]
   },
   "frcse_mayport": {
    "adcon": [
     "frcse"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "frcw_fallon": {
    "adcon": [
     "frcw"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "frcsw_yuma": {
    "adcon": [
     "frcsw"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "frcsw_hi": {
    "adcon": [
     "frcsw"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "frcsw_ptmugu": {
    "adcon": [
     "frcw"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "opnav5450_350b",
+     "usc_10_8033",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "peo_t": {
    "aa": [
@@ -4783,7 +7524,24 @@ const KMS_DATA = {
    ],
    "ta": [
     "navair"
-   ]
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "pma299": {
    "aa": [
@@ -4794,6 +7552,23 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMA-299 H-60 Multi-Mission Helicopters (MH-60R/S Seahawk). Under PEO(A). Verified per navair.navy.mil. Note: F-35 is under PEO(F-35)/JSF Program Office, not PMA-299."
   },
   "pma261": {
@@ -4805,6 +7580,23 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMA-261 Heavy Lift Helicopters (CH-53E Super Stallion / CH-53K King Stallion). Under PEO(A). Verified per navair.navy.mil."
   },
   "pma275": {
@@ -4816,6 +7608,23 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMA-275. E-2D Advanced Hawkeye / C-2A COD. Under PEO(T). NAVAIR TA."
   },
   "pma207": {
@@ -4827,6 +7636,23 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMA-207 Tactical Airlift. KC-130J Super Hercules, C-130T, C-40A. Under PEO(A). NAVAIR TA. FRCE designated depot for C/KC-130 MRO."
   },
   "f35jpo": {
@@ -4837,7 +7663,49 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
-   "note": "F-35 Lightning II Joint Program Office. PEO-level joint program. Reports to alternating service acquisition executive (currently AF per JSF Charter). NAVAIR retains airworthiness TA for F-35B/C. Led by LtGen (3-star). Located Crystal City, Arlington VA."
+   "ref": {
+    "aa": [
+     "dodd_5000_01",
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "F-35 Lightning II Joint Program Office. PEO-level joint program. Reports to alternating service acquisition executive (currently AF per JSF Charter). NAVAIR retains airworthiness TA for F-35B/C. Led by LtGen (3-star). Located Crystal City, Arlington VA.",
+   "friction": [
+    {
+     "types": [
+      "aa",
+      "ta"
+     ],
+     "desc": "NAVAIR airworthiness TA for F-35B/C (OPNAVINST 5450.350B, CYBERSAFE M-13034.1) vs USAF acquisition lead (JSF Charter, DoDD 5000.01). NAVAIR AIR-4.0P retains flight clearance authority for Navy/Marine Corps variants regardless of program lead service.",
+     "refs": [
+      "opnav5450_350b",
+      "navair_m13034_1",
+      "dodd_5000_01"
+     ],
+     "severity": "medium",
+     "dimensions": {
+      "resolution": "partial",
+      "impact": "flight-safety",
+      "visibility": "high",
+      "clarity": "clear",
+      "temporal": "static"
+     },
+     "failure_modes": {
+      "tactical": "misinterpretation",
+      "operational": "misinterpretation",
+      "strategic": "non-compliance"
+     }
+    }
+   ]
   },
   "pma263": {
    "aa": [
@@ -4848,6 +7716,23 @@ const KMS_DATA = {
    "ta": [
     "navair"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMA-263 Small Tactical UAS (RQ-21A Blackjack, RQ-20B Puma, etc). Under PEO(U&W). Verified per navair.navy.mil. Note: MQ-25 Stingray is PMA-268, not PMA-263."
   },
   "pma262": {
@@ -4858,62 +7743,175 @@ const KMS_DATA = {
    ],
    "ta": [
     "navair"
-   ]
+   ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_350b",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "asn_mra": {
    "adcon": [
     "secnav"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "asn_fmc": {
    "adcon": [
     "secnav"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "asn_eie": {
    "adcon": [
     "secnav"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "unsecnav": {
    "adcon": [
     "secnav"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "usc_10_8015",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "indopacom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "eucom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "centcom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "africom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "southcom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "northcom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "cybercom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_167a",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "dcdc": {
    "opcon": [
@@ -4922,29 +7920,95 @@ const KMS_DATA = {
    "adcon": [
     "secdef"
    ],
-   "note": "DoD Cyber Defense Command (formerly JFHQ-DODIN). Sub-unified command under CYBERCOM, designated 28 May 2025 per NDAA FY2025 § 1502 (P.L. 118-159). CDR dual-hatted as DISA Director. Executes DACO on behalf of CYBERCOM to secure, operate, and defend the DODIN."
+   "daco": [
+    "cybercom"
+   ],
+   "ref": {
+    "adcon": [
+     "ndaa2025_1502",
+     "usc_10_167a",
+     "usc_10_164",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "ndaa2025_1502",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_167a",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "DoD Cyber Defense Command (formerly JFHQ-DODIN). Sub-unified command under CYBERCOM, designated 28 May 2025 per NDAA FY2025 § 1502 (P.L. 118-159). CDR dual-hatted as DISA Director. Executes DACO on behalf of CYBERCOM to secure, operate, and defend the DODIN. DACO chain: CYBERCOM → DCDC → Service Cyber Components (FLTCYBERCOM, MARFORCYBER, ARCYBER, AF16)."
   },
   "socom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_167",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "transcom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "stratcom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "spacecom": {
    "adcon": [
     "secdef"
-   ]
+   ],
+   "ref": {
+    "adcon": [
+     "ucp2022",
+     "usc_10_164",
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   }
   },
   "potus": {
+   "ref": {
+    "nca": [
+     "constitution_art2"
+    ]
+   },
    "note": "Commander in Chief per Article II, U.S. Constitution. National Command Authority with SECDEF. COCOM authority flows POTUS → SECDEF → CCDR per 10 USC §164."
   },
   "secdef": {
@@ -5157,12 +8221,27 @@ const KMS_DATA = {
    "adcon": [
     "secdef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_152",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Chairman, Joint Chiefs of Staff per 10 USC §152. Principal military advisor to POTUS, NSC, and SECDEF. No command authority over CCMDs — advisory only."
   },
   "vcjcs": {
    "adcon": [
     "cjcs"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_154",
+     "usc_10_152",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Vice Chairman, Joint Chiefs of Staff per 10 USC §154."
   },
   "cno": {
@@ -5211,6 +8290,15 @@ const KMS_DATA = {
    "adcon": [
     "cmc"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8044",
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Assistant Commandant of the Marine Corps per 10 USC §8044 (formerly §5044)."
   },
   "usd_as": {
@@ -5245,30 +8333,66 @@ const KMS_DATA = {
    "adcon": [
     "secdef"
    ],
-   "note": "Secretary of the Army."
+   "ref": {
+    "adcon": [
+     "usc_10_3013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Secretary of the Army per 10 USC §3013. Subject to authority, direction, and control of SECDEF."
   },
   "secaf": {
    "adcon": [
     "secdef"
    ],
-   "note": "Secretary of the Air Force (also Space Force)."
+   "ref": {
+    "adcon": [
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Secretary of the Air Force (also Space Force) per 10 USC §9013. Subject to authority, direction, and control of SECDEF."
   },
   "csa": {
    "adcon": [
     "sa"
    ],
-   "note": "Chief of Staff, Army."
+   "ref": {
+    "adcon": [
+     "usc_10_7013",
+     "usc_10_3013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief of Staff, Army per 10 USC §7013."
   },
   "csaf": {
    "adcon": [
     "secaf"
    ],
-   "note": "Chief of Staff, Air Force."
+   "ref": {
+    "adcon": [
+     "usc_10_9033",
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief of Staff, Air Force per 10 USC §9033."
   },
   "pca": {
    "adcon": [
     "secdef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Principal Cyber Advisor to SECDEF."
   },
   "marforcent": {
@@ -5278,7 +8402,28 @@ const KMS_DATA = {
    "opcon": [
     "centcom"
    ],
-   "note": "Marine Forces Central Command. CENTCOM Marine component."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Central Command. CENTCOM Marine component.",
+   "daco": [
+    "marforcyber"
+   ]
   },
   "marforeur": {
    "adcon": [
@@ -5287,7 +8432,28 @@ const KMS_DATA = {
    "opcon": [
     "eucom"
    ],
-   "note": "Marine Forces Europe/Africa. EUCOM/AFRICOM Marine component. MajGen billet."
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Marine Forces Europe/Africa. EUCOM/AFRICOM Marine component. MajGen billet.",
+   "daco": [
+    "marforcyber"
+   ]
   },
   "marsoc": {
    "adcon": [
@@ -5304,71 +8470,159 @@ const KMS_DATA = {
      "usc_10_162",
      "usc_10_113",
      "constitution_art2"
+    ],
+    "daco": [
+     "dodi_8530_01",
+     "usc_10_113",
+     "constitution_art2"
     ]
    },
    "note": "Marine Forces Special Operations Command (Marine Raider Command). ADCON from CMC. OPCON to SOCOM per UCP.",
    "opcon": [
     "socom"
+   ],
+   "daco": [
+    "marforcyber"
    ]
   },
   "imef": {
    "adcon": [
     "marforpac"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "I Marine Expeditionary Force. LtGen. Camp Pendleton, CA. Contains 1st MarDiv, 3d MAW, 1st MLG."
   },
   "iimef": {
    "adcon": [
     "marforcom"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "II Marine Expeditionary Force. LtGen. Camp Lejeune, NC. Contains 2d MarDiv, 2d MAW, 2d MLG."
   },
   "iiimef": {
    "adcon": [
     "marforpac"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "III Marine Expeditionary Force. LtGen. Okinawa, Japan. Contains 3d MarDiv, 1st MAW, 3d MLG."
   },
   "dmaw": {
    "adcon": [
     "iiimef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "1st Marine Aircraft Wing. BGen. Okinawa. ACE for III MEF."
   },
   "smaw": {
    "adcon": [
     "iimef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "2d Marine Aircraft Wing. MajGen. MCAS Cherry Point, NC. ACE for II MEF."
   },
   "tmaw": {
    "adcon": [
     "imef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "3d Marine Aircraft Wing. MajGen. MCAS Miramar, CA. ACE for I MEF."
   },
   "mag16": {
    "adcon": [
     "tmaw"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Marine Aircraft Group 16. Col. MCAS Miramar, CA. Under 3d MAW."
   },
   "mag26": {
    "adcon": [
     "smaw"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Marine Aircraft Group 26. Col. MCAS New River, NC. Under 2d MAW."
   },
   "mag36": {
    "adcon": [
     "dmaw"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Marine Aircraft Group 36. Col. MCAS Futenma, Okinawa. Under 1st MAW."
   },
   "mlr": {
    "adcon": [
     "iiimef"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_8043",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "3d Marine Littoral Regiment. Part of Force Design 2030 restructuring under III MEF."
   },
   "af16": {
@@ -5378,6 +8632,19 @@ const KMS_DATA = {
    "opcon": [
     "cybercom"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_9033",
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "16th Air Force / Air Forces Cyber. CYBERCOM Air Force component."
   },
   "arcyber": {
@@ -5387,12 +8654,32 @@ const KMS_DATA = {
    "opcon": [
     "cybercom"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_7013",
+     "usc_10_3013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Army Cyber Command / 2nd Army. CYBERCOM Army component."
   },
   "cg_cyber": {
    "opcon": [
     "cybercom"
    ],
+   "ref": {
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "USCG Cyber Command. CYBERCOM Coast Guard component (DHS for ADCON)."
   },
   "spaceops": {
@@ -5402,6 +8689,19 @@ const KMS_DATA = {
    "opcon": [
     "spacecom"
    ],
+   "ref": {
+    "adcon": [
+     "usc_10_9033",
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "opcon": [
+     "usc_10_162",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "Space Operations Command. SPACECOM component."
   },
   "pms400": {
@@ -5413,6 +8713,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMS-400 DDG-51. Under PEO Ships. NAVSEA TA."
   },
   "pms317": {
@@ -5424,6 +8741,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "FFG-62 program. Under PEO USC (formerly PEO LCS). NAVSEA TA."
   },
   "pms385": {
@@ -5435,6 +8769,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMS-385 Virginia SSN. Under PEO SSN (Attack Submarines). NAVSEA TA."
   },
   "pms425": {
@@ -5446,6 +8797,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMS-425 Columbia SSBN. Under PEO SSBN (Strategic Submarines). NAVSEA TA."
   },
   "pms394": {
@@ -5457,6 +8825,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "CVN-78 class. Under PEO Carriers. NAVSEA TA."
   },
   "pms500": {
@@ -5468,6 +8853,23 @@ const KMS_DATA = {
    "ta": [
     "navsea"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "opnav5450_340a",
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMS-500 LPD-17. Under PEO Ships. NAVSEA TA."
   },
   "pmw120": {
@@ -5479,6 +8881,22 @@ const KMS_DATA = {
    "ta": [
     "navwar"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMW-120 Battlespace Awareness & Information Operations. Under PEO C4I. Note: CANES is PMW-160, not PMW-120. Corrected per peoc4i.navy.mil."
   },
   "pmw130": {
@@ -5490,6 +8908,22 @@ const KMS_DATA = {
    "ta": [
     "navwar"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMW-130 Cybersecurity. Under PEO C4I. Corrected per peoc4i.navy.mil."
   },
   "pmw160": {
@@ -5501,6 +8935,22 @@ const KMS_DATA = {
    "ta": [
     "navwar"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMW-160 Tactical Networks — includes CANES (Consolidated Afloat Networks & Enterprise Services) and Automated Digital Networking System. Under PEO C4I. Verified per peoc4i.navy.mil."
   },
   "pmw240": {
@@ -5512,13 +8962,37 @@ const KMS_DATA = {
    "ta": [
     "navwar"
    ],
+   "ref": {
+    "aa": [
+     "secnavinst_5400_15d",
+     "dodd_5000_01",
+     "usc_10_8016",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ],
+    "ta": [
+     "secnavinst_5400_15d",
+     "usc_10_8013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
    "note": "PMW-240 Sea Warrior Program. Under PEO MLB (Manpower, Logistics & Business Solutions), NOT PEO C4I or PEO Digital. Corrected per peoc4i.navy.mil."
   },
   "cso": {
    "adcon": [
     "secaf"
    ],
-   "note": "Chief of Space Operations. Senior military officer of the Space Force. Member JCS. Reports through Secretary of the Air Force."
+   "ref": {
+    "adcon": [
+     "usc_10_9082",
+     "usc_10_9013",
+     "usc_10_113",
+     "constitution_art2"
+    ]
+   },
+   "note": "Chief of Space Operations per 10 USC §9082. Senior military officer of the Space Force. Member JCS. Reports through Secretary of the Air Force."
   }
  },
  "views": {
@@ -10645,6 +14119,403 @@ const KMS_DATA = {
     "t-cyber"
    ],
    "summary": "Establishes Directive Authority for Cyberspace Operations (DACO). Defines defensive cyberspace operations framework. DACO flows from CYBERCOM through DCDC to service cyber components (FLTCYBERCOM, MARFORCYBER, ARCYBER, AF16). Foundation for all cyber authority relationships in the KMS.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_164",
+   "type": "USC",
+   "service": "Joint",
+   "number": "10 USC §164",
+   "title": "10 USC §164 — Commanders of Combatant Commands: Assignment; Powers and Duties",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "indopacom",
+    "eucom",
+    "centcom",
+    "africom",
+    "southcom",
+    "northcom",
+    "socom",
+    "transcom",
+    "stratcom",
+    "spacecom",
+    "cybercom"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CCDR"
+   ],
+   "refs": [
+    "10 USC §162",
+    "Art. II, §2"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Establishes COCOM (Combatant Command) authority. CCDRs exercise command authority over assigned forces per the chain of command running POTUS → SECDEF → CCDR. Enacted by Goldwater-Nichols Act 1986.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_152",
+   "type": "USC",
+   "service": "Joint",
+   "number": "10 USC §152",
+   "title": "10 USC §152 — Chairman of the Joint Chiefs of Staff: Appointment; Grade and Rank",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "cjcs"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CJCS"
+   ],
+   "refs": [
+    "10 USC §113",
+    "Art. II, §2"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Establishes the Chairman of the Joint Chiefs of Staff as the principal military adviser to the President, NSC, and Secretary of Defense. Does not exercise military command over the Joint Chiefs or combatant commands.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_154",
+   "type": "USC",
+   "service": "Joint",
+   "number": "10 USC §154",
+   "title": "10 USC §154 — Vice Chairman of the Joint Chiefs of Staff",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "vcjcs"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CJCS",
+    "VCJCS"
+   ],
+   "refs": [
+    "10 USC §152",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Establishes the Vice Chairman as second-ranking member of the armed forces. Performs duties prescribed by CJCS with approval of SECDEF.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_167",
+   "type": "USC",
+   "service": "Joint",
+   "number": "10 USC §167",
+   "title": "10 USC §167 — Unified Combatant Command for Special Operations Forces",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "socom"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CDR SOCOM"
+   ],
+   "refs": [
+    "10 USC §164",
+    "10 USC §162"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc"
+   ],
+   "summary": "Establishes USSOCOM as a unified combatant command with specific authorities for special operations procurement, training, and readiness. COCOM per §164 plus additional budget authority unique among CCMDs.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_167a",
+   "type": "USC",
+   "service": "Joint",
+   "number": "10 USC §167a",
+   "title": "10 USC §167a — Unified Combatant Command for Cyber Operations",
+   "date": "2018-08-13",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "cybercom"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CDR CYBERCOM"
+   ],
+   "refs": [
+    "10 USC §164",
+    "10 USC §162"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-cyber"
+   ],
+   "summary": "Established USCYBERCOM as a unified combatant command (elevated from sub-unified under STRATCOM). COCOM per §164 plus DACO authority per DoDI 8530.01.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_3013",
+   "type": "USC",
+   "service": "Army",
+   "number": "10 USC §3013",
+   "title": "10 USC §3013 — Secretary of the Army",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "sa"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SA"
+   ],
+   "refs": [
+    "10 USC §113",
+    "Art. II, §2"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Secretary of the Army as head of the Department of the Army, subject to the authority, direction, and control of the Secretary of Defense.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_9013",
+   "type": "USC",
+   "service": "Air Force",
+   "number": "10 USC §9013",
+   "title": "10 USC §9013 — Secretary of the Air Force",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "secaf"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECAF"
+   ],
+   "refs": [
+    "10 USC §113",
+    "Art. II, §2"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Secretary of the Air Force as head of the Department of the Air Force (including Space Force per 10 USC §9081), subject to the authority, direction, and control of the Secretary of Defense.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_7013",
+   "type": "USC",
+   "service": "Army",
+   "number": "10 USC §7013",
+   "title": "10 USC §7013 — Chief of Staff of the Army",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "csa"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SA",
+    "CSA"
+   ],
+   "refs": [
+    "10 USC §3013",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Chief of Staff of the Army as presiding officer of the Army Staff, member of the JCS, and principal military adviser to the Secretary of the Army. Subject to the authority of the SA.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_9033",
+   "type": "USC",
+   "service": "Air Force",
+   "number": "10 USC §9033",
+   "title": "10 USC §9033 — Chief of Staff of the Air Force",
+   "date": "1947-07-26",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "csaf"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECAF",
+    "CSAF"
+   ],
+   "refs": [
+    "10 USC §9013",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Chief of Staff of the Air Force as presiding officer of the Air Staff, member of the JCS, and principal military adviser to the Secretary of the Air Force.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_8044",
+   "type": "USC",
+   "service": "USMC",
+   "number": "10 USC §8044",
+   "title": "10 USC §8044 — Assistant Commandant of the Marine Corps",
+   "date": "1986-10-01",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "acmc"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECNAV",
+    "CMC",
+    "ACMC"
+   ],
+   "refs": [
+    "10 USC §8043",
+    "10 USC §8013"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Assistant Commandant of the Marine Corps. Performs duties prescribed by CMC. Acts as CMC when there is a vacancy or the CMC is absent or disabled.",
+   "body": ""
+  },
+  {
+   "id": "usc_10_9082",
+   "type": "USC",
+   "service": "Space Force",
+   "number": "10 USC §9082",
+   "title": "10 USC §9082 — Chief of Space Operations",
+   "date": "2019-12-20",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "cso"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "SECAF",
+    "CSO"
+   ],
+   "refs": [
+    "10 USC §9013",
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes the Chief of Space Operations as the senior military officer of the Space Force, member of the JCS, and principal military adviser to the Secretary of the Air Force on Space Force matters. Created by Space Force Act (NDAA FY2020).",
+   "body": ""
+  },
+  {
+   "id": "ndaa2025_1502",
+   "type": "NDAA",
+   "service": "Joint",
+   "number": "NDAA FY2025 §1502",
+   "title": "NDAA FY2025 §1502 (P.L. 118-159) — DoD Cyber Defense Command",
+   "date": "2024-12-23",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [
+    "dcdc"
+   ],
+   "chain": [
+    "POTUS",
+    "SECDEF",
+    "CYBERCOM",
+    "DCDC"
+   ],
+   "refs": [
+    "10 USC §167a",
+    "10 USC §164"
+   ],
+   "tags": [
+    "t-joint",
+    "t-doc",
+    "t-cyber"
+   ],
+   "summary": "Designates the DoD Cyber Defense Command (formerly JFHQ-DODIN) as a sub-unified command under USCYBERCOM. CDR dual-hatted as DISA Director. Responsible for securing, operating, and defending the DODIN.",
+   "body": ""
+  },
+  {
+   "id": "usc_40_11103",
+   "type": "USC",
+   "service": "Joint",
+   "number": "40 USC §11103",
+   "title": "40 USC §11103 — Applicability to National Security Systems (Clinger-Cohen Act)",
+   "date": "1996-02-10",
+   "classification": "UNCLASSIFIED",
+   "issuer": "Congress",
+   "affects": [],
+   "chain": [],
+   "refs": [
+    "10 USC §113"
+   ],
+   "tags": [
+    "t-doc",
+    "t-cyber"
+   ],
+   "summary": "Exempts national security systems — including equipment that is an integral part of a weapon or weapons system — from federal IT management requirements (Title 40 Chapter 113). Does not nullify Title 10 DACO authority, but signals congressional intent that weapon system IT governance differs from enterprise IT. Key boundary statute for TA/DACO friction analysis.",
+   "body": ""
+  },
+  {
+   "id": "navair_m13034_1",
+   "type": "NAVAIR",
+   "service": "USN",
+   "number": "NAVAIR M-13034.1",
+   "title": "NAVAIR M-13034.1 — Airworthiness and CYBERSAFE Process",
+   "date": "2016-04-13",
+   "classification": "UNCLASSIFIED",
+   "issuer": "NAVAIR",
+   "affects": [
+    "navair"
+   ],
+   "chain": [
+    "SECNAV",
+    "CNO",
+    "NAVAIR",
+    "AIR-4.0P"
+   ],
+   "refs": [
+    "OPNAVINST 5450.350B"
+   ],
+   "tags": [
+    "t-doc"
+   ],
+   "summary": "Establishes CYBERSAFE process under NAVAIR AIR-4.0P. Any software change — including cyber patches — affecting flight-critical systems requires NAVAIR flight clearance review. AIR-4.0P is the single delegated authority for flight clearances on all DoN air vehicles. Creates a practical firewall between DACO cyber directives and airworthiness authority. Key deconfliction reference for TA vs DACO friction.",
    "body": ""
   }
  ],
