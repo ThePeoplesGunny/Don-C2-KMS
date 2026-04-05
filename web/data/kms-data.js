@@ -75,7 +75,7 @@ const KMS_DATA = {
    "lcsp": "8,4",
    "align": "5,3",
    "nca": null,
-   "dac": null,
+   "dac": "10,3,3,3",
    "aa": "4,2,2,2"
   },
   "aw": {
@@ -87,7 +87,7 @@ const KMS_DATA = {
    "lcsp": 1.1,
    "align": 1.2,
    "nca": 3,
-   "dac": 2.2,
+   "dac": 1.8,
    "aa": 1.8
   },
   "aor_col": {

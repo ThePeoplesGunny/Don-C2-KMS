@@ -85,7 +85,7 @@ function showPanel(id){
 // ORG CHART — D3 RENDERER
 // ═══════════════════════════════════════════════════════
 const NW=156,NH=76;
-const ORG={nodePos:{},zb:null}; // org chart viewport state
+const ORG={nodePos:{},zb:null,horizontal:false}; // org chart viewport state
 function _svgDims(){const el=document.getElementById('oc-svg');return{W:el.clientWidth||900,H:el.clientHeight||580};}
 function fitAllNodes(dur){
   if(!ORG.zb||!Object.keys(ORG.nodePos).length)return;
@@ -173,21 +173,53 @@ function buildFocusLayout(rootId, viewLinks, availW, maxDepth){
     if(!ch.length) return {id:id};
     return {id:id, children:ch.map(buildHier)};
   }
+  var ns=ORG.horizontal?[NH+10,NW+30]:[186,146];
   var hierarchy=d3.hierarchy(buildHier(rootId));
-  d3.tree().nodeSize([186,146]).separation(function(a,b){
+  d3.tree().nodeSize(ns).separation(function(a,b){
     return a.parent===b.parent ? 1.0 : 1.5;
   })(hierarchy);
 
-  // Extract positions as {id:{x,y}} objects
-  var pos={};
-  var minX=Infinity;
+  // Compact stagger for focus layout
+  var STAGGER_THRESHOLD=8;
+  var depthStep=ns[1], spreadStep=ns[0];
   hierarchy.descendants().forEach(function(d){
-    pos[d.data.id]={x:d.x, y:d.y};
-    if(d.x<minX) minX=d.x;
+    if(!d.children||d.children.length<STAGGER_THRESHOLD)return;
+    var ch=d.children;
+    var midSpread=0;
+    ch.forEach(function(c){midSpread+=c.x;});
+    midSpread/=ch.length;
+    for(var i=0;i<ch.length;i++){
+      var col=i%2, row=Math.floor(i/2);
+      var halfCount=Math.ceil(ch.length/2);
+      ch[i].x=midSpread+(row-(halfCount-1)/2)*spreadStep;
+      if(col===1){
+        ch[i].y=d.y+depthStep*2;
+        if(ch[i].descendants){
+          var shift=ch[i].y-(d.y+depthStep);
+          ch[i].descendants().forEach(function(desc){if(desc!==ch[i])desc.y+=shift;});
+        }
+      }
+    }
   });
-  // Normalize X to positive origin
-  var xShift=40-minX;
-  Object.keys(pos).forEach(function(id){ pos[id].x+=xShift; });
+
+  // Extract positions as {id:{x,y}} objects
+  // When ORG.horizontal, swap: depth→x, spread→y
+  var pos={};
+  var minP=Infinity;
+  var horiz=ORG.horizontal;
+  hierarchy.descendants().forEach(function(d){
+    if(horiz){
+      pos[d.data.id]={x:d.y, y:d.x};
+      if(d.x<minP) minP=d.x;
+    }else{
+      pos[d.data.id]={x:d.x, y:d.y};
+      if(d.x<minP) minP=d.x;
+    }
+  });
+  // Normalize spread axis to positive origin
+  var pShift=40-minP;
+  var spreadKey=horiz?'y':'x';
+  Object.keys(pos).forEach(function(id){ pos[id][spreadKey]+=pShift; });
 
   return{nodeIds:[...visited],pos:pos,links:focusLinks};
 }
@@ -235,26 +267,69 @@ function treeLayoutView(view){
   }
 
   // Run d3.tree with fixed node footprint
+  // Horizontal: spread axis is vertical (needs NH+10 min), depth axis is horizontal (needs NW+30 min)
+  var ns=ORG.horizontal?[NH+10,NW+30]:[186,146];
   var hierarchy=d3.hierarchy(treeRoot);
-  d3.tree().nodeSize([186,146]).separation(function(a,b){
+  d3.tree().nodeSize(ns).separation(function(a,b){
     return a.parent===b.parent ? 1.0 : 1.5;
   })(hierarchy);
 
-  // Extract positions — d3.tree uses x=horizontal (centered), y=vertical (depth*nodeSize[1])
-  var posMap={};
-  var minX=Infinity;
+  // Compact stagger: parents with 8+ children get split into 2 columns.
+  // Even-indexed children stay in place, odd-indexed shift one depth tier forward
+  // and close up the spread gap. Halves the spread, fills the depth axis.
+  var STAGGER_THRESHOLD=8;
+  var depthStep=ns[1]; // depth tier spacing from nodeSize
+  var spreadStep=ns[0]; // spread spacing from nodeSize
   hierarchy.descendants().forEach(function(d){
-    if(d.data.id==='__vroot__')return;
-    var py=vrootUsed ? d.y-146 : d.y; // Strip virtual root tier
-    posMap[d.data.id]=[d.x, py];
-    if(d.x<minX)minX=d.x;
+    if(!d.children||d.children.length<STAGGER_THRESHOLD)return;
+    var ch=d.children;
+    // Compute center of children spread for regrouping
+    var midSpread=0;
+    ch.forEach(function(c){midSpread+=c.x;});
+    midSpread/=ch.length;
+    // Reposition: col1 (even indices) tighter above center, col2 (odd) offset in depth
+    for(var i=0;i<ch.length;i++){
+      var col=i%2; // 0=col1, 1=col2
+      var row=Math.floor(i/2);
+      var halfCount=Math.ceil(ch.length/2);
+      // Spread: distribute rows evenly, centered
+      ch[i].x=midSpread+(row-(halfCount-1)/2)*spreadStep;
+      // Depth: col2 gets pushed one tier forward
+      if(col===1) ch[i].y=d.y+depthStep*2;
+      // Propagate depth shift to all descendants of staggered children
+      if(col===1&&ch[i].descendants){
+        var shift=ch[i].y-(d.y+depthStep);
+        ch[i].descendants().forEach(function(desc){
+          if(desc!==ch[i])desc.y+=shift;
+        });
+      }
+    }
   });
 
-  // Normalize X so minimum is at 40px (d3.tree centers at 0, can go negative)
-  var xShift=40-minX;
+  // Extract positions — d3.tree uses x=horizontal (centered), y=vertical (depth*nodeSize[1])
+  // When ORG.horizontal, swap: depth→x, spread→y (left-to-right flow)
+  var posMap={};
+  var minP=Infinity; // min of primary spread axis
+  var horiz=ORG.horizontal;
+  hierarchy.descendants().forEach(function(d){
+    if(d.data.id==='__vroot__')return;
+    var depth=vrootUsed ? d.y-146 : d.y; // Strip virtual root tier
+    var spread=d.x;
+    if(horiz){
+      posMap[d.data.id]=[depth, spread];
+      if(spread<minP)minP=spread;
+    }else{
+      posMap[d.data.id]=[spread, depth];
+      if(spread<minP)minP=spread;
+    }
+  });
+
+  // Normalize spread axis so minimum is at 40px
+  var shiftIdx=horiz?1:0;
+  var pShift=40-minP;
   ids.forEach(function(id){
     if(posMap[id]){
-      posMap[id][0]+=xShift;
+      posMap[id][shiftIdx]+=pShift;
     }else{
       posMap[id]=[40,0]; // Fallback for any node missed by tree
     }
@@ -279,25 +354,52 @@ function setupDefs(svg){
     defs.append('marker').attr('id','arr-'+type).attr('viewBox','0 -5 10 10').attr('refX',13).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4).attr('orient','auto')
       .append('path').attr('d','M0,-5L10,0L0,5').attr('fill',ACOL[type]).attr('opacity',.9);
   });
-  ['glow','cyberGlow','taGlow'].forEach((id,i)=>{
-    const f=defs.append('filter').attr('id',id);
-    f.append('feGaussianBlur').attr('stdDeviation',i===0?2.5:3.5).attr('result','blur');
+  ['glow','cyberGlow','taGlow'].forEach((id)=>{
+    const f=defs.append('filter').attr('id',id).attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+    f.append('feGaussianBlur').attr('stdDeviation',4).attr('result','blur');
     const m=f.append('feMerge');m.append('feMergeNode').attr('in','blur');m.append('feMergeNode').attr('in','SourceGraphic');
   });
 }
 
 // ── SHARED DRAW: links ──
+function _linkRestOpacity(a){
+  // ADCON is structural scaffolding — subtle at rest, like deconfliction tab
+  if(a==='adcon') return 0.25;
+  // Peer/cross-cutting types get moderate visibility
+  if(a==='ta'||a==='lcsp'||a==='aa'||a==='cyber') return 0.7;
+  // Chain types (opcon, cocom, nca, dac, align) — prominent
+  return 0.7;
+}
 function drawLinks(G, links, posMap, af, hiSet, isFocus){
+  const horiz=ORG.horizontal;
   links.forEach(lk=>{
     if(af!=='all'&&lk.a!==af)return;
     const sp=posMap[lk.s],tp=posMap[lk.t];if(!sp||!tp)return;
     const col=ACOL[lk.a]||'#555';
-    const x1=sp.x+NW/2,y1=sp.y+NH,x2=tp.x+NW/2,y2=tp.y;
-    const my=(y1+y2)/2;
+    // Vertical: bottom-center → top-center. Horizontal: right-center → left-center.
+    const x1=horiz?sp.x+NW:sp.x+NW/2, y1=horiz?sp.y+NH/2:sp.y+NH;
+    const x2=horiz?tp.x:tp.x+NW/2,     y2=horiz?tp.y+NH/2:tp.y;
     const hi=isFocus||(hiSet.has(lk.s)&&hiSet.has(lk.t));
-    G.append('path').attr('d',`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`)
+    const isCross=lk.a==='ta'||lk.a==='lcsp'||lk.a==='aa';
+    const dx=x2-x1,dy=y2-y1;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const arcOff=isCross?dist*0.35:0;
+    let d;
+    if(isCross){
+      // Quadratic arc — offset perpendicular to the line
+      d=horiz
+        ?`M${x1},${y1} Q${(x1+x2)/2},${(y1+y2)/2-arcOff} ${x2},${y2}`
+        :`M${x1},${y1} Q${(x1+x2)/2+arcOff},${(y1+y2)/2} ${x2},${y2}`;
+    }else{
+      // Cubic Bezier — smooth S-curve along flow axis
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      d=horiz
+        ?`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`
+        :`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+    }
+    G.append('path').attr('d',d)
       .attr('stroke',col).attr('stroke-width',hi?AW[lk.a]*2.2:AW[lk.a])
-      .attr('fill','none').attr('opacity',hi?1:hiSet.size?0.13:(lk.a==='cyber'||lk.a==='ta')?0.85:0.65)
+      .attr('fill','none').attr('opacity',hi?1:hiSet.size?0.13:_linkRestOpacity(lk.a))
       .attr('stroke-dasharray',ADSH[lk.a]||null).attr('marker-end','url(#arr-'+lk.a+')')
       .attr('filter',(lk.a==='cyber'&&!hiSet.size)?'url(#cyberGlow)':(lk.a==='ta'&&!hiSet.size)?'url(#taGlow)':null);
   });
@@ -317,12 +419,23 @@ function drawNodes(G, nodes, posMap, activeId, hiSet, isFocus){
       .on('click',e=>{e.stopPropagation();selectNode(n.id);})
       .on('dblclick',e=>{e.stopPropagation();pickLogo(n.id);})
       .on('mouseover',e=>showTT(e,n)).on('mousemove',e=>moveTT(e)).on('mouseout',hideTT);
-    ng.append('rect').attr('width',NW).attr('height',NH).attr('rx',3).attr('fill','#000').attr('opacity',.4).attr('transform','translate(2,2)');
-    ng.append('rect').attr('width',NW).attr('height',NH).attr('rx',3).attr('fill',sc2.fill)
-      .attr('stroke',isSel?'#c9a84c':sc2.stroke).attr('stroke-width',isSel?2.5:1.5)
+    // Friction halo — pulsing severity-colored border behind card
+    const _fa=AUTH[n.id];
+    const _fr=_fa&&_fa.friction;
+    if(_fr&&_fr.length&&!isDim){
+      const _maxSev=_fr.some(f=>f.severity==='high')?'high':_fr.some(f=>f.severity==='medium')?'medium':'low';
+      const _hc=_maxSev==='high'?'#ff5566':_maxSev==='medium'?'#e8b00f':'#0076a9';
+      const _dur=_maxSev==='high'?'1.5s':'2.5s';
+      const halo=ng.append('rect').attr('x',-6).attr('y',-6).attr('width',NW+12).attr('height',NH+12).attr('rx',8)
+        .attr('fill','none').attr('stroke',_hc).attr('stroke-width',2.5).attr('filter','url(#glow)').attr('opacity',0.8);
+      // Pulse opacity
+      halo.append('animate').attr('attributeName','opacity').attr('values','0.8;0.3;0.8').attr('dur',_dur).attr('repeatCount','indefinite');
+      // Pulse stroke width
+      halo.append('animate').attr('attributeName','stroke-width').attr('values','2.5;4;2.5').attr('dur',_dur).attr('repeatCount','indefinite');
+    }
+    ng.append('rect').attr('width',NW).attr('height',NH).attr('rx',5).attr('fill',sc2.fill)
+      .attr('stroke',isSel?'#fff':sc2.stroke).attr('stroke-width',isSel?2:1.5)
       .attr('filter',(isHi||(isCyber&&!isDim))?'url(#'+(isCyber?'cyberGlow':'glow')+')':(isAcq&&!isDim)?'url(#taGlow)':null);
-    if(isSel)ng.append('rect').attr('width',NW+4).attr('height',NH+4).attr('rx',4).attr('x',-2).attr('y',-2)
-      .attr('fill','none').attr('stroke','#c9a84c').attr('stroke-width',1).attr('opacity',.5);
     if(n.dh){
       const dhCol=isCyber?ACOL.cyber:isAcq?ACOL.ta:ACOL.cocom;
       ng.append('rect').attr('x',0).attr('y',NH-14).attr('width',NW).attr('height',14).attr('rx',1)
@@ -330,7 +443,8 @@ function drawNodes(G, nodes, posMap, activeId, hiSet, isFocus){
       ng.append('text').attr('x',NW/2).attr('y',NH-3).attr('text-anchor','middle').attr('font-family','Space Mono,monospace').attr('font-weight','700').attr('font-size',7.5)
         .attr('fill',sc2.fill).text('\u25c6 '+dhLabel(n.id,n.dh));
     }
-    const logo=n.logo||S.logos[n.id],tx=logo?38:8;
+    const logo=n.logo||S.logos[n.id];
+    const tcx=logo?(38+NW)/2:NW/2; // text center x — offset for logo area
     if(logo){
       ng.append('clipPath').attr('id','lc-'+n.id).append('rect').attr('x',4).attr('y',4).attr('width',30).attr('height',30).attr('rx',2);
       ng.append('image').attr('x',4).attr('y',4).attr('width',30).attr('height',30).attr('preserveAspectRatio','xMidYMid meet').attr('href',logo).attr('clip-path','url(#lc-'+n.id+')');
@@ -339,15 +453,25 @@ function drawNodes(G, nodes, posMap, activeId, hiSet, isFocus){
     }
     const lbl=n.lbl.length>15?n.lbl.slice(0,14)+'\u2026':n.lbl;
     const sub=n.sub.length>26?n.sub.slice(0,25)+'\u2026':n.sub;
-    ng.append('text').attr('x',tx).attr('y',16).attr('font-family','Rajdhani,sans-serif').attr('font-weight','700').attr('font-size',12.5).attr('fill',sc2.text).attr('letter-spacing','0.5').text(lbl);
-    if(n.billet){ng.append('text').attr('x',tx).attr('y',28).attr('font-family','Rajdhani,sans-serif').attr('font-size',9.5).attr('font-weight','600').attr('fill',isSel?'#c9a84c':isCyber?'#22cccc':isAcq?'#bb99dd':'#a0b8d0').attr('letter-spacing','0.3').text(n.billet);}
-    ng.append('text').attr('x',tx).attr('y',40).attr('font-family','IBM Plex Sans,sans-serif').attr('font-size',8.5).attr('fill',isCyber?'#33bbbb':isAcq?'#9966cc':'#6688aa').text(sub);
+    ng.append('text').attr('x',tcx).attr('y',16).attr('text-anchor','middle').attr('font-family','Rajdhani,sans-serif').attr('font-weight','700').attr('font-size',12.5).attr('fill',sc2.text).attr('letter-spacing','0.5').text(lbl);
+    if(n.billet){ng.append('text').attr('x',tcx).attr('y',28).attr('text-anchor','middle').attr('font-family','Rajdhani,sans-serif').attr('font-size',9.5).attr('font-weight','600').attr('fill',isSel?'#fff':isCyber?'#22cccc':isAcq?'#bb99dd':'#a0b8d0').attr('letter-spacing','0.3').text(n.billet);}
+    ng.append('text').attr('x',tcx).attr('y',40).attr('text-anchor','middle').attr('font-family','IBM Plex Sans,sans-serif').attr('font-size',8.5).attr('fill',isCyber?'#33bbbb':isAcq?'#9966cc':'#6688aa').text(sub);
     if(n.maint){
       const mlvl=n.maint;
       const mclr=mlvl==='I/D'?'#ff9500':mlvl==='D'?'#ff6600':mlvl==='O/I'?'#88dd88':'#c9a84c';
       const mbg=ng.append('g').attr('transform',`translate(${NW-20},${NH-15})`);
       mbg.append('rect').attr('x',-2).attr('y',-2).attr('width',17).attr('height',14).attr('rx',2).attr('fill','#000').attr('opacity',.7);
       mbg.append('text').attr('x',6.5).attr('y',9).attr('text-anchor','middle').attr('font-family','Rajdhani,sans-serif').attr('font-weight','700').attr('font-size',8.5).attr('fill',mclr).attr('letter-spacing','0.2').text(mlvl);
+    }
+    // Friction badge — diamond with count at top-right
+    if(_fr&&_fr.length&&!isDim){
+      const _maxSev=_fr.some(f=>f.severity==='high')?'high':_fr.some(f=>f.severity==='medium')?'medium':'low';
+      const _bc=_maxSev==='high'?'#ff5566':_maxSev==='medium'?'#e8b00f':'#0076a9';
+      const bx=NW-2,by=-2; // top-right corner
+      ng.append('polygon').attr('points',`${bx},${by-8} ${bx+8},${by} ${bx},${by+8} ${bx-8},${by}`)
+        .attr('fill',_bc).attr('stroke','#fff').attr('stroke-width',1);
+      ng.append('text').attr('x',bx).attr('y',by+3).attr('text-anchor','middle')
+        .attr('font-family','Rajdhani,sans-serif').attr('font-weight','700').attr('font-size',8).attr('fill','#fff').text(_fr.length);
     }
   });
 }
@@ -500,6 +624,12 @@ function selectNode(id){
   document.getElementById('btn-clear').style.display='inline-block';
 }
 function clearFilter(){S.activeNode=null;S.focusNode=null;S.highlight.clear();renderOrg();closeSide();updateBadge();document.getElementById('btn-clear').style.display='none';document.getElementById('active-badge').style.display='none';}
+function toggleOrientation(){
+  ORG.horizontal=!ORG.horizontal;
+  var btn=document.getElementById('btn-orient');
+  btn.textContent=ORG.horizontal?'↔ Left-Right':'↕ Top-Down';
+  _lastRenderView=null;renderOrg(true);
+}
 function updateBadge(){
   const b=document.getElementById('active-badge');
   if(S.focusNode){b.textContent='\u2b21 '+nlbl(S.focusNode)+' chain';b.style.display='inline-block';}
@@ -2260,6 +2390,7 @@ function initEvents(){
       case 'show-daco':      showPanel('org');document.getElementById('oc-view').value='cyber';renderOrg();break;
       // Org chart
       case 'clear-filter':   clearFilter();break;
+      case 'toggle-orient':  toggleOrientation();break;
       case 'close-side':     closeSide();break;
       case 'jump-to-node':   jumpToNode(arg);break;
       case 'select-node':    selectNode(arg);break;
